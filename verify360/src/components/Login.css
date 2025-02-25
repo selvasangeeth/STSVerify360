@@ -1,0 +1,182 @@
+/* Full-screen layout */
+.full-screen {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  /* Left section with curved background */
+  .left-section {
+    width: 35%;
+    background: #f5deb3; /* Light orange shade */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    box-shadow: none; /* Reduced shadow */
+    padding: 40px; /* Increased padding */
+  }
+  
+  /* Logo */
+  .logo {
+    width: 160px; /* Bigger logo */
+    margin-bottom: 35px;
+  }
+  
+  /* SPAN TESTING TOOL Styling */
+  .tool-name {
+    font-family: "Poppins", sans-serif;
+    font-size: 38px; /* Increased size */
+    font-weight: bold;
+    color: #1a1a1a;
+    text-align: center;
+    line-height: 1.4;
+  }
+  
+  .tool-span {
+    display: block;
+    font-size: 40px;
+  }
+  
+  .tool-testing {
+    display: block;
+    padding-left: 14px;
+    font-size: 38px;
+  }
+  
+  .tool-tool {
+    display: block;
+    padding-left: 28px;
+    font-size: 36px;
+  }
+  
+  /* Right section */
+  .right-section {
+    width: 65%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-top: 30px; /* Moved elements slightly higher */
+  }
+  
+  /* Welcome Back */
+  .welcome-text {
+    font-size: 32px; /* Increased size */
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 20px; /* More space */
+  }
+  
+  .sub-text {
+    font-size: 20px;
+    margin-bottom: 35px; /* More space */
+    text-align: left;
+  }
+  
+  /* Input fields */
+  .input-label {
+    font-weight: bold;
+    font-size: 20px; /* Bigger labels */
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .input-field {
+    width: 400px; /* Bigger input fields */
+    padding: 16px;
+    margin-bottom: 30px; /* Increased spacing */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #bfbfbf; /* Cement color */
+  }
+  
+  /* Remember me & forgot password */
+  .options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px; /* Bigger text */
+    margin-bottom: 25px; /* More spacing */
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+  }
+  
+  .forgot-password {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  /* Sign-in button (Centered and Rounded) */
+  .signin-btn {
+    width: 400px;
+    padding: 18px; /* Increased padding */
+    background: #0056b3;
+    color: white;
+    font-size: 22px; /* Bigger button text */
+    border: none;
+    border-radius: 25px; /* More rounded edges */
+    cursor: pointer;
+    margin: 30px auto 0; /* Centered button */
+    display: block;
+    text-align: center;
+  }
+  
+  .signin-btn:hover {
+    background: #004494;
+  }
+  
+  /* Social login */
+  .social-login {
+    text-align: center;
+    margin-top: 25px;
+  }
+  
+  .or-text {
+    font-size: 18px;
+    margin-bottom: 18px;
+  }
+  
+  .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* More spacing */
+  }
+  
+  .social-btn {
+    font-size: 22px; /* Larger icons */
+    color: white;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  
+  .instagram { background: #e4405f; }
+  .facebook { background: #1877f2; }
+  .google { background: #db4437; }
+  .twitter { background: #1da1f2; }
+  
+  /* Register link */
+  .register-text {
+    font-size: 18px; /* Bigger text */
+    text-align: center;
+    margin-top: 25px;
+  }
+  
+  .register-link {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
