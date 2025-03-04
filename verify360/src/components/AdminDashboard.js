@@ -46,16 +46,11 @@ const AdminDashboard = () => {
     },
     {
       id: 4,
-      name: 'Dyanahesh',
+      name: 'Dhyanesh',
       role: 'QA Engineer',
       username: 'dyanahesh'
     },
-    {
-      id: 5,
-      name: 'Pavithra',
-      role: 'QA Engineer',
-      username: 'pavithra'
-    }
+
   ]);
 
   const [newMember, setNewMember] = useState({
