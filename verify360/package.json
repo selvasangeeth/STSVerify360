@@ -22,6 +22,7 @@
     "react-minimal-pie-chart": "^9.1.0",
     "react-router-dom": "^6.29.0",
     "react-scripts": "5.0.1",
+    "recharts": "^2.15.1",
     "verify360": "file:",
     "web-vitals": "^2.1.4"
   },
