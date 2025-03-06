@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom hover effect for project buttons */
+.project-button:hover {
+  @apply bg-gray-100 transition-colors;
+}
+
+/* Custom styles for the modules table */
+.modules-table {
+  @apply w-full border-collapse;
+}
+
+.modules-table th {
+  @apply bg-gray-50 text-left p-4 border-b;
+}
+
+.modules-table td {
+  @apply p-4 border-b;
+}
+
+/* Hover effect for table rows */
+.modules-table tr:hover {
+  @apply bg-gray-50;
+}
+
+/* Custom styles for the team member cards */
+.team-member-card {
+  @apply p-4 rounded-lg hover:bg-gray-50 transition-colors;
+}
+
+/* Custom styles for the search input */
+.search-input {
+  @apply pl-10 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent;
+}
