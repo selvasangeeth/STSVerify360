@@ -35,13 +35,11 @@ const Login = () => {
 
   return (
     <div className="login-container full-screen">
-      <div className="left-section no-shadow">
+      <div className="left-section">
         <img src="/logo.png" alt="SPAN Logo" className="logo" />
         <h1 className="tool-name">
           <span className="tool-span">SPAN</span>
-          <br />
           <span className="tool-testing">TESTING</span>
-          <br />
           <span className="tool-tool">TOOL</span>
         </h1>
       </div>
@@ -57,7 +55,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="input-field cement-color"
+              className="input-field"
             />
             <label className="input-label">Password</label>
             <input
@@ -66,7 +64,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="input-field cement-color"
+              className="input-field"
             />
             <div className="options">
               <label className="remember-me">
