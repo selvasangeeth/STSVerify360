@@ -56,5 +56,5 @@ const AddDocumentModal = ({ isOpen, onClose, onAdd }) => {
   )
 }
 
-export default AddDocumentModal
+export default AddDocumentModal;
 
