@@ -1,0 +1,486 @@
+/* Tab Navigation */
+.users-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tab-navigation {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button.active {
+  color: #FF5722;
+  border-bottom: 2px solid #FF5722;
+}
+
+/* Common styles for both tabs */
+.users-view,
+.admins-view {
+  padding: 20px;
+}
+
+.users-header,
+.admins-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title-search {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.title-search span {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 6px 12px;
+  width: 350px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #666;
+  width: 100%;
+}
+
+.search-box input::placeholder {
+  color: #999;
+}
+
+.add-user-btn,
+.add-admin-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FF5722;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  height: 36px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.add-user-btn:hover,
+.add-admin-btn:hover {
+  background: #F4511E;
+}
+
+.users-table-container,
+.admins-table-container {
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.users-table,
+.admins-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th,
+.admins-table th {
+  background: #0d47a1;
+  color: white;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.users-table td,
+.admins-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.users-table tr:nth-child(even) td,
+.admins-table tr:nth-child(even) td {
+  background: #f8f9fa;
+}
+
+.blank-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-info,
+.admin-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar,
+.admin-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name,
+.admin-name {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.user-email,
+.admin-email {
+  color: #666;
+  font-size: 13px;
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.time {
+  color: #666;
+  font-size: 13px;
+}
+
+.delete-btn,
+.edit-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover,
+.edit-btn:hover {
+  opacity: 1;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Password field styles */
+.password-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-password-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #666;
+}
+
+.view-password-btn:hover {
+  color: #333;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.confirm-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.warning-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #ff0000;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.confirm-modal h2 {
+  color: #ff0000;
+  font-size: 20px;
+  margin: 0;
+}
+
+.confirm-modal-content {
+  margin-bottom: 24px;
+}
+
+.confirm-modal-content p {
+  margin: 8px 0;
+  color: #666;
+}
+
+.confirm-modal-content .user-name,
+.confirm-modal-content .admin-name {
+  font-weight: 600;
+  color: #333;
+  margin: 12px 0;
+}
+
+.confirm-modal-content .user-email,
+.confirm-modal-content .admin-email {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.confirm-modal-content .warning-text {
+  color: #666;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.btn-cancel {
+  padding: 10px 32px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+}
+
+.btn-remove {
+  padding: 10px 32px;
+  border: none;
+  background: #ff0000;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-cancel:hover {
+  background-color: #f5f5f5;
+}
+
+.btn-remove:hover {
+  background-color: #e60000;
+}
+
+/* Add Users/Admins Modal Styles */
+.add-users-modal,
+.add-admins-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.add-users-modal h2,
+.add-admins-modal h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  margin-bottom: 16px;
+}
+
+.search-input input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-input input::placeholder {
+  color: #999;
+}
+
+.available-users,
+.available-admins {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.user-item,
+.admin-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-item:hover,
+.admin-item:hover {
+  background-color: #f5f5f5;
+}
+
+.user-item.selected,
+.admin-item.selected {
+  background-color: #E3F2FD;
+}
+
+.user-details,
+.admin-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-details .user-name,
+.admin-details .admin-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.user-details .user-position,
+.admin-details .admin-position {
+  font-size: 12px;
+  color: #666;
+}
+
+.add-users-btn,
+.add-admins-btn {
+  width: 100%;
+  padding: 12px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-users-btn:hover,
+.add-admins-btn:hover {
+  background: #1976D2;
+}
+
+.add-users-btn:disabled,
+.add-admins-btn:disabled {
+  background: #E0E0E0;
+  cursor: not-allowed;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.pagination select {
+  margin: 0 10px;
+  padding: 5px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.pagination-controls button {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-controls span {
+  margin: 0 10px;
+}

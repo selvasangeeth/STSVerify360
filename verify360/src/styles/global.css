@@ -1,0 +1,72 @@
+/* Global Profile and Logout Styles */
+.sidebar-profile {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 240px;
+  padding: 16px;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+
+.sidebar-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-user-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #2196F3;
+}
+
+.sidebar-user-position {
+  font-size: 11px;
+  color: #666;
+}
+
+.sidebar-logout {
+  padding: 6px 12px;
+  background: #2196F3;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sidebar-logout:hover {
+  background: #1976D2;
+}
+
+/* Remove any conflicting styles from other components */
+.user-profile-section,
+.profile-details,
+.profile-name,
+.profile-position,
+.logout-btn {
+  all: unset;
+} 

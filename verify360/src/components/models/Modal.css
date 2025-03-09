@@ -104,3 +104,34 @@
   background-color: #e0e0e0;
 }
 
+/* Document select styles */
+.document-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.document-select:focus {
+  outline: none;
+  border-color: #2196f3;
+}
+
+.document-select option {
+  padding: 8px;
+}
+
+/* Disabled button state */
+.btn-primary:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.btn-primary:disabled:hover {
+  background-color: #e0e0e0;
+}
+
+
