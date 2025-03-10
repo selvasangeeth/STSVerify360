@@ -17,8 +17,12 @@ const moduleSchema = mongoose.Schema({
     project: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project'
+    },
+    timestamp:{
+        type:Date,
+        default:Date.now()
     }
 
-}, { timestamps: true })
+})
 
 module.exports = mongoose.model("module", moduleSchema);

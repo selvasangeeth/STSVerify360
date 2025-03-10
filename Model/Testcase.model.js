@@ -1,48 +1,81 @@
 const TestCaseSchema = new mongoose.Schema({
-    testCaseName :{
-        type :String,
-        required :true,
-    },
-    testCaseId :{
-        type :String,
-        required :true,
-    },
-    caseType :{
-        type :String,
-        required :true
+  testCaseName: {
+    type: String,
+    required: true,
+  },
+  testCaseId: {
+    type: String,
+    required: true,
+  },
+  caseType: {
+    type: String,
+    required: true
 
-    },
-    status :{
-        type : String,
-        required :true
+  },
+  expectedResult :{
+      type : String,
+  },
+  testCaseData: {
+    type: String,
+  },
+  steps: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: null
 
-    },
-    scenario :{
-         type :mongoose.Schema.Types.ObjectId,
-         ref : "scenario"
-    },
-    createdBy :{
-         type :mongoose.Schema.Types.ObjectId,
-         ref : "user"
-    },
-    testCaseDescription : {
+  },
+  comments: {
+    type: String,
+  },
+  reference: {
+    type : String,
+
+  },
+  testRegion :{
         type :String,
-        required :true
+  },
+  bugReferenceId: {
+    type: String,
 
-    },
-    testedBy : [
-        {
-          testerName: {
-            type: "string",
-          },
-          testDate: {
-            type: "Date", 
-            value: new Date().toISOString() 
-          }
-        }
-      ]
-},{timestamps:true});
+  },
+  bugPriority: {
+    type: String,
+  },
+  testRegion: {
+    type: String,
+  },
+  scenario: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "scenario"
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user"
+  },
+  testCaseDescription: {
+    type: String,
+    required: true
 
-module.exports = mongoose.model('Testcase',TestCaseSchema);
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now()
+  },
+  testedBy: [
+    {
+      testerName: {
+        type: "string",
+      },
+      testDate: {
+        type: "Date",
+        value: new Date().toISOString()
+      }
+    }
+  ]
+});
+
+module.exports = mongoose.model('Testcase', TestCaseSchema);
 
 

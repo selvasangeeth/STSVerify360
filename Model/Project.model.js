@@ -16,6 +16,10 @@ const projectSchema = mongoose.Schema({
        
 
     },
+    timestamp:{
+        type:Date,
+        default:Date.now()
+    },
     assignedTo :[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
@@ -38,6 +42,6 @@ const projectSchema = mongoose.Schema({
     //     }
     //   ]
 
-},{timeStamps:true});
+});
 
 module.exports = mongoose.model("Project", projectSchema);
