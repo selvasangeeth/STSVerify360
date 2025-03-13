@@ -1,0 +1,322 @@
+.testcases-container {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.breadcrumb-section span {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.profile-info {
+  text-align: right;
+}
+
+.profile-info .name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.profile-info .role {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.search-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.search-bar {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.add-case-btn {
+  background-color: #f52109;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.testcases-table {
+  margin: 20px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.testcases-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.testcases-table th {
+  background: #14365d;
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: normal;
+}
+
+.testcases-table td {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.test-case-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.test-case-id {
+  color: #333;
+  font-weight: 500;
+}
+
+.test-case-desc {
+  color: #666;
+  font-size: 13px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-info .name {
+  color: #333;
+  font-size: 14px;
+}
+
+.user-info .date {
+  color: #666;
+  font-size: 12px;
+}
+
+.case-type-badge,
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.case-type-badge.positive {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.case-type-badge.negative {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.status-badge.pass {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-badge.fail {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.status-badge.untested {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.edit-btn,
+.view-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.edit-btn:hover,
+.view-btn:hover {
+  color: #333;
+}
+
+.edit-btn svg,
+.view-btn svg {
+  stroke-width: 1.5px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Changed from center to flex-start */
+  z-index: 1000;
+  padding: 20px; /* Add padding to ensure space at top and bottom */
+  overflow-y: auto; /* Enable scrolling on the overlay */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh; /* Set maximum height */
+  overflow-y: auto; /* Enable scrolling within the modal */
+  margin: 20px auto; /* Add margin to ensure space at top and bottom */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Add smooth scrollbar for better appearance */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Form styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+  max-height: 200px; /* Limit textarea height */
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  position: sticky; /* Make buttons stick to bottom */
+  bottom: 0;
+  background-color: white;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.cancel-btn, 
+.submit-btn {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.submit-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.cancel-btn:hover, 
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+/* Modal header */
+.modal-content h2 {
+  margin: 0 0 20px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}   

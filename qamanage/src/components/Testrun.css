@@ -1,0 +1,280 @@
+.test-runs-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Search and Filters in Same Row */
+  .search-filters-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  /* Search Bar */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 400px;
+  }
+  
+  .search-icon {
+    margin-right: 10px;
+    color: #666;
+  }
+  
+  .search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+  }
+  
+  /* Filters */
+  .filters {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .filters select {
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: #f0f7ff; /* Light blue background */
+    color: #007bff; /* Blue text */
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    appearance: none; /* Hide default arrow */
+    width: 150px;
+  }
+  
+  .filters select::after {
+    content: "▼";
+    font-size: 12px;
+    color: #007bff;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  /* Hover Effect */
+  .filters select:hover {
+    background-color: #e3efff;
+  }
+  
+  /* Focus Effect */
+  .filters select:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Table Styles */
+  .test-runs-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+  }
+  
+  /* Header Background Blue & Text White */
+  .test-runs-table th {
+    background-color: #003366;
+    color: white;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  /* Row Styling */
+  .test-runs-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Small Arrow Instead of View Button */
+  .action-arrow {
+    font-size: 18px;
+    color: #003366;
+    cursor: pointer;
+  }
+  
+  .action-arrow:hover {
+    color: #0056b3;
+  }
+  
+  /* Status Badges */
+  .status-badge {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background-color: #e0e0e0;
+    color: #333;
+    font-size: 12px;
+  }
+  
+  .pass {
+    color: green;
+  }
+  
+  .fail {
+    color: red;
+  }
+  
+  .unexecuted {
+    color: orange;
+  }
+  
+  .test-status.pass {
+    color: green;
+  }
+  
+  .test-status.fail {
+    color: red;
+  }
+  
+  /* Modal Styles */
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  /* Datepicker Popup */
+  .datepicker-popup {
+    position: fixed;
+    top: 10%;
+    right: 2%;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    z-index: 1000;
+  }
+  
+  .datepicker-popup .react-datepicker {
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  .datepicker-popup .react-datepicker__day-name,
+  .datepicker-popup .react-datepicker__day,
+  .datepicker-popup .react-datepicker__time-name {
+    width: 2.5rem;
+    line-height: 2.5rem;
+    text-align: center;
+  }
+  
+  .datepicker-popup .react-datepicker__header {
+    background-color: #f9fafb;
+    border-bottom: 1px solid #d1d5db;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 8px 0;
+  }
+  
+  .datepicker-popup .react-datepicker__day--selected {
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 50%;
+  }
+  
+  .datepicker-popup .react-datepicker__day--today {
+    background-color: #e0f2fe;
+    border-radius: 50%;
+  }
+  
+  .datepicker-popup .react-datepicker__current-month {
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  
+  .datepicker-popup .react-datepicker__time-container {
+    border-left: 1px solid #d1d5db;
+  }
+  
+  .datepicker-popup .react-datepicker__time-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .datepicker-popup .react-datepicker__time-list-item--selected {
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 8px;
+  }
+  
+  .datepicker-popup .react-datepicker__navigation {
+    top: 10px;
+  }
+  
+  .datepicker-popup .react-datepicker__month-container {
+    padding: 8px;
+  }
+  
+  .datepicker-popup .react-datepicker__day {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+    margin: 4px;
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    font-size: 14px;
+    color: #000;
+    font-weight: 500;
+    visibility: visible;
+  }
+  
+  .datepicker-popup .react-datepicker__day:hover {
+    background-color: #dbeafe;
+  }
+  
+  .datepicker-popup .react-datepicker__day--disabled {
+    color: #ccc;
+  }
+  
+  .datepicker-popup .react-datepicker__day--outside-month {
+    color: #bbb;
+  }
+  
+  .datepicker-popup .react-datepicker__week {
+    display: flex;
+    justify-content: space-around;
+  }
