@@ -1,0 +1,94 @@
+/* Container */
+.container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    width: 60%;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+.heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+.subheading {
+    font-size: 20px;
+    color: #555;
+}
+
+/* Textarea */
+.textarea {
+    width: 90%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    resize: none;
+}
+
+/* Button */
+.button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #3498db;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    font-weight: bold;
+}
+.button:hover {
+    background-color: #217dbb;
+}
+.button-disabled {
+    background-color: #a0c4e2;
+    cursor: not-allowed;
+}
+
+/* Spinner */
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.loading-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+}
+
+/* Output Box */
+.output {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: left;
+    white-Space: pre-wrap;
+    border: 1px solid #ddd;
+    width: 90%;
+    margin: 20px auto;
+    font-size: 14px;
+    font-family: monospace;
+}
