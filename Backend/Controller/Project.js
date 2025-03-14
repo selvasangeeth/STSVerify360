@@ -9,7 +9,6 @@ const createProject = async (req, res) => {
   try {
     const createdById = req.user.id;
     const { projectName } = req.body;
-    console.log(projectName)
     const projectLogo = req.file;
     const base64String = projectLogo.buffer.toString('base64');
 
@@ -29,22 +28,28 @@ const createProject = async (req, res) => {
         projectLogo: base64String
       });
 
+    const UserName = await userDetails.findById(createdById).populate('Name'); 
+
+
       try {
-        await log.create({
+       const a =  await log.create({
           action: "Created",
           entityType: "Project",
           entityId: creat._id,
-          user: createdById,
+          user: UserName.Name,
           timestamp: Date.now(),
           path: projectName,
           details: `Created Project : ${projectName}`,
-
         })
+      
       }
       catch (err) {
         console.log(err);
 
       }
+      // console.log("Project Created log"+ logDetails);
+   
+   
 
       return res.json({ msg: "Project Created Successfully", data: creat });
     }
@@ -58,8 +63,10 @@ const createProject = async (req, res) => {
 //Update Project
 const updateProject = async (req, res) => {
 
+  const updatedBy = req.user.id;
+
   try {
-    const { projectId, newProjectName, updatedBy } = req.body;
+    const { projectId, newProjectName } = req.body;
 
     const proj = await ProjectDetails.findById(projectId);
     if (!proj) {
@@ -68,12 +75,15 @@ const updateProject = async (req, res) => {
       oldProjectName = proj.projectName;
       proj.projectName = newProjectName;
       await proj.save();
+
+      const UserName = await userDetails.findById(updatedBy).populate('Name'); 
+
       try {
         await log.create({
           action: "Updated",
           entityType: "Project",
           entityId: projectId,
-          user: updatedBy,
+          user: UserName.Name,
           path: proj.projectName,
           details: ` ${oldProjectName} updated to ${newProjectName}`
 
@@ -144,6 +154,7 @@ const deleteProject = async (req, res) => {
     }
 
     await ProjectDetails.findByIdAndDelete(projectId);
+    const UserName = await userDetails.findById(deletedById).populate('Name'); 
 
     //log 
 
@@ -152,7 +163,7 @@ const deleteProject = async (req, res) => {
         action: "Deleted",
         entityType: "Project",
         entityId: projectId,
-        user: deletedById,
+        user: UserName.Name,
         path: projectName,
         details: ` Project Deleted : ${projectName}`
 
@@ -203,12 +214,13 @@ const assignUsers = async (req, res) => {
     project.assignedTo = [...new Set([...project.assignedTo, ...userIds])];
 
     await project.save();
+    const UserName = await userDetails.findById(userId).populate('Name'); 
 
     await log.create({
       action: "Assigned",
       entityType: "Project",
       entityId: projectId,
-      user: userId,
+      user: UserName.Name,
       path: project.projectName,
       details: "Users Assigned"
 

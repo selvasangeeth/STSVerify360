@@ -60,8 +60,8 @@ const loginUser = async (req, res) => {
   }
 
   //jwt auth
-
-  const token = jwt.sign(  { id: user._id, email: user.email, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+ const UserName = await userDetails.findById(user._id).populate('Name');
+ const token = jwt.sign(  { id: user._id, email: user.email, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
   res.cookie("jwt", token, { httpOnly: true, maxAge: 3600000 });
 
   try {
@@ -70,7 +70,8 @@ const loginUser = async (req, res) => {
       entityType: "User",
       entityId: user._id,
       timestamp: Date.now(),
-      details: "User LoggedIn"
+      details: "User LoggedIn",
+      user : UserName.Name,
 
     })
   } catch (err) {
@@ -100,12 +101,16 @@ const updateUser =async(req,res)=>{
           }
         user.Profileimg = Profileimg;  
 
+        const UserName = await userDetails.findById(userId).populate('Name'); 
+
         await log.create({
           action: "Updated",
           entityType: "User",
           entityId: user._id,
           timestamp: Date.now(),
-          details: "User Profile Updated"
+          user : UserName.Name,
+          details: "User Profile Updated",
+          
         })
 
         res.status(200).json({ msg: 'User updated successfully', data : user });

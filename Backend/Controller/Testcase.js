@@ -70,30 +70,29 @@ const createTestCase = async (req, res) => {
 
 const updateTestCaseStatus = async (req, res) => {
   try {
-    const { testCaseId, testStatus, scenarioId, projectId, moduleId, testRegion, comments, bugReferenceId, bugPriority } = req.body;
+    const { testCaseId, testStatus, scenarioId, projectId, description, moduleId, testRegion, comments, bugReferenceId, bugPriority } = req.body;
     const testerId = req.user.id;
-    console.log("test case Id................ " + testCaseId);
-    console.log("testerid :" + testerId);
-    console.log("Module id ------>" + moduleId);
-    console.log(req.body);
-    // if (!req.file) {
-    //   console.log("no file");
-    //   return res.status(400).json({ msg: "No file uploaded" });
-    // }
-    // const reference= req.file;
-    // console.log(reference);
-    // const base64String = reference.buffer.toString('base64');
+    if (!req.file) {
+      console.log("no file");
+      return res.status(400).json({ msg: "No file uploaded" });
+    }
+    const fileUploaded = req.file;
+    const base64String = fileUploaded.buffer.toString('base64');
+    if (base64String) {
+      console.log("Converted to base64")
+    }
+    else {
+      console.log("Not Converted");
+    }
     const tester = await user.findById(testerId).populate('Name');
 
     const testerName = tester ? tester.Name : "Unknown";
     const testCaseName = await testCaseModel.findById(testCaseId).populate('testCaseId');
-    console.log("TestCaseName :" + testCaseName.testCaseId);
     if (!testStatus) {
       return res.status(400).json({ msg: "Status is required" });
     }
 
-    console.log("test updating");
-    console.log(testerName);
+    console.log("testCase Updating....");
     const updatedTestCase = await testCaseModel.findByIdAndUpdate(
       testCaseId,
       {
@@ -102,7 +101,7 @@ const updateTestCaseStatus = async (req, res) => {
         comments: comments,
         bugPriority: bugPriority,
         bugReferenceId: bugReferenceId,
-        // reference : base64String,
+        reference: base64String,
         testedBy: {
           testerName: testerName,
           testDate: new Date().toISOString(),
@@ -119,48 +118,65 @@ const updateTestCaseStatus = async (req, res) => {
       },
       { new: true }
     );
-    console.log("updated module : "+updatedModule);
-    console.log("successupdate");
-    console.log("updated TestCase : " + updatedTestCase)
+    console.log("Success update");
+    // console.log("updated TestCase : " + updatedTestCase)
     if (!updatedTestCase) {
       return res.status(404).json({ msg: "TestCase not found" });
     }
+
+    // TestRun Create
+
     const associatedScenario = await testScenarioModel.findById(scenarioId)
       .populate('scenarioIdstr')
       .populate('taskId')
       .populate('subTaskId')
 
+    const testCaseDetails = await testCaseModel.findById(testCaseId).populate('caseType').populate('testCaseDescription').populate('createdBy').populate('expectedResult').populate('testCaseData').populate('steps');
+    const testCaseCreatedBy = await user.findById(testCaseDetails.createdBy).populate('Name');
+    const testCaseCreatedByName = testCaseCreatedBy.Name;
+    console.log("Name of creatoir"+testCaseCreatedByName)
     const associatedModule = await modulee.findById(moduleId);
     const associatedProject = await project.findById(projectId);
 
-    // TestRun Create
-    console.log("testlog came");
-    console.log("TestCase NAme : " + testCaseName.testCaseId);
+
+    console.log("TestRun Creating....");
+    console.log(comments);
 
     const testRunCreate = await testRunModel.create({
       testCaseName: testCaseName.testCaseId,
-      scenarioId: scenarioId,
       testScenario: associatedScenario.scenarioIdstr,
       taskId: associatedScenario.taskId,
       subTaskId: associatedScenario.subTaskId,
       testRegion: testRegion,
       testStatus: testStatus,
-      testedBy: testerName
-    })
-
-    console.log("TestRun :" + testRunCreate);
-
-    const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioName}/${updatedTestCase.testCaseName}`;
-
-    await log.create({
+      testedBy: testerName,
+      reference: base64String,
+      testDescription :testCaseDetails.testCaseDescription,
+      caseType : testCaseDetails.caseType,
+      testCaseCreatedBy : testCaseCreatedBy.Name,
+      bugPriority: bugPriority,
+      bugReferenceId: bugReferenceId,
+      comments : comments,
+      expectedResult :testCaseDetails.expectedResult,
+      testCaseData: testCaseDetails.testCaseData,
+      steps : testCaseDetails.steps,
+    })  
+    console.log("TestRun Created")
+    // console.log(testRunCreate);
+    const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioIdstr}/${testCaseName.testCaseId}`;
+    console.log("TestLog Creating....")
+    const TestCaseUpdateLog = await log.create({
       action: "Test Status Updated",
       entityType: "TestCase",
       entityId: updatedTestCase._id,
-      user: testerId,
+      user: testerName,
       timestamp: Date.now(),
       path: path,
       details: `Status updated to: ${testStatus} and TestedBy: ${testerName}`,
     });
+
+    console.log("TestLog Created Success")
+    // console.log("TestLog"+TestCaseUpdateLog);
 
     return res.json({
       msg: "TestRun updated successfully",

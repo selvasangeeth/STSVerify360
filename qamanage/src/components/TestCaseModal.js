@@ -131,7 +131,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
 
     // Append the file if available
     if (selectedFile) {
-      formData.append('reference', newResult.reference);
+      formData.append('reference', selectedFile);
     }
     for (let pair of formData.entries()) {
       console.log(pair[0], pair[1]);
