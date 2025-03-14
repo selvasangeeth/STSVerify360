@@ -3,7 +3,6 @@
   height: 100vh;
   position: relative;
 }
-
 .sidebar {
   width: 250px;
   background: white;
@@ -11,22 +10,18 @@
   display: flex;
   flex-direction: column;
 }
-
 .logo-section {
   padding: 16px;
   border-bottom: 1px solid #e0e0e0;
 }
-
 .logo {
   height: 32px;
 }
-
 /* Project Dropdown Styles */
 .project-dropdown-container {
   margin: 20px 0;
   position: relative;
 }
-
 .project-header {
   padding: 10px 15px;
   background-color: #f8f9fa;
@@ -37,17 +32,14 @@
   align-items: center;
   gap: 10px;
 }
-
 .project-icon {
   font-size: 1.2em;
 }
-
 .project-name {
   flex: 1;
   font-size: 14px;
   color: #333;
 }
-
 .project-menu {
   background: none;
   border: none;
@@ -56,7 +48,6 @@
   cursor: pointer;
   padding: 4px 8px;
 }
-
 .project-dropdown {
   position: absolute;
   top: 100%;
@@ -68,7 +59,6 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 1000;
 }
-
 .add-project-btn {
   width: 100%;
   padding: 10px;
@@ -79,24 +69,25 @@
   text-align: left;
   font-weight: 500;
 }
-
 .projects-list {
   max-height: 300px;
   overflow-y: auto;
 }
-
 .project-item {
   padding: 10px 15px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 100px;
   cursor: pointer;
 }
-
 .project-item:hover {
   background-color: #f8f9fa;
 }
-
+.project-item img {
+  width: 40px; /* Image size */
+  height: 40px;
+  border-radius: 50%; /* Circular image */
+}
 /* Quick Links Styles */
 .quick-links {
   margin-top: auto;
@@ -104,7 +95,6 @@
   border-top: 1px solid #e0e0e0;
   width: 100%;
 }
-
 /* Ensure "Quick Links" and "+" are on the same line with correct alignment */
 .quick-links-header {
   display: flex;
@@ -113,7 +103,6 @@
   margin-bottom: 12px;
   width: 100%;
 }
-
 .add-link {
   background: none;
   border: none;
@@ -124,7 +113,6 @@
   display: flex;
   align-items: center;
 }
-
 /* Ensures list takes full width */
 .quick-links-list {
   list-style: none;
@@ -132,7 +120,6 @@
   margin: 0;
   width: 100%;
 }
-
 /* Ensures text is in one line and 3 dots are at the right corner */
 .quick-link-item {
   display: flex;
@@ -145,13 +132,11 @@
   cursor: pointer;
   white-space: nowrap; /* Prevents text from wrapping */
 }
-
 .quick-link-item span {
   flex-grow: 1; /* Pushes the more-options button to the right */
   overflow: hidden;
   text-overflow: ellipsis; /* Adds "..." if text is too long */
 }
-
 /* Fixes the alignment of 3 dots to the right */
 .more-options {
   background: none;
@@ -165,15 +150,11 @@
   justify-content: center;
   margin-right: auto; /* Moves it fully to the right */
 }
-
-
 /* Module icon specific styling */
 .module-icon {
   color: white;
 }
-
 /* Add Project Modal styles can be added here */
-
 .project-dropdown-menu {
   position: absolute;
   top: 100%;
@@ -185,16 +166,13 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 1000;
 }
-
 .project-item {
   padding: 8px 16px;
   cursor: pointer;
 }
-
 .project-item:hover {
   background: #f5f5f5;
 }
-
 .add-project-btn {
   width: 100%;
   padding: 8px 16px;
@@ -204,36 +182,30 @@
   text-align: left;
   cursor: pointer;
 }
-
 .main-content {
   flex: 1;
   padding: 20px;
   background: #f8f9fa;
 }
-
 .content-header {
   margin-bottom: 20px;
 }
-
 .breadcrumb {
   font-size: 16px;
   color: #333;
   margin-bottom: 16px;
 }
-
 .search-bar {
   display: flex;
   gap: 16px;
   align-items: center;
 }
-
 .search-bar input {
   flex: 1;
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
-
 .add-module-btn {
   padding: 8px 16px;
   background: #e65c00;
@@ -242,30 +214,25 @@
   border-radius: 4px;
   cursor: pointer;
 }
-
 .modules-table {
   background: white;
   border-radius: 8px;
   overflow: hidden;
 }
-
 .modules-table table {
   width: 100%;
   border-collapse: collapse;
 }
-
 .modules-table th {
   background: #14365d;
   color: white;
   padding: 12px;
   text-align: left;
 }
-
 .modules-table td {
   padding: 12px;
   border-bottom: 1px solid #eee;
 }
-
 .module-id,
 .submodule-id,
 .test-date {
@@ -273,22 +240,19 @@
   color: #666;
   margin-top: 4px;
 }
-
 .action-btn {
   background: none;
   border: none;
   cursor: pointer;
   color: #666;
 }
-
 .project-header {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 16px 12px;
   cursor: pointer;
   border-bottom: 1px solid #e0e0e0;
 }
-
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -300,23 +264,19 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   z-index: 1000;
 }
-
 .dropdown-section {
   padding: 8px 0;
   border-bottom: 1px solid #e0e0e0;
 }
-
 .dropdown-section:last-child {
   border-bottom: none;
 }
-
 .section-title {
   padding: 8px 16px;
   color: #666;
   font-size: 12px;
   text-transform: uppercase;
 }
-
 .dropdown-item {
   padding: 8px 16px;
   display: flex;
@@ -324,64 +284,51 @@
   cursor: pointer;
   color: #333;
 }
-
 .dropdown-item:hover {
   background: #f5f5f5;
 }
-
 .dropdown-item.active {
   background: #e65c00;
   color: white;
 }
-
 .add-project {
   color: #e65c00;
 }
-
 .add-icon {
   margin-right: 8px;
   font-weight: bold;
 }
-
 .dropdown-arrow {
   margin-left: auto;
   transition: transform 0.3s;
 }
-
 .dropdown-arrow.open {
   transform: rotate(180deg);
 }
-
 .nav-menu {
   background-color: white; /* Background color */
   display: flex;
   flex-direction: column;
-  
   height: 100vh; /* Full height */
   gap: 20px; /* Spacing between items */
 }
-
 .nav-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px; 
+  gap: 10px;
   font-size: 16px;
   color: black;
   cursor: pointer;
   width: 150px; /* Fixed width */
   padding: 10px;
 }
-
 .nav-icon {
   margin-right: 8px;
-  
 }
-
 .menu-container {
   position: relative;
 }
-
 .menu-dropdown {
   position: absolute;
   right: 0;
@@ -393,7 +340,6 @@
   z-index: 1000;
   min-width: 120px;
 }
-
 .menu-item {
   padding: 8px 16px;
   cursor: pointer;
@@ -403,36 +349,29 @@
   color: #333;
   font-size: 14px;
 }
-
 .menu-item:hover {
   background: #f5f5f5;
 }
-
 .menu-item.delete {
   color: #dc3545;
 }
-
 .menu-item:first-child {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
-
 .menu-item:last-child {
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
 }
-
 .dashboard-container {
   position: relative;
 }
-
 .header-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-
 .add-module-btn {
   background-color: #007bff;
   color: white;
@@ -441,20 +380,16 @@
   border-radius: 4px;
   cursor: pointer;
 }
-
 .add-module-btn:hover {
   background-color: #0056b3;
 }
-
 .module-name-cell {
   cursor: pointer;
   color: #0066cc;
 }
-
 .module-name-cell:hover {
   text-decoration: underline;
 }
-
 .action-btn {
   background: none;
   border: none;
@@ -462,20 +397,41 @@
   font-size: 20px;
   color: #333;
 }
-
 .modules-table {
   width: 100%;
   border-collapse: collapse;
 }
-
 .modules-table th {
   background-color: #1a365d;
   color: white;
   padding: 12px;
   text-align: left;
 }
-
 .modules-table td {
   padding: 12px;
   border-bottom: 1px solid #eee;
-} 
+}
+.dropdown-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding-right: 8px;
+  color: black;
+  text-align: right;
+}
+.select-project {
+  flex-grow: 10; /* Allows text to take available space */
+  font-size: 16px;
+  white-space: nowrap;
+  padding-left: 8px; /* Adds spacing from the left */
+}
+
+
+
+
+
+
+
+
+

@@ -10,6 +10,7 @@ import LogList from './LogList'; // Import LogList component
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import logo from "../Assets/logo.ico";
+import { FaAlignJustify } from 'react-icons/fa';
 
 const DEFAULT_QUICK_LINKS = [
   {
@@ -210,20 +211,20 @@ const Dashboard = ({ children }) => {
 
         {/* Project Dropdown */}
         <div className="project-dropdown-container">
-          <div 
-            className="project-header"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            {selectedProject ? (
-              <>
-                <span className="project-icon">📁</span>
-                <span className="project-name">{selectedProject.projectName}</span>
-              </>
-            ) : (
-              <span className="select-project">Select Project</span>
-            )}
-          </div>
-
+      <div className="project-header">
+        <span
+          className="select-project"
+          onClick={() => setShowDropdown(!showDropdown)}
+        >
+          Select Project
+        </span>
+        <button
+          className="dropdown-button"
+          onClick={() => setShowDropdown(!showDropdown)}
+        >
+          ▼
+        </button>
+      </div>
           {showDropdown && (
             <div className="project-dropdown">
               <button 
@@ -249,7 +250,7 @@ const Dashboard = ({ children }) => {
       width: '40px',  
       height: '40px',  
       objectFit: 'contain', 
-      marginRight: '10px'  
+       
     }}
   />
 )}
@@ -257,12 +258,11 @@ const Dashboard = ({ children }) => {
 {/* Display the project name */}
 <span
   style={{
-    fontSize: '16px',
+    fontSize: '14px',
     fontWeight: 'bold',  
-    display: 'inline-block', 
-    verticalAlign: 'middle', 
-    marginTop:'10px'
-   
+    top: '-15px',
+    position: 'relative',  
+    
   }}
 >
   {project.projectName}
@@ -378,10 +378,11 @@ const Dashboard = ({ children }) => {
       onChange={loadFile} // Use the loadFile function to handle the file
     />
     {newProject.logo && (
-      <div className="preview">
-        <img src={URL.createObjectURL(newProject.logo)} alt="Project Logo" className="logo-preview" />
-      </div>
-    )}
+  <div className="project-item">
+    <img src={URL.createObjectURL(newProject.logo)} alt="Project Logo" />
+    <span className="project-name">{newProject.projectName || "Project Name"}</span>
+  </div>
+)}
   </div>
 </div>
 

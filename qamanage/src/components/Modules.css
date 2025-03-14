@@ -66,6 +66,10 @@ td {
   padding: 15px;
   border-bottom: 1px solid #dee2e6;
 }
+.module-name{
+  color: #007bff;
+  text-decoration: underline;
+}
 
 .module-row {
   cursor: pointer;

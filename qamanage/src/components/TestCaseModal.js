@@ -169,7 +169,6 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
         <div className="add-modal-content">
           <div className="modal-header">
             <h2>Add New Case</h2>
-            <button className="close-btn" onClick={onClose}>×</button>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -252,6 +251,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
             </div>
 
             <div className="add-case-actions">
+            <button className="cancel-case-submit" onClick={onClose}>Cancel</button>
               <button type="submit" className="add-case-submit">
                 <span>+</span> Add Case
               </button>

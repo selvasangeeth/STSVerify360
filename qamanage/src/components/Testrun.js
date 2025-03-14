@@ -98,13 +98,12 @@ const Testrun = () => {
       <table className="test-runs-table">
         <thead>
           <tr>
-            <th>Task ID</th>
-            <th>Sub Task ID</th>
+            <th>Date / Time</th>
             <th>Test Scenario</th>
-            <th>Tested By</th>
-            <th>Cases</th>
-            <th>Pass | Fail | Unexecuted</th>
+            <th>Test Cases</th>
+            <th>Sub Task ID</th>
             <th>Test Status</th>
+            <th>Tested By</th>
             <th>Action</th>
           </tr>
         </thead>

@@ -144,7 +144,7 @@ const Modules = () => {
                 className="module-row"
                 style={{ cursor: 'pointer' }}
               >
-                <td>
+                <td className=" module-name">
                   <div>{module.moduleName}</div>
                   <div className="id-text">{module.moduleId}</div>
                 </td>

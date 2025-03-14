@@ -126,12 +126,6 @@ const Scenarios = () => {
   return (
     <div className="scenarios-container">
       <div className="scenarios-header">
-        <button 
-          className="back-button"
-          onClick={handleBackClick}
-        >
-          ← Back to Modules
-        </button>
         {moduleDetails && (
           <div className="module-info">
             <h2>{moduleDetails.moduleName}</h2>
