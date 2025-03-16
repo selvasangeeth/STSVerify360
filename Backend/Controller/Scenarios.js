@@ -4,6 +4,7 @@ const log = require("../Model/Log.model");  // Ensure this is the correct log mo
 const scenario = require("../Model/Scenarios.model");
 const testCaseModel = require("../Model/Testcase.model");
 
+
 // Create Scenario 
 const createScenario = async (req, res) => {
   try {
@@ -47,11 +48,12 @@ const createScenario = async (req, res) => {
       const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${creat.scenarioIdstr}`;
       try {
         // Ensure log.create() is called correctly
+        const UserName = await userDetails.findById(createdById).populate('Name'); 
         const logEntry = await log.create({
           action: "Created",
           entityType: "Scenario",
           entityId: creat._id,
-          user: createdById,
+          user: UserName.Name,
           timestamp: Date.now(),
           path: path,
           details: `Created Scenario: ${scenarioIdstr}`,
@@ -86,13 +88,15 @@ const createScenario = async (req, res) => {
         return res.status(404).json({ msg: "No Scenario found for this project" });
       }
 
-        // Get the count of test cases for each scenario
-    for (let i = 0; i < sc.length; i++) {
-      const testCaseCount = await testCaseModel.countDocuments({ scenarioId: sc[i]._id });
-      sc[i].testCaseCount = testCaseCount; // Add the test case count to the scenario object
-    }
+      const scenariosWithTestCaseCount = await Promise.all(sc.map(async (scenario) => {
+        const testCaseCount = await testCaseModel.countDocuments({ scenarioId: scenario._id });
+        return {
+          ...scenario.toObject(),
+          testCaseCount: testCaseCount,
+        };
+      }));
      
-      res.status(200).json({msg :"Success Scenario Fetch",data : sc });
+      res.status(200).json({msg :"Success Scenario Fetch",data : scenariosWithTestCaseCount });
     } catch (err) {
       console.error("Error fetching Scenarios:", err);
       res.status(500).json({ msg: "Failed to fetch Scenarios" });

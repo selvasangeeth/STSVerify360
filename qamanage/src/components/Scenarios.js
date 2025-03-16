@@ -190,7 +190,7 @@ const Scenarios = () => {
                     {new Date(scenario.timestamp).toLocaleDateString()}
                   </div>
                 </td>
-                <td>{scenario.testCaseCount}</td>
+                <td>{scenario.testCaseCount || 0}</td>
                 <td>
                   <button className="action-btn">⋮</button>
                 </td>

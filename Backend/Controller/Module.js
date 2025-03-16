@@ -2,7 +2,8 @@ const modulee = require("../Model/Module.model");
 const project = require("../Model/Project.model")
 const log = require("../Model/Log.model");
 const mongoose = require('mongoose');
-
+const ScenarioModel = require("../Model/Scenarios.model");
+const TestCaseModal = require("../Model/Testcase.model");
 
 const createModule = async (req, res) => {
   try {
@@ -25,13 +26,14 @@ const createModule = async (req, res) => {
       if (!associatedProject) {
         return res.status(404).json({ msg: "Project not found" });
       }
+      const UserName = await userDetails.findById(createdById).populate('Name'); 
       const path = `${associatedProject.projectName}/${creat.moduleName}`;
       try {
         await log.create({
           action: "Created",
           entityType: "Module",
           entityId: creat._id,
-          user: createdById,
+          user: UserName.Name,
           timestamp: Date.now(),
           path: path,
           details: `Created Module : ${moduleName}`,
@@ -53,6 +55,35 @@ const createModule = async (req, res) => {
 
 //getModule
 
+// const getModules = async (req, res) => {
+//   try {
+//     const { projectId } = req.params;
+//     console.log("Received projectId:", projectId);
+
+//     if (!mongoose.Types.ObjectId.isValid(projectId)) {
+//       return res.status(400).json({ msg: "Invalid Project ID" });
+//     }
+//     console.log("ProjectId validated");
+
+
+//     const proj = await project.findById(projectId);
+//     if (!proj) {
+//       return res.status(404).json({ msg: "Project not found" });
+//     }
+
+//     const modules = await modulee.find({ projectId: projectId });
+//     console.log("Modules found:", modules);
+
+//     if (modules.length === 0) {
+//       return res.status(404).json({ msg: "No modules found for this project" });
+//     }
+//     res.status(200).json({ msg: "Module Fetched Success", data: modules });
+//   } catch (err) {
+//     console.error("Error fetching modules:", err);
+//     res.status(500).json({ msg: "Failed to fetch modules" });
+//   }
+// };
+
 const getModules = async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -70,18 +101,33 @@ const getModules = async (req, res) => {
     }
 
     const modules = await modulee.find({ projectId: projectId });
-    console.log("Modules found:", modules);
+    // console.log("Modules found:", modules);
 
     if (modules.length === 0) {
       return res.status(404).json({ msg: "No modules found for this project" });
     }
-    res.status(200).json({ msg: "Module Fetched Success", data: modules });
+
+    const modulesWithCounts = await Promise.all(modules.map(async (module) => {
+      const scenarioCount = await ScenarioModel.countDocuments({ module: module._id });
+      const testCaseCount = await TestCaseModal.countDocuments({ moduleId: module._id });
+      
+      return {
+        ...module.toObject(),
+        scenariosCount: scenarioCount,
+        casesCount: testCaseCount,
+      };
+    }));
+
+    console.log(modulesWithCounts);
+
+    res.status(200).json({ msg: "Module Fetched Success", data: modulesWithCounts });
+
+    // res.status(200).json({ msg: "Module Fetched Success", data: modules });
   } catch (err) {
     console.error("Error fetching modules:", err);
     res.status(500).json({ msg: "Failed to fetch modules" });
   }
 };
-
 
 
 

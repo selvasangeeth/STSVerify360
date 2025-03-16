@@ -75,3 +75,24 @@ const getAllTestRuns = async (req, res) => {
 };
 
 module.exports = { getAllTestRuns };
+
+
+
+// const { projectId } = req.params;  // Get the projectId from the request parameters
+
+//     try {
+//         // Find all Testrun records where the projectId matches and populate project data if necessary
+//         const testRuns = await Testrun.find({ projectId: mongoose.Types.ObjectId(projectId) })
+//                                       .populate('projectId')  // Populate if you need project details
+//                                       .exec();
+
+//         if (!testRuns || testRuns.length === 0) {
+//             return res.status(404).json({ message: "No test runs found for the given project ID." });
+//         }
+
+//         // Respond with the test runs associated with the projectId
+//         return res.status(200).json({ testRuns });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: 'Server error while fetching test runs.', error });
+//     }

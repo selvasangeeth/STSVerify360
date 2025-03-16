@@ -11,17 +11,14 @@ const createTestCase = async (req, res) => {
   try {
     const createdById = req.user.id;
     const { testCaseId, caseType, scenarioId, description, projectId, moduleId, expectedResult, testCaseData, steps } = req.body;
-    console.log("sdsddsdsdsdsddsd : " + moduleId);
     const test = await testCaseModel.findOne({ testCaseId });
-    console.log("sddsfssssss : " + scenarioId)
-    console.log("asd : " + testCaseData);
     const testCaseDescription = description;
     if (test) {
       return res.json({ msg: "TestCase already Exist" });
     }
     else {
       const creat = await testCaseModel.create({
-
+        moduleId : moduleId,
         scenarioId: scenarioId,
         testCaseId: testCaseId,
         caseType: caseType,
@@ -32,32 +29,33 @@ const createTestCase = async (req, res) => {
         createdBy: createdById,
       })
       console.log("ksdhksbd");
-      const associatedScenario = await testScenarioModel.findById(scenarioId);
-      console.log("ass : " + associatedScenario);
-      const associatedModule = await modulee.findById(moduleId);
-      console.log("moddddd : " + associatedModule);
+      const associatedScenario = await testScenarioModel.findById(scenarioId).populate('scenarioIdstr');
+      const associatedModule = await modulee.findById(moduleId).populate('moduleName');
       const associatedProject = await project.findById(projectId);
       if (!associatedModule) {
         return res.status(404).json({ msg: "Module not found" });
       }
-      const path = `${associatedProject.projectName}/${associatedModule.scenarioIdstr}/${associatedScenario.scenarioName}/${creat.testCaseId}`;
+      const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioIdstr}/${creat.testCaseId}`;
+      const UserName = await user.findById(createdById).populate('Name'); 
       try {
         console.log("log creating");
-        await log.create({
+       const logDetails =  await log.create({
           action: "Created",
           entityType: "TestCase",
           entityId: creat._id,
-          user: createdById,
+          user: UserName.Name,
           timestamp: Date.now(),
           path: path,
           details: `Created TestCase : ${testCaseId}`,
 
         })
+
+        // console.log("Log TestCase Created :"+logDetails);
       }
       catch (err) {
         console.log(err);
       }
-
+    
       return res.json({ msg: "TestCase Created Successfully", data: creat });
     }
   }
@@ -72,6 +70,7 @@ const updateTestCaseStatus = async (req, res) => {
   try {
     const { testCaseId, testStatus, scenarioId, projectId, description, moduleId, testRegion, comments, bugReferenceId, bugPriority } = req.body;
     const testerId = req.user.id;
+    console.log(" projectId : "+projectId);
     if (!req.file) {
       console.log("no file");
       return res.status(400).json({ msg: "No file uploaded" });
@@ -143,6 +142,7 @@ const updateTestCaseStatus = async (req, res) => {
     console.log(comments);
 
     const testRunCreate = await testRunModel.create({
+      projectId : projectId,
       testCaseName: testCaseName.testCaseId,
       testScenario: associatedScenario.scenarioIdstr,
       taskId: associatedScenario.taskId,
@@ -162,7 +162,7 @@ const updateTestCaseStatus = async (req, res) => {
       steps : testCaseDetails.steps,
     })  
     console.log("TestRun Created")
-    // console.log(testRunCreate);
+    console.log(testRunCreate);
     const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioIdstr}/${testCaseName.testCaseId}`;
     console.log("TestLog Creating....")
     const TestCaseUpdateLog = await log.create({
