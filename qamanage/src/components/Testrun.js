@@ -29,6 +29,7 @@ const Testrun = ({ selectedProject }) => {
   const [customDate, setCustomDate] = useState(null);
   const [testRunsData, setTestRunsData] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const handleTimePeriodChange = (e) => {
     const value = e.target.value;
@@ -48,26 +49,41 @@ const Testrun = ({ selectedProject }) => {
     setShowModal(true);
   };
 
-  // Fetch test runs data from the backend based on the selected project
   useEffect(() => {
     if (selectedProject) {
-      axios
-        .get(`/getTestRuns/${selectedProject.projectId}`)  // Replace with your actual API URL
-        .then((response) => {
-          setTestRunsData(response.data);
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching test runs:", error);
-        });
+      fetchTestRuns();
     }
   }, [selectedProject]);
+
+  const fetchTestRuns = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`/api/testruns/${selectedProject._id}`);
+      setTestRunsData(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching test runs:', error);
+      setLoading(false);
+    }
+  };
 
   const filteredData = testRunsData.filter(
     (test) =>
       test.taskId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       test.subTaskId.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (!selectedProject) {
+    return (
+      <div className="no-project-selected">
+        <h2>Please select a project to view test runs</h2>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div className="loading">Loading test runs...</div>;
+  }
 
   return (
     <div className="test-runs-container">

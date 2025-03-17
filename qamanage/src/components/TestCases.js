@@ -28,7 +28,13 @@ const TestCases = () => {
     testCase: null
   });
 
-
+  const [statusOptions] = useState([
+    { value: 'Pass', label: 'Pass', color: '#4CAF50' },
+    { value: 'Fail', label: 'Fail', color: '#f44336' },
+    { value: 'Blocked', label: 'Blocked', color: '#ff9800' },
+    { value: 'Not Executed', label: 'Not Executed', color: '#9e9e9e' },
+    { value: 'In Progress', label: 'In Progress', color: '#2196f3' }
+  ]);
 
   useEffect(() => {
     if (scenarioId) {
@@ -126,6 +132,42 @@ const TestCases = () => {
     handleModalClose();
   };
 
+  const handleStatusChange = async (testCaseId, newStatus) => {
+    try {
+      await axios.patch(`/api/testcases/${testCaseId}/status`, { status: newStatus });
+      // Update local state
+      setTestCases(testCases.map(testCase => 
+        testCase.id === testCaseId ? { ...testCase, status: newStatus } : testCase
+      ));
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
+
+  const renderStatusDropdown = (testCase) => {
+    const currentStatus = statusOptions.find(option => option.value === testCase.status) || statusOptions[3]; // Default to Not Executed
+
+    return (
+      <div className="status-dropdown-container">
+        <select
+          className={`status-dropdown status-${currentStatus.value.toLowerCase().replace(' ', '-')}`}
+          value={currentStatus.value}
+          onChange={(e) => handleStatusChange(testCase.id, e.target.value)}
+        >
+          {statusOptions.map(option => (
+            <option 
+              key={option.value} 
+              value={option.value}
+              style={{ color: option.color }}
+            >
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
   const filteredTestCases = Array.isArray(testCases) ? testCases.filter(testCase =>
     testCase.testCaseId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     testCase.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -196,9 +238,7 @@ const TestCases = () => {
                   </span>
                 </td>
                 <td>
-                  <span className={`status-badge ${testCase.status?.toLowerCase()}`}>
-                    {testCase.testStatus}
-                  </span>
+                  {renderStatusDropdown(testCase)}
                 </td>
                 <td>
                   <div className="action-buttons">

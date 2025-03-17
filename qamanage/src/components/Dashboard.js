@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
 import './Dashboard.css';
@@ -47,6 +47,13 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const [showEditQuickLinkModal, setShowEditQuickLinkModal] = useState(false);
   const [showRemoveQuickLinkModal, setShowRemoveQuickLinkModal] = useState(false);
   const [selectedQuickLink, setSelectedQuickLink] = useState(null);
+  const actionMenuRef = useRef(null);
+  const [activeQuickLink, setActiveQuickLink] = useState(null);
+  const [showRemoveConfirmModal, setShowRemoveConfirmModal] = useState(false);
+  const [linkToRemove, setLinkToRemove] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingLink, setEditingLink] = useState(null);
+  const [editFormData, setEditFormData] = useState({ name: '', url: '' });
 
   const [newProject, setNewProject] = useState({
     projectName: '',
@@ -179,6 +186,43 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     window.open(url, '_blank');
   };
 
+  const handleQuickLinkMenuClick = (e, index) => {
+    e.stopPropagation();
+    setActiveQuickLink(activeQuickLink === index ? null : index);
+  };
+
+  const handleEditQuickLink = (index) => {
+    const linkToEdit = quickLinks[index];
+    setEditingLink(index);
+    setEditFormData({ name: linkToEdit.name, url: linkToEdit.url });
+    setShowEditModal(true);
+    setActiveQuickLink(null);
+  };
+
+  const handleRemoveQuickLink = (index) => {
+    setLinkToRemove(index);
+    setShowRemoveConfirmModal(true);
+    setActiveQuickLink(null);
+  };
+
+  const confirmRemoveLink = () => {
+    const updatedLinks = quickLinks.filter((_, i) => i !== linkToRemove);
+    setQuickLinks(updatedLinks);
+    setShowRemoveConfirmModal(false);
+    setLinkToRemove(null);
+  };
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    const updatedLinks = quickLinks.map((link, index) => 
+      index === editingLink ? editFormData : link
+    );
+    setQuickLinks(updatedLinks);
+    setShowEditModal(false);
+    setEditingLink(null);
+    setEditFormData({ name: '', url: '' });
+  };
+
   const handleModuleClick = (module) => {
     setSelectedModule(module);
     setView('scenarios');
@@ -198,19 +242,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     setQuickLinks([...quickLinks, newQuickLink]);
     setNewQuickLink({ name: '', url: '' });
     setShowAddQuickLinkModal(false);
-  };
-
-  const handleEditQuickLink = (e) => {
-    e.preventDefault();
-    setQuickLinks(quickLinks.map(link => link === selectedQuickLink ? newQuickLink : link));
-    toast.success('Quick link updated successfully');
-    setShowEditQuickLinkModal(false);
-  };
-
-  const handleRemoveQuickLink = () => {
-    setQuickLinks(quickLinks.filter(link => link !== selectedQuickLink));
-    toast.success('Quick link removed successfully');
-    setShowRemoveQuickLinkModal(false);
   };
 
   return (
@@ -339,35 +370,38 @@ projects.map((project) => (
         </nav>
 
         {/* Quick Links */}
-        <div className="quick-links">
+        <div className="quick-links-section">
           <div className="quick-links-header">
-            <span>Quick Links</span>
-            <button 
-              className="add-link"
-              onClick={() => setShowAddQuickLinkModal(true)} // Show the add quick link modal
-            >
-              +
-            </button>
+            <h3>Quick Links</h3>
+            <button className="add-quick-link">+</button>
           </div>
           <ul className="quick-links-list">
             {quickLinks.map((link, index) => (
-              <li 
-                key={index} 
-                className="quick-link-item"
-                onClick={() => handleQuickLinkClick(link.url)}
-              >
-                <span>{link.name}</span>
-                <button className="more-options" onClick={(e) => handleMenuClick(e, link)}>⋮</button>
-                {selectedQuickLink === link && (
-                  <div className="action-menu">
-                    <div className="action-item" onClick={() => setShowEditQuickLinkModal(true)}>
-                      <FaEdit /> Edit
+              <li key={index} className="quick-link-item">
+                <span 
+                  className="quick-link-name"
+                  onClick={() => handleQuickLinkClick(link.url)}
+                >
+                  {link.name}
+                </span>
+                <div className="quick-link-menu">
+                  <button 
+                    className="menu-dots"
+                    onClick={(e) => handleQuickLinkMenuClick(e, index)}
+                  >
+                    ⋮
+                  </button>
+                  {activeQuickLink === index && (
+                    <div className="menu-dropdown">
+                      <button onClick={() => handleEditQuickLink(index)}>
+                        <span>✏️</span> Edit
+                      </button>
+                      <button onClick={() => handleRemoveQuickLink(index)}>
+                        <span>🗑️</span> Remove
+                      </button>
                     </div>
-                    <div className="action-item" onClick={() => setShowRemoveQuickLinkModal(true)}>
-                      <FaTrash /> Remove
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </li>
             ))}
           </ul>
@@ -546,6 +580,83 @@ onChange={loadFile} // Use the loadFile function to handle the file
                 Remove
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showRemoveConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-content remove-confirm-modal">
+            <h2>
+              <span className="warning-icon">⚠️</span>
+              Confirm Remove Document
+            </h2>
+            <p>Are you sure you want to remove this document named</p>
+            <p className="document-name">{quickLinks[linkToRemove]?.name}?</p>
+            <p className="warning-text">This action cannot be undone.</p>
+            <div className="modal-actions">
+              <button 
+                className="cancel-btn"
+                onClick={() => setShowRemoveConfirmModal(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="remove-btn"
+                onClick={confirmRemoveLink}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEditModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Edit Quick Link</h2>
+            <form onSubmit={handleEditSubmit}>
+              <div className="form-group">
+                <label>Link Name</label>
+                <input
+                  type="text"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({
+                    ...editFormData,
+                    name: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Link URL</label>
+                <input
+                  type="url"
+                  value={editFormData.url}
+                  onChange={(e) => setEditFormData({
+                    ...editFormData,
+                    url: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button 
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="submit-btn"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

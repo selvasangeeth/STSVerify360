@@ -4,6 +4,7 @@ import './QuickLinks.css';
 const QuickLinks = ({ quickLinks, setQuickLinks }) => {
   const [showAddLinkModal, setShowAddLinkModal] = useState(false);
   const [newLink, setNewLink] = useState({ name: '', url: '' });
+  const [activeMenu, setActiveMenu] = useState(null); // Track which menu is open
 
   const handleAddLink = (e) => {
     e.preventDefault();
@@ -14,6 +15,23 @@ const QuickLinks = ({ quickLinks, setQuickLinks }) => {
 
   const handleQuickLinkClick = (url) => {
     window.open(url, '_blank');
+  };
+
+  const handleMenuClick = (e, index) => {
+    e.stopPropagation(); // Prevent link click when clicking menu
+    setActiveMenu(activeMenu === index ? null : index);
+  };
+
+  const handleEditLink = (index) => {
+    setNewLink(quickLinks[index]);
+    setShowAddLinkModal(true);
+    setActiveMenu(null);
+  };
+
+  const handleRemoveLink = (index) => {
+    const updatedLinks = quickLinks.filter((_, i) => i !== index);
+    setQuickLinks(updatedLinks);
+    setActiveMenu(null);
   };
 
   return (
@@ -32,10 +50,28 @@ const QuickLinks = ({ quickLinks, setQuickLinks }) => {
           <li 
             key={index} 
             className="quick-link-item"
-            onClick={() => handleQuickLinkClick(link.url)}
           >
-            <span>{link.name}</span>
-            <button className="more-options">⋮</button>
+            <span onClick={() => handleQuickLinkClick(link.url)}>
+              {link.name}
+            </span>
+            <div className="menu-container">
+              <button 
+                className="more-options"
+                onClick={(e) => handleMenuClick(e, index)}
+              >
+                ⋮
+              </button>
+              {activeMenu === index && (
+                <div className="dropdown-menu">
+                  <button onClick={() => handleEditLink(index)}>
+                    <span>✏️</span> Edit
+                  </button>
+                  <button onClick={() => handleRemoveLink(index)}>
+                    <span>🗑️</span> Remove
+                  </button>
+                </div>
+              )}
+            </div>
           </li>
         ))}
       </ul>

@@ -15,7 +15,7 @@ import Modules from './components/Modules';
 import LogList from './components/LogList';
 import Testrun from "./components/Testrun";
 import Breadcrumbs from './components/Breadcrumbs';
-import Metrics from './components/Metrics/Metrics';
+import Metrics from './components/Metrics';
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -52,8 +52,19 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><LogList /></Dashboard>} />
-          <Route path="/testrun" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Testrun /></Dashboard>} />
-          <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Metrics /></Dashboard>} />
+          <Route path="/testrun" element={
+            <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+              <Testrun selectedProject={selectedProject} />
+            </Dashboard>
+          } />
+          <Route 
+            path="/metrics" 
+            element={
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Metrics />
+              </Dashboard>
+            } 
+          />
         </Routes>
       </Router>
     </Provider>

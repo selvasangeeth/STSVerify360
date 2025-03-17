@@ -431,6 +431,189 @@
   white-space: nowrap;
   padding-left: 8px; /* Adds spacing from the left */
 }
+.quick-links-section {
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+.quick-links-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.quick-links-header h3 {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+.add-quick-link {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+}
+.quick-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.quick-link-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  font-size: 14px;
+  color: #0066cc;
+  cursor: pointer;
+}
+.quick-link-name {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.quick-link-menu {
+  position: relative;
+}
+.menu-dots {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 120px;
+}
+.menu-dropdown button {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+  font-size: 14px;
+  text-align: left;
+}
+.menu-dropdown button:hover {
+  background: #f5f5f5;
+}
+.menu-dropdown button:last-child {
+  color: #dc3545;
+}
+.remove-confirm-modal {
+  max-width: 400px;
+  text-align: center;
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+}
+.warning-icon {
+  font-size: 24px;
+  margin-right: 12px;
+}
+.document-name {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 16px 0;
+  word-break: break-word;
+}
+.warning-text {
+  color: #666;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+.modal-actions .cancel-btn {
+  padding: 8px 24px;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  cursor: pointer;
+  min-width: 100px;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+.modal-actions .cancel-btn:hover {
+  background-color: #f5f5f5;
+}
+.modal-actions .remove-btn {
+  padding: 8px 24px;
+  background: #ff0000;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  min-width: 100px;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+.modal-actions .remove-btn:hover {
+  background: #dc3545;
+}
+.modal-actions .submit-btn {
+  padding: 8px 24px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  min-width: 100px;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+.modal-actions .submit-btn:hover {
+  background: #0056b3;
+}
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+}
+.modal-content h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+}
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
 
 
 
