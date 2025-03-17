@@ -81,6 +81,30 @@ const Modules = ({ selectedProject }) => {
     module.subModuleName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+        setActiveMenu(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeMenu && actionMenuRef.current) {
+      const menuRect = actionMenuRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      if (menuRect.bottom > viewportHeight) {
+        actionMenuRef.current.style.top = `-${menuRect.height}px`;
+      } else {
+        actionMenuRef.current.style.top = '20px';
+      }
+    }
+  }, [activeMenu]);
+
   if (loading) return <div className="loading">Loading modules...</div>;
 
   if (!selectedProject) {

@@ -1,6 +1,6 @@
 .dashboard-container {
   display: flex;
-  height: 100vh;
+  height: 95vh;
   position: relative;
 }
 .sidebar {
@@ -31,6 +31,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  height: 10px;
 }
 .project-icon {
   font-size: 1.2em;
@@ -310,7 +311,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh; /* Full height */
-  gap: 20px; /* Spacing between items */
+   /* Spacing between items */
 }
 .nav-item {
   display: flex;

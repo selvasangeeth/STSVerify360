@@ -10,7 +10,7 @@ import LogList from './LogList'; // Import LogList component
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import logo from "../Assets/logo.ico";
-import { FaAlignJustify } from 'react-icons/fa';
+import { FaAlignJustify, FaEdit, FaTrash } from 'react-icons/fa';
 
 const DEFAULT_QUICK_LINKS = [
   {
@@ -42,6 +42,11 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const [view, setView] = useState('modules');
   const [selectedModule, setSelectedModule] = useState(null);
   const [showLogs, setShowLogs] = useState(false); // State to show logs
+  const [showAddQuickLinkModal, setShowAddQuickLinkModal] = useState(false); // State to show add quick link modal
+  const [newQuickLink, setNewQuickLink] = useState({ name: '', url: '' }); // State for new quick link
+  const [showEditQuickLinkModal, setShowEditQuickLinkModal] = useState(false);
+  const [showRemoveQuickLinkModal, setShowRemoveQuickLinkModal] = useState(false);
+  const [selectedQuickLink, setSelectedQuickLink] = useState(null);
 
   const [newProject, setNewProject] = useState({
     projectName: '',
@@ -188,6 +193,26 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     setActiveTab('/activity'); // Set active tab to activity
   };
 
+  const handleAddQuickLink = (e) => {
+    e.preventDefault();
+    setQuickLinks([...quickLinks, newQuickLink]);
+    setNewQuickLink({ name: '', url: '' });
+    setShowAddQuickLinkModal(false);
+  };
+
+  const handleEditQuickLink = (e) => {
+    e.preventDefault();
+    setQuickLinks(quickLinks.map(link => link === selectedQuickLink ? newQuickLink : link));
+    toast.success('Quick link updated successfully');
+    setShowEditQuickLinkModal(false);
+  };
+
+  const handleRemoveQuickLink = () => {
+    setQuickLinks(quickLinks.filter(link => link !== selectedQuickLink));
+    toast.success('Quick link removed successfully');
+    setShowRemoveQuickLinkModal(false);
+  };
+
   return (
     <div className="dashboard-container">
       <div className="sidebar">
@@ -319,7 +344,7 @@ projects.map((project) => (
             <span>Quick Links</span>
             <button 
               className="add-link"
-              onClick={() => console.log('Add quick link clicked')}
+              onClick={() => setShowAddQuickLinkModal(true)} // Show the add quick link modal
             >
               +
             </button>
@@ -332,7 +357,17 @@ projects.map((project) => (
                 onClick={() => handleQuickLinkClick(link.url)}
               >
                 <span>{link.name}</span>
-                <button className="more-options">⋮</button>
+                <button className="more-options" onClick={(e) => handleMenuClick(e, link)}>⋮</button>
+                {selectedQuickLink === link && (
+                  <div className="action-menu">
+                    <div className="action-item" onClick={() => setShowEditQuickLinkModal(true)}>
+                      <FaEdit /> Edit
+                    </div>
+                    <div className="action-item" onClick={() => setShowRemoveQuickLinkModal(true)}>
+                      <FaTrash /> Remove
+                    </div>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -404,6 +439,115 @@ onChange={loadFile} // Use the loadFile function to handle the file
           onClose={() => setShowAddModuleModal(false)}
           onModuleAdded={handleModuleAdded}
         />
+      )}
+
+      {/* Add Quick Link Modal */}
+      {showAddQuickLinkModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Add Quick Link</h2>
+            <form onSubmit={handleAddQuickLink}>
+              <div className="form-group">
+                <label>Link Name</label>
+                <input
+                  type="text"
+                  value={newQuickLink.name}
+                  onChange={(e) => setNewQuickLink({ ...newQuickLink, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Link URL</label>
+                <input
+                  type="url"
+                  value={newQuickLink.url}
+                  onChange={(e) => setNewQuickLink({ ...newQuickLink, url: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  onClick={() => setShowAddQuickLinkModal(false)}
+                  className="cancel-btn"
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="submit-btn">
+                  Add Link
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showEditQuickLinkModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Edit Document</h2>
+            <form onSubmit={handleEditQuickLink}>
+              <div className="form-group">
+                <label>Document Name</label>
+                <input
+                  type="text"
+                  value={newQuickLink.name}
+                  onChange={(e) => setNewQuickLink({ ...newQuickLink, name: e.target.value })}
+                  placeholder="Enter the document name"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Enter Document Link</label>
+                <input
+                  type="url"
+                  value={newQuickLink.url}
+                  onChange={(e) => setNewQuickLink({ ...newQuickLink, url: e.target.value })}
+                  placeholder="Enter the document link"
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  onClick={() => setShowEditQuickLinkModal(false)}
+                  className="cancel-btn"
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="submit-btn">
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showRemoveQuickLinkModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Confirm Remove Document</h2>
+            <p>Are you sure you want to remove this document named <strong>{selectedQuickLink.name}</strong>?</p>
+            <p>This action cannot be undone.</p>
+            <div className="modal-actions">
+              <button 
+                type="button" 
+                onClick={() => setShowRemoveQuickLinkModal(false)}
+                className="cancel-btn"
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                onClick={handleRemoveQuickLink}
+                className="remove-btn"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       
     </div>
