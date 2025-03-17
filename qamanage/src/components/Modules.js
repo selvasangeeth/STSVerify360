@@ -1,50 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from './axios';
 import AddModuleModal from './AddModuleModal';
+import EditModuleModal from './EditModuleModal'; // Import the EditModuleModal component
 import './Modules.css';
 import './common.css';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
-const Modules = () => {
+const Modules = ({ selectedProject }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const projectId = queryParams.get('projectId');
-
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newModule, setNewModule] = useState({
-    moduleName: '',
-    subModuleName: ''
-  });
-
-  // const API_BASE_URL = 'http://localhost:5000/api';
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedModule, setSelectedModule] = useState(null);
+  const actionMenuRef = useRef(null);
 
   useEffect(() => {
-    if (projectId) {
-      fetchModules(projectId);
+    if (selectedProject) {
+      fetchModules(selectedProject.projectId);
     }
-  }, [projectId]);
+  }, [selectedProject]);
 
   const fetchModules = async (projectId) => {
     try {
       setLoading(true);
-      console.log("Request made");
-      console.log("ppp "+projectId);
-      // const response = await axios.get(`/getModules/${projectId}`);
-      const response = await axios.get(`/getModules/${projectId}`); 
-      console.log(response.data.data);
-      console.log(response.data.msg);
-      console.log("Respons---->"+response.data.msg);
+      const response = await axios.get(`/getModules/${projectId}`);
       if (response.data.msg === "Module Fetched Success") {
         setModules(response.data.data);
       }
-      console.log("Module"+response.data.data);
     } catch (error) {
       console.error('Error fetching modules:', error);
       setError('Failed to fetch modules');
@@ -54,31 +43,36 @@ const Modules = () => {
   };
 
   const handleModuleClick = (moduleId, projectId) => {
-    console.log("project id at clickmod : "+projectId)
     navigate(`/modules/scenarios/${moduleId}/${projectId}`);
-  };
-  
-  const handleAddModule = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('/modules', {
-        ...newModule,
-        projectId
-      });
-    
-      if (response.data.success) {
-        setModules([response.data.data, ...modules]);
-        setShowAddModal(false);
-        setNewModule({ moduleName: '', subModuleName: '' });
-      }
-    } catch (error) {
-      console.error('Error adding module:', error);
-      setError('Failed to add module');
-    }
   };
 
   const handleModuleAdded = (newModule) => {
     setModules([newModule, ...modules]);
+  };
+
+  const handleMenuClick = (e, moduleId) => {
+    e.stopPropagation();
+    setActiveMenu(activeMenu === moduleId ? null : moduleId);
+  };
+
+  const handleEdit = (module) => {
+    setSelectedModule(module);
+    setShowEditModal(true);
+  };
+
+  const handleRemove = async (moduleId) => {
+    try {
+      await axios.delete(`/deleteModule/${moduleId}`);
+      setModules(modules.filter(module => module._id !== moduleId));
+      toast.success('Module removed successfully');
+    } catch (error) {
+      console.error('Error removing module:', error);
+      toast.error('Failed to remove module');
+    }
+  };
+
+  const handleModuleUpdated = (updatedModule) => {
+    setModules(modules.map(module => module._id === updatedModule._id ? updatedModule : module));
   };
 
   const filteredModules = modules.filter(module =>
@@ -89,12 +83,13 @@ const Modules = () => {
 
   if (loading) return <div className="loading">Loading modules...</div>;
 
-  if (!projectId) {
-    return <div className="error-message">Please select a project first</div>;
+  if (!selectedProject) {
+    return <div>Please select a project to view modules.</div>;
   }
 
   return (
     <div className="modules-container">
+      <h2>Modules for {selectedProject.projectName}</h2>
       <div className="actions-container">
         <div className="search-container">
           <input
@@ -106,7 +101,7 @@ const Modules = () => {
           />
         </div>
         <div className="button-container">
-          <button className="add-button" onClick={() => setShowAddModal(true)}>
+          <button className="add-button" onClick={() => setShowAddModal(true)} style={{ backgroundColor: 'orange' }}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
             </svg>
@@ -114,15 +109,6 @@ const Modules = () => {
           </button>
         </div>
       </div>
-
-      {/* {error && (
-        <div className="error-message">
-          {error}
-          <button onClick={fetchModules} className="retry-btn">
-            Retry
-          </button>
-        </div>
-      )} */}
 
       <div className="modules-table">
         <table>
@@ -138,36 +124,34 @@ const Modules = () => {
           </thead>
           <tbody>
             {filteredModules.map((module) => (
-              <tr 
-                key={module._id}
-                onClick={() => handleModuleClick(module._id,projectId)}
-                className="module-row"
-                style={{ cursor: 'pointer' }}
-              >
-                <td className=" module-name">
+              <tr key={module._id} className="module-row">
+                <td className="module-name" onClick={() => handleModuleClick(module._id, selectedProject.projectId)}>
                   <div>{module.moduleName}</div>
                   <div className="id-text">{module.moduleId}</div>
                 </td>
-                <td>
-                  <div>{module.subModule}</div>
-                </td>
+                <td>{module.subModule}</td>
                 <td>
                   <div>{module.lastTestedBy}</div>
                   <div className="date-text">
-                  { module.lastTested === "Not Tested" ? module.lastTested : new Date(module.lastTested).toLocaleDateString()}
+                    { module.lastTested === "Not Tested" ? module.lastTested : new Date(module.lastTested).toLocaleDateString()}
                   </div>
                 </td>
                 <td>{module.scenariosCount || 0}</td>
                 <td>{module.casesCount || 0}</td>
                 <td>
-                  <button 
-                    className="action-btn"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent row click
-                    }}
-                  >
+                  <div className="action-button" onClick={(e) => handleMenuClick(e, module._id)}>
                     ⋮
-                  </button>
+                    {activeMenu === module._id && (
+                      <div className="action-menu" ref={actionMenuRef}>
+                        <div className="action-item" onClick={() => handleEdit(module)}>
+                          <FaEdit /> Edit
+                        </div>
+                        <div className="action-item" onClick={() => handleRemove(module._id)}>
+                          <FaTrash /> Remove
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -177,9 +161,16 @@ const Modules = () => {
       <ToastContainer/>
       {showAddModal && (
         <AddModuleModal
-          projectId={projectId}
+          projectId={selectedProject.projectId}
           onClose={() => setShowAddModal(false)}
           onModuleAdded={handleModuleAdded}
+        />
+      )}
+      {showEditModal && (
+        <EditModuleModal
+          module={selectedModule}
+          onClose={() => setShowEditModal(false)}
+          onModuleUpdated={handleModuleUpdated}
         />
       )}
     </div>

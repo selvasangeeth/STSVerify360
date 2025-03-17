@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaArrowRight } from "react-icons/fa";
+import { FaSearch, FaEye } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from './axios'; // Make sure to import axios
@@ -28,6 +28,7 @@ const Testrun = () => {
   const [showModal, setShowModal] = useState(false);
   const [customDate, setCustomDate] = useState(null);
   const [testRunsData, setTestRunsData] = useState([]);
+  const [selectedTest, setSelectedTest] = useState(null);
 
   const handleTimePeriodChange = (e) => {
     const value = e.target.value;
@@ -40,6 +41,11 @@ const Testrun = () => {
   const handleDateChange = (date) => {
     setCustomDate(date);
     setShowModal(false);
+  };
+
+  const handleEyeClick = (test) => {
+    setSelectedTest(test);
+    setShowModal(true);
   };
 
   // Fetch test runs data from the backend
@@ -63,6 +69,7 @@ const Testrun = () => {
 
   return (
     <div className="test-runs-container">
+      <h1>Test Runs</h1>
       <div className="search-filters-row">
         <div className="search-bar">
           <FaSearch className="search-icon" />
@@ -136,8 +143,8 @@ const Testrun = () => {
                     {test.regions[0]?.overallTestStatus}
                   </span>
                 </td>
-                <td>
-                  <FaArrowRight className="action-arrow" />
+                <td className="action-cell">
+                  <FaEye className="action-eye" onClick={() => handleEyeClick(test)} /> {/* Add eye icon here */}
                 </td>
               </tr>
             ))
@@ -148,11 +155,27 @@ const Testrun = () => {
           )}
         </tbody>
       </table>
-      {showModal && (
+      {showModal && selectedTest && (
         <Modal onClose={() => setShowModal(false)}>
-          <div className="datepicker-popup">
-            <h2 className="text-lg font-bold mb-4">Select Custom Date</h2>
-            <DatePicker selected={customDate} onChange={handleDateChange} inline />
+          <div className="test-case-details">
+            <h2>Test Case Details</h2>
+            <p><strong>Test Case ID:</strong> {selectedTest.taskId}</p>
+            <p><strong>Test Case Type:</strong> {selectedTest.testCaseType}</p>
+            <p><strong>Created By:</strong> {selectedTest.createdBy}</p>
+            <p><strong>Created At:</strong> {selectedTest.createdAt}</p>
+            <p><strong>Test Case Description:</strong> {selectedTest.scenarioName}</p>
+            <p><strong>Expected Result:</strong> {selectedTest.expectedResult}</p>
+            <p><strong>Steps:</strong> {selectedTest.steps}</p>
+            <p><strong>Test Case Data:</strong> {selectedTest.testCaseData}</p>
+            <h3>Result</h3>
+            <p><strong>Tested By:</strong> {selectedTest.testedBy}</p>
+            <p><strong>Tested On:</strong> {selectedTest.testedOn}</p>
+            <p><strong>Test Region:</strong> {selectedTest.testRegion}</p>
+            <p><strong>Test Status:</strong> {selectedTest.testStatus}</p>
+            <p><strong>Comments:</strong> {selectedTest.comments}</p>
+            <p><strong>Bug Reference ID:</strong> {selectedTest.bugReferenceId}</p>
+            <p><strong>Reference:</strong> {selectedTest.reference}</p>
+            <p><strong>Bug Priority:</strong> {selectedTest.bugPriority}</p>
           </div>
         </Modal>
       )}

@@ -27,12 +27,11 @@ const DEFAULT_QUICK_LINKS = [
   }
 ];
 
-const Dashboard = ({ children }) => {
+const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [activeTab, setActiveTab] = useState(null);
+  const [activeTab, setActiveTab] = useState(location.pathname); // Set initial active tab based on current path
   const [modules, setModules] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -43,7 +42,6 @@ const Dashboard = ({ children }) => {
   const [view, setView] = useState('modules');
   const [selectedModule, setSelectedModule] = useState(null);
   const [showLogs, setShowLogs] = useState(false); // State to show logs
-  
 
   const [newProject, setNewProject] = useState({
     projectName: '',
@@ -67,20 +65,8 @@ const Dashboard = ({ children }) => {
       reader.readAsDataURL(file);
     }
   };
-  
 
   const API_BASE_URL = 'http://localhost:5000/api';
-
-  // useEffect(() => {
-  //   fetchProjects();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (selectedProject && selectedProject._id) {
-  //     fetchModules(selectedProject._id);
-  //   }
-  // }, [selectedProject]);
-  
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -111,7 +97,6 @@ const Dashboard = ({ children }) => {
       console.error('Error fetching modules:', error);
     }
   };
-  
 
   const formData = new FormData();
     formData.append("projectName",newProject.projectName );
@@ -137,14 +122,18 @@ const Dashboard = ({ children }) => {
   };
 
   const handleProjectSelect = (project) => {
-    setSelectedProject(project);
+    onProjectSelect(project);
     setShowDropdown(false);
     console.log("projectlog :"+project.projectId);
+    fetchModules(project.projectId); // Fetch modules for the selected project
     navigate(`/modules?projectId=${project.projectId}`);
   };
 
   const handleNavClick = (tab) => {
-    setActiveTab(tab);
+    if (selectedProject) {
+      setActiveTab(tab);
+      navigate(tab);
+    }
   };
 
   const handleDelete = async (projectId) => {
@@ -194,10 +183,9 @@ const Dashboard = ({ children }) => {
     return location.pathname.startsWith(path);
   };
 
-
-
   const handleActivityClick = () => {
     setShowLogs(true);
+    setActiveTab('/activity'); // Set active tab to activity
   };
 
   return (
@@ -216,7 +204,7 @@ const Dashboard = ({ children }) => {
           className="select-project"
           onClick={() => setShowDropdown(!showDropdown)}
         >
-          Select Project
+          {selectedProject ? selectedProject.projectName : "Select Project"}
         </span>
         <button
           className="dropdown-button"
@@ -235,24 +223,24 @@ const Dashboard = ({ children }) => {
               </button>
               <div className="projects-list">
               {projects && projects.length > 0 ? (
-  projects.map((project) => (
-    <div 
-      key={project._id} 
-      className="project-item"
-      onClick={() => handleProjectSelect(project,project._id)} 
-    >
-      <div className="project-details">
-      {project.projectLogo && (
-  <img
-    src={`data:image/jpeg;base64,${project.projectLogo}`}
-    alt={project.projectName}  
-    style={{
-      width: '40px',  
-      height: '40px',  
-      objectFit: 'contain', 
-       
-    }}
-  />
+projects.map((project) => (
+<div 
+  key={project._id} 
+  className="project-item"
+  onClick={() => handleProjectSelect(project)} 
+>
+  <div className="project-details">
+  {project.projectLogo && (
+<img
+  src={`data:image/jpeg;base64,${project.projectLogo}`}
+  alt={project.projectName}  
+  style={{
+    width: '40px',  
+    height: '40px',  
+    objectFit: 'contain', 
+    
+  }}
+/>
 )}
 
 {/* Display the project name */}
@@ -268,12 +256,12 @@ const Dashboard = ({ children }) => {
   {project.projectName}
 </span>
 
-        
-      </div>
-    </div>
-  ))
+      
+  </div>
+</div>
+))
 ) : (
-  <p>No projects available</p> // Fallback message if there are no projects
+<p>No projects available</p> // Fallback message if there are no projects
 )}
 
 </div>
@@ -284,36 +272,41 @@ const Dashboard = ({ children }) => {
         {/* Navigation Menu */}
         <nav className="nav-menu">
           <div 
-            className={`nav-item ${isActivePath('/modules') ? 'active' : ''}`}
-            onClick={() => navigate('/modules')}
+            className={`nav-item ${activeTab === '/modules' ? 'active' : ''}`}
+            onClick={() => handleNavClick('/modules')}
+            style={{ backgroundColor: activeTab === '/modules' ? 'orange' : '' }}
           >
             <span className="nav-icon">📊</span>
             <span>Modules</span>
           </div>
           <div 
-            className={`nav-item ${isActivePath('/test-runs') ? 'active' : ''}`}
-            onClick={() => navigate('/testrun')}
+            className={`nav-item ${activeTab === '/testrun' ? 'active' : ''}`}
+            onClick={() => handleNavClick('/testrun')}
+            style={{ backgroundColor: activeTab === '/testrun' ? 'orange' : '' }}
           >
             <span className="nav-icon">📋</span>
             <span>Test Runs</span>
           </div>
           <div 
-            className={`nav-item ${isActivePath('/metrics') ? 'active' : ''}`}
-            onClick={() => navigate('/metrics')}
+            className={`nav-item ${activeTab === '/metrics' ? 'active' : ''}`}
+            onClick={() => handleNavClick('/metrics')}
+            style={{ backgroundColor: activeTab === '/metrics' ? 'orange' : '' }}
           >
             <span className="nav-icon">📈</span>
             <span>Metrics</span>
           </div>
           <div 
-            className={`nav-item ${isActivePath('/testers') ? 'active' : ''}`}
-            onClick={() => navigate('/testers')}
+            className={`nav-item ${activeTab === '/testers' ? 'active' : ''}`}
+            onClick={() => handleNavClick('/testers')}
+            style={{ backgroundColor: activeTab === '/testers' ? 'orange' : '' }}
           >
             <span className="nav-icon">👥</span>
             <span>Testers</span>
           </div>
           <div 
-            className={`nav-item ${isActivePath('/activity') ? 'active' : ''}`}
+            className={`nav-item ${activeTab === '/activity' ? 'active' : ''}`}
             onClick={handleActivityClick} // Update to handle click
+            style={{ backgroundColor: activeTab === '/activity' ? 'orange' : '' }}
           >
             <span className="nav-icon">📝</span>
             <span>Activity</span>
@@ -370,20 +363,20 @@ const Dashboard = ({ children }) => {
                 />
               </div>
 <div className="form-group">
-  <label>Project Logo</label>
-  <div className="file-input">
-    <input
-      type="file"
-      accept="image/*"
-      onChange={loadFile} // Use the loadFile function to handle the file
-    />
-    {newProject.logo && (
-  <div className="project-item">
-    <img src={URL.createObjectURL(newProject.logo)} alt="Project Logo" />
-    <span className="project-name">{newProject.projectName || "Project Name"}</span>
-  </div>
+<label>Project Logo</label>
+<div className="file-input">
+<input
+type="file"
+accept="image/*"
+onChange={loadFile} // Use the loadFile function to handle the file
+/>
+{newProject.logo && (
+<div className="project-item">
+<img src={URL.createObjectURL(newProject.logo)} alt="Project Logo" />
+<span className="project-name">{newProject.projectName || "Project Name"}</span>
+</div>
 )}
-  </div>
+</div>
 </div>
 
 
@@ -407,6 +400,7 @@ const Dashboard = ({ children }) => {
       {/* Add Module Modal */}
       {showAddModuleModal && (
         <AddModuleModal
+          projectId={selectedProject.projectId}
           onClose={() => setShowAddModuleModal(false)}
           onModuleAdded={handleModuleAdded}
         />

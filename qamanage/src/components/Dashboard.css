@@ -315,13 +315,17 @@
 .nav-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align items to the start */
   gap: 10px;
   font-size: 16px;
   color: black;
   cursor: pointer;
-  width: 150px; /* Fixed width */
+  width: 100%; /* Full width */
   padding: 10px;
+}
+.nav-item.active {
+  background-color: orange;
+  color: white;
 }
 .nav-icon {
   margin-right: 8px;

@@ -1,6 +1,6 @@
 /* Common button styles */
 .add-button {
-  background-color:#1976d2;;
+  background-color: #1976d2;
   color: white;
   border: none;
   border-radius: 4px;
@@ -45,6 +45,7 @@
   font-size: 0.9rem;
   cursor: pointer;
   height: 32px;
+  width: fit-content; /* Ensure the width matches the add button */
 }
 
 .cancel-button:hover {
@@ -75,6 +76,8 @@
 .button-container {
   flex: 1; /* Takes up 1 part of the space */
   max-width: 200px; /* Prevents the button from becoming too wide */
+  display: flex;
+  justify-content: flex-end; /* Aligns the button to the right */
 }
 
 /* Responsive adjustments */

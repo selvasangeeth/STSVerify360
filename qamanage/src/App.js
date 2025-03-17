@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import Login from './components/Login';
@@ -12,9 +12,11 @@ import './App.css';
 import Scenarios from './components/Scenarios';
 import TestCases from './components/TestCases';
 import Modules from './components/Modules';
-import LogList from './components/LogList'; // Import LogList
+import LogList from './components/LogList';
 import Testrun from "./components/Testrun";
-import Breadcrumbs from './components/Breadcrumbs'; // Import Breadcrumbs
+import Breadcrumbs from './components/Breadcrumbs';
+import Metrics from './components/Metrics/Metrics';
+
 const AppLayout = ({ children }) => {
   const location = useLocation();
   const excludePaths = ["/login", "/register"];
@@ -25,30 +27,37 @@ const AppLayout = ({ children }) => {
     </div>
   );
 };
+
 function App() {
+  const [selectedProject, setSelectedProject] = useState(null);
+
+  const handleProjectSelect = (project) => {
+    setSelectedProject(project);
+  };
+
   return (
     <Provider store={store}>
-      <BrowserRouter>
-        <AppLayout>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/modules" element={<Dashboard><Modules /></Dashboard>} />
-            <Route path="/modules/scenarios/:moduleId/:projectId" element={<Dashboard><Scenarios /></Dashboard>} />
-            <Route path="/modules/scenarios/testcases/:scenarioId/:projectId/:moduleId" element={<Dashboard><TestCases /></Dashboard>} />
-            <Route path="/add-admin" element={
-              <ProtectedRoute allowedRoles={['superadmin']}>
-                <AddAdmin />
-              </ProtectedRoute>
-            } />
-            <Route path="/activity" element={<Dashboard><LogList /></Dashboard>} />
-            <Route path="/testrun" element={<Testrun />} />
-          </Routes>
-        </AppLayout>
-      </BrowserRouter>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject} />} />
+          <Route path="/modules" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Modules selectedProject={selectedProject} /></Dashboard>} />
+          <Route path="/modules/scenarios/:moduleId/:projectId" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Scenarios /></Dashboard>} />
+          <Route path="/modules/scenarios/testcases/:scenarioId/:projectId/:moduleId" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><TestCases /></Dashboard>} />
+          <Route path="/add-admin" element={
+            <ProtectedRoute allowedRoles={['superadmin']}>
+              <AddAdmin />
+            </ProtectedRoute>
+          } />
+          <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><LogList /></Dashboard>} />
+          <Route path="/testrun" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Testrun /></Dashboard>} />
+          <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Metrics /></Dashboard>} />
+        </Routes>
+      </Router>
     </Provider>
   );
 }
+
 export default App;
