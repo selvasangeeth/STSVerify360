@@ -39,6 +39,7 @@ const createProject = async (req, res) => {
           user: UserName.Name,
           timestamp: Date.now(),
           path: projectName,
+          projectId : creat._id,
           details: `Created Project : ${projectName}`,
         })
       
@@ -85,6 +86,7 @@ const updateProject = async (req, res) => {
           entityId: projectId,
           user: UserName.Name,
           path: proj.projectName,
+          projectId : projectId,
           details: ` ${oldProjectName} updated to ${newProjectName}`
 
         })
@@ -92,7 +94,7 @@ const updateProject = async (req, res) => {
       catch (err) {
         console.log(err);
       }
-      return res.json({ msg: "Project updated successfully", data: updatedProject });
+      return res.json({ msg: "Project updated successfully", data: proj});
     }
   }
   catch (err) {
@@ -165,6 +167,7 @@ const deleteProject = async (req, res) => {
         entityId: projectId,
         user: UserName.Name,
         path: projectName,
+        projectId:projectId,
         details: ` Project Deleted : ${projectName}`
 
       })
@@ -181,6 +184,9 @@ const deleteProject = async (req, res) => {
     return res.status(500).json({ msg: 'Failed to delete project' });
   }
 };
+
+
+//get Images
 
 const getImage = async (req, res) => {
 
@@ -221,6 +227,7 @@ const assignUsers = async (req, res) => {
       entityType: "Project",
       entityId: projectId,
       user: UserName.Name,
+      projectId : projectId,
       path: project.projectName,
       details: "Users Assigned"
 

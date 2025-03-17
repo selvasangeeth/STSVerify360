@@ -2,22 +2,34 @@ import React, { useState } from 'react';
 import axios from './axios';
 import './EditModuleModal.css';
 
-const EditModuleModal = ({ module, onClose, onModuleUpdated }) => {
+const EditModuleModal = ({ module, moduleId,projectId,onClose, onModuleUpdated }) => {
   const [moduleName, setModuleName] = useState(module.moduleName);
   const [subModule, setSubModule] = useState(module.subModule);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`/updateModule/${module._id}`, {
-        moduleName,
-        subModule
-      });
+      // console.log("projectid "+projectId);
+      // console.log("moduleid"+moduleId);
+      // console.log(moduleName);
+      // console.log(subModule);
+      const response = await axios.put("/mod/updateModule", {
+        newModuleName :moduleName,
+        newSubModuleName: subModule,
+        projectId : projectId,
+        moduleId : moduleId 
+      },
+      {
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
       if (response.data.msg === "Module Updated Success") {
         onModuleUpdated(response.data.data);
+        window.location.reload();
         onClose();
       }
-    } catch (error) {
+    } catch (error) { 
       console.error('Error updating module:', error);
     }
   };

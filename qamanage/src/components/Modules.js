@@ -56,20 +56,37 @@ const Modules = ({ selectedProject }) => {
   };
 
   const handleEdit = (module) => {
+    console.log(module);
     setSelectedModule(module);
     setShowEditModal(true);
   };
 
   const handleRemove = async (moduleId) => {
     try {
-      await axios.delete(`/deleteModule/${moduleId}`);
-      setModules(modules.filter(module => module._id !== moduleId));
-      toast.success('Module removed successfully');
+      const response = await axios.delete("/mod/deleteModule", {
+        data: {
+          moduleId: moduleId,
+          projectId: selectedProject.projectId
+        },
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+  
+      // Check the response to confirm the success
+      console.log(response.data.msg);
+      if (response.data.msg === "Module deleted successfully") {
+        // Remove the module from the UI (optional)
+        setModules(modules.filter((module) => module._id !== moduleId));
+        toast.success("Module removed successfully");
+      }
+  
     } catch (error) {
-      console.error('Error removing module:', error);
-      toast.error('Failed to remove module');
+      console.error("Error removing module:", error);
+      toast.error("Failed to remove module");
     }
   };
+  
 
   const handleModuleUpdated = (updatedModule) => {
     setModules(modules.map(module => module._id === updatedModule._id ? updatedModule : module));
@@ -80,6 +97,30 @@ const Modules = ({ selectedProject }) => {
     module.moduleId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     module.subModuleName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+        setActiveMenu(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeMenu && actionMenuRef.current) {
+      const menuRect = actionMenuRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      if (menuRect.bottom > viewportHeight) {
+        actionMenuRef.current.style.top = `-${menuRect.height}px`;
+      } else {
+        actionMenuRef.current.style.top = '20px';
+      }
+    }
+  }, [activeMenu]);
 
   if (loading) return <div className="loading">Loading modules...</div>;
 
@@ -169,6 +210,8 @@ const Modules = ({ selectedProject }) => {
       {showEditModal && (
         <EditModuleModal
           module={selectedModule}
+          moduleId={selectedModule._id}
+          projectId = {selectedProject.projectId}
           onClose={() => setShowEditModal(false)}
           onModuleUpdated={handleModuleUpdated}
         />

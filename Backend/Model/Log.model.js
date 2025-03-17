@@ -26,6 +26,10 @@ const LogSchema = new mongoose.Schema({
     },
     path :{
         type:String,
+    },
+    projectId :{
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Project"
     }
 })
 

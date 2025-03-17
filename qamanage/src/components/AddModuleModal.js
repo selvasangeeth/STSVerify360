@@ -24,8 +24,8 @@ const AddModuleModal = ({ projectId, onClose, onModuleAdded }) => {
         projectId,
         ...moduleData
       });
-
-      if (response.data.msg==="Module Created Successfully") {
+       console.log("msg : "+response.data.msg);
+      if (response.data.msg ==="Module Created Successfully") {
         onModuleAdded(response.data.data);
         window.location.reload();
         onClose();
