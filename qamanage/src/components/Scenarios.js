@@ -3,11 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from './axios';
 import './Scenarios.css';
 import './common.css';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const Scenarios = () => {
   const { moduleId, projectId } = useParams();
-  console.log('Module ID:', moduleId);
-  console.log('Project ID:', projectId);
   const navigate = useNavigate();
   const [scenarios, setScenarios] = useState([]);
   const [moduleDetails, setModuleDetails] = useState(null);
@@ -15,6 +14,9 @@ const Scenarios = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [selectedScenario, setSelectedScenario] = useState(null);
   const [newScenario, setNewScenario] = useState({
     scenarioIdstr: '',
     description: '',
@@ -101,12 +103,38 @@ const Scenarios = () => {
     }
   };
 
-  const handleScenarioClick = (scenarioId,projectId,moduleId) => {
+  const handleEditScenario = async (e) => {
+    e.preventDefault();
+    try {
+      setError(null);
+      const response = await axios.put(`/updateScenario/${selectedScenario._id}`, selectedScenario);
+      if (response.data.msg === "Scenario Updated Successfully") {
+        setScenarios(scenarios.map(scenario => scenario._id === selectedScenario._id ? response.data.data : scenario));
+        setShowEditModal(false);
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error) {
+      setError('Error updating scenario. Please try again.');
+    }
+  };
+
+  const handleRemoveScenario = async () => {
+    try {
+      setError(null);
+      await axios.delete(`/deleteScenario/${selectedScenario._id}`);
+      setScenarios(scenarios.filter(scenario => scenario._id !== selectedScenario._id));
+      setShowRemoveModal(false);
+    } catch (error) {
+      setError('Error removing scenario. Please try again.');
+    }
+  };
+
+  const handleScenarioClick = (scenarioId, projectId, moduleId) => {
     console.log(scenarioId);
-    console.log("sdewfewf : "+moduleId);
+    console.log("sdewfewf : " + moduleId);
     navigate(`/modules/scenarios/testcases/${scenarioId}/${projectId}/${moduleId}`);
   };
-  // navigate(`/modules/scenarios/${moduleId}/${projectId}`);
 
   const handleBackClick = () => {
     navigate('/modules');
@@ -153,8 +181,6 @@ const Scenarios = () => {
           </button>
         </div>
       </div>
-{/* 
-      {error && <div className="error-message">{error}</div>} */}
 
       <div className="scenarios-table">
         <table>
@@ -173,9 +199,9 @@ const Scenarios = () => {
             {filteredScenarios.map((scenario) => (
               <tr key={scenario._id} className="scenario-row">
                 <td>
-                  <span 
+                  <span
                     className="clickable-id"
-                    onClick={() => handleScenarioClick(scenario._id,projectId,moduleId)}
+                    onClick={() => handleScenarioClick(scenario._id, projectId, moduleId)}
                   >
                     {scenario.scenarioIdstr}
                   </span>
@@ -192,7 +218,17 @@ const Scenarios = () => {
                 </td>
                 <td>{scenario.testCaseCount || 0}</td>
                 <td>
-                  <button className="action-btn">⋮</button>
+                  <button className="action-btn" onClick={() => setSelectedScenario(scenario)}>⋮</button>
+                  {selectedScenario === scenario && (
+                    <div className="action-menu">
+                      <div className="action-item" onClick={() => setShowEditModal(true)}>
+                        <FaEdit /> Edit
+                      </div>
+                      <div className="action-item" onClick={() => setShowRemoveModal(true)}>
+                        <FaTrash /> Remove
+                      </div>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
@@ -204,7 +240,6 @@ const Scenarios = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Add New Scenario</h2>
-            {/* {error && <div className="error-message">{error}</div>} */}
             <form onSubmit={handleAddScenario}>
               <div className="form-group">
                 <label>Scenario ID</label>
@@ -254,8 +289,8 @@ const Scenarios = () => {
                 />
               </div>
               <div className="modal-actions">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setShowAddModal(false)}
                   className="cancel-btn"
                 >
@@ -266,6 +301,101 @@ const Scenarios = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showEditModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Edit Scenario</h2>
+            <form onSubmit={handleEditScenario}>
+              <div className="form-group">
+                <label>Scenario ID</label>
+                <input
+                  type="text"
+                  value={selectedScenario.scenarioIdstr}
+                  onChange={(e) => setSelectedScenario({
+                    ...selectedScenario,
+                    scenarioIdstr: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Task ID</label>
+                <input
+                  type="text"
+                  value={selectedScenario.taskId}
+                  onChange={(e) => setSelectedScenario({
+                    ...selectedScenario,
+                    taskId: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Sub Task ID</label>
+                <input
+                  type="text"
+                  value={selectedScenario.subTaskId}
+                  onChange={(e) => setSelectedScenario({
+                    ...selectedScenario,
+                    subTaskId: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  value={selectedScenario.description}
+                  onChange={(e) => setSelectedScenario({
+                    ...selectedScenario,
+                    description: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="cancel-btn"
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="submit-btn">
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showRemoveModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Confirm Remove Scenario</h2>
+            <p>Are you sure you want to remove this scenario named <strong>{selectedScenario.scenarioIdstr}</strong>?</p>
+            <p>This action cannot be undone.</p>
+            <div className="modal-actions">
+              <button
+                type="button"
+                onClick={() => setShowRemoveModal(false)}
+                className="cancel-btn"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleRemoveScenario}
+                className="remove-btn"
+              >
+                Remove
+              </button>
+            </div>
           </div>
         </div>
       )}
