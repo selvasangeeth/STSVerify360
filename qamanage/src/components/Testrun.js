@@ -20,7 +20,7 @@ const Modal = ({ onClose, children }) => {
 
 export { Modal };
 
-const Testrun = () => {
+const Testrun = ({ selectedProject }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [testRegion, setTestRegion] = useState("Test Region");
   const [testStatus, setTestStatus] = useState("All Statuses");
@@ -48,18 +48,20 @@ const Testrun = () => {
     setShowModal(true);
   };
 
-  // Fetch test runs data from the backend
+  // Fetch test runs data from the backend based on the selected project
   useEffect(() => {
-    axios
-      .get("/getAllTestRuns")  // Replace with your actual API URL
-      .then((response) => {
-        setTestRunsData(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching test runs:", error);
-      });
-  }, []);
+    if (selectedProject) {
+      axios
+        .get(`/getTestRuns/${selectedProject.projectId}`)  // Replace with your actual API URL
+        .then((response) => {
+          setTestRunsData(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching test runs:", error);
+        });
+    }
+  }, [selectedProject]);
 
   const filteredData = testRunsData.filter(
     (test) =>
@@ -69,7 +71,7 @@ const Testrun = () => {
 
   return (
     <div className="test-runs-container">
-      <h1>Test Runs</h1>
+      <h1>Test Runs for {selectedProject ? selectedProject.projectName : "Select a Project"}</h1>
       <div className="search-filters-row">
         <div className="search-bar">
           <FaSearch className="search-icon" />
@@ -106,7 +108,8 @@ const Testrun = () => {
         <thead>
           <tr>
             <th>Date / Time</th>
-            <th>Test Scenario</th>
+            <th>Test Scenario ID</th>
+            <th>Test Case ID</th>
             <th>Test Cases</th>
             <th>Sub Task ID</th>
             <th>Test Status</th>
@@ -118,31 +121,13 @@ const Testrun = () => {
           {filteredData.length > 0 ? (
             filteredData.map((test, index) => (
               <tr key={index}>
-                <td>{test.taskId}</td>
+                <td>{new Date(test.dateTime).toLocaleString()}</td>
+                <td>{test.testScenarioId}</td>
+                <td>{test.testCaseId}</td>
+                <td>{test.testCases}</td>
                 <td>{test.subTaskId}</td>
-                <td>{test.scenarioName}</td>
-                <td>
-                  {test.testedBy}
-                  <br />
-                  <span className="status-badge">{test.status}</span>
-                </td>
-                <td>{test.regions.reduce((acc, region) => acc + region.totalTestCases, 0)}</td>
-                <td>
-                  {test.regions.map((region, idx) => (
-                    <div key={idx}>
-                      {region.testRegion}: <span className="pass">{region.passedTestCases}</span> |
-                      <span className="fail">{region.failedTestCases}</span> |
-                      <span className="unexecuted">
-                        {region.totalTestCases - (region.passedTestCases + region.failedTestCases)}
-                      </span>
-                    </div>
-                  ))}
-                </td>
-                <td>
-                  <span className={`test-status ${test.regions[0]?.overallTestStatus.toLowerCase()}`}>
-                    {test.regions[0]?.overallTestStatus}
-                  </span>
-                </td>
+                <td>{test.testStatus}</td>
+                <td>{test.testedBy}</td>
                 <td className="action-cell">
                   <FaEye className="action-eye" onClick={() => handleEyeClick(test)} /> {/* Add eye icon here */}
                 </td>

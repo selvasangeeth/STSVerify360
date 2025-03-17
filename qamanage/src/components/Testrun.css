@@ -1,20 +1,22 @@
 .test-runs-container {
   padding: 20px;
   background-color: #f9f9f9;
+  min-height: 100vh;
 }
 
 /* Search and Filters in Same Row */
 .search-filters-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 /* Search Bar */
 .search-bar {
   display: flex;
   align-items: center;
+  position: relative;
   background: white;
   padding: 8px 12px;
   border-radius: 5px;
@@ -23,11 +25,16 @@
 }
 
 .search-icon {
-  margin-right: 10px;
-  color: #666;
+  position: absolute;
+  left: 10px;
+  color: #aaa;
 }
 
 .search-bar input {
+  padding: 10px 10px 10px 30px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 300px;
   border: none;
   outline: none;
   width: 100%;
@@ -41,6 +48,10 @@
 }
 
 .filters select {
+  margin-left: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   padding: 12px 20px;
   border-radius: 10px;
   border: none;
@@ -77,9 +88,35 @@
 
 /* Table Styles */
 .test-runs-table {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #f8f9fa;
+}
+
+th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+td {
+  padding: 15px;
+  border-bottom: 1px solid #dee2e6;
 }
 
 /* Header Background Blue & Text White */
@@ -110,9 +147,9 @@
 
 /* Eye Icon for Action */
 .action-eye {
-  font-size: 18px;
-  color: #003366;
   cursor: pointer;
+  color: #007bff;
+  font-size: 18px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -154,25 +191,30 @@
 
 /* Modal Styles */
 .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
 }
 
 .modal-content {
   background: white;
   padding: 20px;
-  border-radius: 10px;
-  position: relative;
-  max-width: 800px;
+  border-radius: 8px;
   width: 100%;
+  max-width: 500px;
+}
+
+.modal-content h2 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  color: #333;
 }
 
 .modal-close {
@@ -181,8 +223,9 @@
   right: 10px;
   background: none;
   border: none;
-  font-size: 30px; /* Increase the size */
+  font-size: 20px;
   cursor: pointer;
+  font-size: 30px; /* Increase the size */
   color: red; /* Red color for the close button */
   line-height: 1; /* Ensure the button is not cut off */
 }
@@ -309,7 +352,7 @@
 }
 
 .test-case-details p {
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 
 .test-case-details .result-section {
@@ -317,7 +360,7 @@
 }
 
 .test-case-details .result-section h3 {
-  margin-bottom: 10px;
+  margin-top: 20px;
 }
 
 .test-case-details .result-section p {
