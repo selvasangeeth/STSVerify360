@@ -86,7 +86,7 @@ import Modules from './components/Modules';
 import LogList from './components/LogList';
 import Testrun from "./components/Testrun";
 import Breadcrumbs from './components/Breadcrumbs';
-import Metrics from './components/Metrics/Metrics';
+import Metrics from './components/Metrics';
 const AppLayout = ({ children }) => {
   const location = useLocation();
   const excludePaths = ["/login", "/register"];

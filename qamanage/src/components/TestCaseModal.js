@@ -557,20 +557,30 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
             </div>
 
             <div className="modal-actions">
-              {(isEditMode || isViewMode) && (
-                <button 
-                  type="button" 
-                  className="add-result-btn"
-                  onClick={handleAddResult}
-                >
-                  + Add Result
-                </button>
+              {isViewMode && (
+                <>
+                  <button 
+                    type="button" 
+                    className="add-result-btn"
+                    onClick={handleAddResult}
+                  >
+                    Add Result
+                  </button>
+                  <button
+                    type="button"
+                    className="edit-btn"
+                    onClick={() => onSave({ ...testCase, mode: 'edit' })}
+                  >
+                    Edit Case
+                  </button>
+                </>
               )}
               <button 
-                type="submit" 
-                className="submit-btn"
+                type="button" 
+                className="cancel-btn" 
+                onClick={onClose}
               >
-                {isAddMode ? 'Add Case' : 'Edit Case'}
+                Close
               </button>
             </div>
           </form>

@@ -1,145 +1,170 @@
-import React, { useState, useEffect } from 'react';
-import axios from './axios';
+import React, { useState } from 'react';
 import './Metrics.css';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell 
-} from 'recharts';
 
 const Metrics = () => {
-  const [activeTab, setActiveTab] = useState('bugs');
+  const [activeView, setActiveView] = useState('bugs');
   
-  // Dummy data for demonstration
-  const dummyData = {
-    bugs: [
-      { date: 'Jan 2024', count: 45 },
-      { date: 'Feb 2024', count: 32 },
-      { date: 'Mar 2024', count: 28 },
-      { date: 'Apr 2024', count: 37 },
-      { date: 'May 2024', count: 25 },
-      { date: 'Jun 2024', count: 30 }
-    ],
-    priorities: [
-      { name: 'High', value: 35 },
-      { name: 'Medium', value: 45 },
-      { name: 'Low', value: 20 },
-      { name: 'Critical', value: 15 }
-    ],
-    statuses: [
-      { name: 'Passed', value: 150 },
-      { name: 'Failed', value: 45 },
-      { name: 'Blocked', value: 25 },
-      { name: 'Not Executed', value: 30 },
-      { name: 'In Progress', value: 50 }
-    ]
-  };
+  // Sample data - replace with your actual data
+  const moduleData = [
+    { name: 'Module name 1', bugs: 55 },
+    { name: 'Module name 2', bugs: 40 },
+    { name: 'Module name 3', bugs: 25 },
+    { name: 'Module name 4', bugs: 45 },
+    { name: 'Module name 5', bugs: 15 },
+    { name: 'Module name 6', bugs: 65 },
+    { name: 'Module name 7', bugs: 35 },
+    { name: 'Module name 8', bugs: 30 },
+    { name: 'Module name 9', bugs: 20 },
+    { name: 'Module name 10', bugs: 50 },
+    { name: 'Module name 11', bugs: 45 }
+  ];
 
-  const [metricsData, setMetricsData] = useState(dummyData);
-  const [loading, setLoading] = useState(false);
-
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
-
-  const renderBugsChart = () => (
-    <div className="chart-container">
-      <h3>Bug Distribution Over Time</h3>
-      <BarChart width={800} height={400} data={metricsData.bugs}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="count" fill="#8884d8" name="Number of Bugs" />
-      </BarChart>
-    </div>
-  );
-
-  const renderPriorityChart = () => (
-    <div className="chart-container">
-      <h3>Bug Priority Distribution</h3>
-      <PieChart width={400} height={400}>
-        <Pie
-          data={metricsData.priorities}
-          cx={200}
-          cy={200}
-          labelLine={false}
-          outerRadius={150}
-          fill="#8884d8"
-          dataKey="value"
-          nameKey="name"
-          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-        >
-          {metricsData.priorities.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
-    </div>
-  );
-
-  const renderStatusChart = () => (
-    <div className="chart-container">
-      <h3>Test Case Status Distribution</h3>
-      <PieChart width={400} height={400}>
-        <Pie
-          data={metricsData.statuses}
-          cx={200}
-          cy={200}
-          labelLine={false}
-          outerRadius={150}
-          fill="#8884d8"
-          dataKey="value"
-          nameKey="name"
-          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-        >
-          {metricsData.statuses.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
-    </div>
-  );
+  const priorityData = moduleData.map(module => ({
+    name: module.name,
+    highPriority: Math.floor(Math.random() * 30) + 20,
+    mediumPriority: Math.floor(Math.random() * 20) + 10,
+    lowPriority: Math.floor(Math.random() * 10) + 5
+  }));
 
   return (
-    <div className="main-content">
-      <div className="metrics-container">
-        <div className="metrics-header">
-          <h2>Metrics Dashboard</h2>
-          <div className="metrics-tabs">
-            <button 
-              className={`tab-btn ${activeTab === 'bugs' ? 'active' : ''}`}
-              onClick={() => setActiveTab('bugs')}
-            >
-              Bugs
-            </button>
-            <button 
-              className={`tab-btn ${activeTab === 'priority' ? 'active' : ''}`}
-              onClick={() => setActiveTab('priority')}
-            >
-              Bug Priority
-            </button>
-            <button 
-              className={`tab-btn ${activeTab === 'status' ? 'active' : ''}`}
-              onClick={() => setActiveTab('status')}
-            >
-              Status
-            </button>
-          </div>
+    <div className="metrics-page">
+      <div className="metrics-header">
+        <div className="project-info">
+          <span>Project name 1 / Test Runs</span>
+        </div>
+        <div className="user-info">
+          <span>SURYA PRABHU</span>
+          <span className="user-role">JUNIOR QA TRAINEE</span>
+        </div>
+      </div>
+
+      <div className="metrics-content">
+        <div className="view-selector">
+          <button 
+            className={`view-button ${activeView === 'bugs' ? 'active' : ''}`}
+            onClick={() => setActiveView('bugs')}
+          >
+            Bugs
+          </button>
+          <button 
+            className={`view-button ${activeView === 'bugPriority' ? 'active' : ''}`}
+            onClick={() => setActiveView('bugPriority')}
+          >
+            Bug Priority
+          </button>
+          <button 
+            className={`view-button ${activeView === 'status' ? 'active' : ''}`}
+            onClick={() => setActiveView('status')}
+          >
+            Status
+          </button>
         </div>
 
-        <div className="metrics-content">
-          {loading ? (
-            <div className="loading">Loading metrics...</div>
-          ) : (
-            <>
-              {activeTab === 'bugs' && renderBugsChart()}
-              {activeTab === 'priority' && renderPriorityChart()}
-              {activeTab === 'status' && renderStatusChart()}
-            </>
-          )}
+        <div className="filters">
+          <select className="filter-select">
+            <option>Module Name 1</option>
+          </select>
+          <select className="filter-select">
+            <option>Scenario</option>
+          </select>
+          <select className="filter-select">
+            <option>This Month</option>
+          </select>
         </div>
+
+        {activeView === 'bugs' && (
+          <div className="bugs-chart">
+            <h3>Number of Bugs</h3>
+            <div className="horizontal-chart">
+              {moduleData.map((module, index) => (
+                <div className="chart-row" key={index}>
+                  <span className="module-name">{module.name}</span>
+                  <div className="bar-container">
+                    <div 
+                      className="bar"
+                      style={{ width: `${(module.bugs/85) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="x-axis">
+              {[...Array(18)].map((_, i) => (
+                <span key={i}>{i * 5}</span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeView === 'bugPriority' && (
+          <div className="priority-chart">
+            <h3>Number of Bugs by Priority</h3>
+            <div className="horizontal-chart">
+              {priorityData.map((module, index) => (
+                <div className="chart-row" key={index}>
+                  <span className="module-name">{module.name}</span>
+                  <div className="bar-container">
+                    <div className="priority-bars">
+                      <div 
+                        className="priority-bar high"
+                        style={{ width: `${(module.highPriority/85) * 100}%` }}
+                      />
+                      <div 
+                        className="priority-bar medium"
+                        style={{ width: `${(module.mediumPriority/85) * 100}%` }}
+                      />
+                      <div 
+                        className="priority-bar low"
+                        style={{ width: `${(module.lowPriority/85) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="priority-legend">
+              <div className="legend-item">
+                <span className="legend-color high"></span>
+                <span>High Priority</span>
+              </div>
+              <div className="legend-item">
+                <span className="legend-color medium"></span>
+                <span>Medium Priority</span>
+              </div>
+              <div className="legend-item">
+                <span className="legend-color low"></span>
+                <span>Low Priority</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeView === 'status' && (
+          <div className="status-chart">
+            <div className="pie-chart">
+              <h3>Total Cases: 100</h3>
+              <div className="pie-container">
+                <div className="pie-segment passed" style={{ '--percentage': '25' }}></div>
+                <div className="pie-segment failed" style={{ '--percentage': '25' }}></div>
+                <div className="pie-segment unexecuted" style={{ '--percentage': '50' }}></div>
+              </div>
+              <div className="status-legend">
+                <div className="legend-item">
+                  <span className="status-color passed"></span>
+                  <span>25 Passed | 25% of the cases were Set to Passed</span>
+                </div>
+                <div className="legend-item">
+                  <span className="status-color failed"></span>
+                  <span>25 Failed | 25% of the cases were Set to Failed</span>
+                </div>
+                <div className="legend-item">
+                  <span className="status-color unexecuted"></span>
+                  <span>50 Unexecuted | 50% of the cases were Unexecuted</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

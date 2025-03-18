@@ -157,3 +157,51 @@
     font-size: 14px;
     line-height: 1;
   }
+
+  .add-result-btn {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: auto; /* This will push it to the left */
+  }
+
+  .add-result-btn:hover {
+    background-color: #f5f5f5;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+
+  .cancel-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .edit-btn {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .edit-btn:hover {
+    background-color: #f5f5f5;
+  }
