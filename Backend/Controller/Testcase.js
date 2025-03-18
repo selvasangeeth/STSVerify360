@@ -130,7 +130,7 @@ const updateTestCaseStatus = async (req, res) => {
       .populate('taskId')
       .populate('subTaskId')
 
-    const testCaseDetails = await testCaseModel.findById(testCaseId).populate('caseType').populate('testCaseDescription').populate('createdBy').populate('expectedResult').populate('testCaseData').populate('steps');
+    const testCaseDetails = await testCaseModel.findById(testCaseId).populate('caseType').populate('testCaseDescription').populate('createdBy').populate('expectedResult').populate('testCaseData').populate('steps').populate('timestamp');
     const testCaseCreatedBy = await user.findById(testCaseDetails.createdBy).populate('Name');
     const testCaseCreatedByName = testCaseCreatedBy.Name;
     console.log("Name of creatoir"+testCaseCreatedByName)
@@ -160,6 +160,7 @@ const updateTestCaseStatus = async (req, res) => {
       expectedResult :testCaseDetails.expectedResult,
       testCaseData: testCaseDetails.testCaseData,
       steps : testCaseDetails.steps,
+      testCaseCreatedAt :testCaseDetails.timestamp,
     })  
     console.log("TestRun Created")
     console.log(testRunCreate);
