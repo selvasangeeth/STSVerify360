@@ -214,7 +214,7 @@ const updateTestCaseStatus = async (req, res) => {
 const getTestCase = async (req, res) => {
   try {
     const scenarioId = req.params.scenarioId;
-    console.log('Requested Scenario ID:', scenarioId);
+    // console.log('Requested Scenario ID:', scenarioId);
 
     const sc = await testScenarioModel.findById(scenarioId);
     if (!sc) {

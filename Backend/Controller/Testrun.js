@@ -100,7 +100,7 @@ const testScenarioModel = require("../Model/Scenarios.model");
 
 const getTestRuns = async (req, res) => {
   const projectId = req.params.projectId;
-  console.log("Fetching test runs for project ID:", projectId);
+  // console.log("Fetching test runs for project ID:", projectId);
   const tests = await testRunModel.find({ projectId: projectId });
   if (!tests || tests.length === 0) {
     return res.status(404).json({ msg: "No test runs found for the selected project." });

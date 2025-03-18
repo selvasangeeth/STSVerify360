@@ -108,7 +108,7 @@ const getProject = async (req, res) => {
     const userId = req.user.id; // userId extraction from jwt
     const user = await userDetails.findById(userId);
     const role = user.Role;
-    console.log("Role " + role);
+    console.log("Role : " + role);
 
     if (role == 'admin' || role == 'user') {
       const projects = await ProjectDetails.find({ assignedTo: userId }).select('projectName _id');
@@ -117,7 +117,7 @@ const getProject = async (req, res) => {
 
     const projects = await ProjectDetails.find().select('projectName projectLogo _id');  // Include _id
     // superAdmin
-    console.log("kahn");
+  
 
     const processedProjects = projects.map(project => {
       // Process project data

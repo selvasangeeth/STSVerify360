@@ -86,7 +86,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
         const response = await axios.get('/getproject');
         setProjects(response.data.projects);
         console.log(response.data.projects);
-        console.log(response.data.projects[11].projectLogo);
       } catch (error) {
         console.error('Error fetching projects:', error);
       }

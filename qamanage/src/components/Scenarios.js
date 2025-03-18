@@ -54,7 +54,7 @@ const Scenarios = () => {
       const response = await axios.get(`/getScenario/${moduleId}`);
       console.log(response.data);
       console.log('Scenarios response:', response.data);
-      console.log(response.data.testCaseCount)
+      
 
       if (response.data.msg === "Success Scenario Fetch") {
         setScenarios(response.data.data);
@@ -107,7 +107,10 @@ const Scenarios = () => {
     e.preventDefault();
     try {
       setError(null);
-      const response = await axios.put(`/updateScenario/${selectedScenario._id}`, selectedScenario);
+      console.log(selectedScenario);
+      console.log("project"+projectId);
+      console.log("modid :" + moduleId);
+      const response = await axios.put(`/updateScenario/${selectedScenario._id}`, {scenarioUpdate : selectedScenario,projectId : projectId,moduleId:moduleId});
       if (response.data.msg === "Scenario Updated Successfully") {
         setScenarios(scenarios.map(scenario => scenario._id === selectedScenario._id ? response.data.data : scenario));
         setShowEditModal(false);
@@ -121,14 +124,26 @@ const Scenarios = () => {
 
   const handleRemoveScenario = async () => {
     try {
-      setError(null);
-      await axios.delete(`/deleteScenario/${selectedScenario._id}`);
-      setScenarios(scenarios.filter(scenario => scenario._id !== selectedScenario._id));
-      setShowRemoveModal(false);
+        setError(null);
+        console.log("askjdhkj");
+        console.log(selectedScenario._id);
+        console.log(projectId);
+        console.log(moduleId);
+
+        // Pass projectId and moduleId as query params
+        const response = await axios.delete(`/sc/deleteScenario/${selectedScenario._id}`, {
+            params: {
+                projectId: projectId,
+                moduleId: moduleId
+            }
+        });
+        console.log(response.data.msg);
+        setScenarios(scenarios.filter(scenario => scenario._id !== selectedScenario._id));
+        setShowRemoveModal(false);
     } catch (error) {
-      setError('Error removing scenario. Please try again.');
+        setError('Error removing scenario. Please try again.');
     }
-  };
+};
 
   const handleScenarioClick = (scenarioId, projectId, moduleId) => {
     console.log(scenarioId);

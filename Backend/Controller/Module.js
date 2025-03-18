@@ -89,7 +89,7 @@ const createModule = async (req, res) => {
 const getModules = async (req, res) => {
   try {
     const { projectId } = req.params;
-    console.log("Received projectId:", projectId);
+    // console.log("Received projectId:", projectId);
 
     if (!mongoose.Types.ObjectId.isValid(projectId)) {
       return res.status(400).json({ msg: "Invalid Project ID" });
