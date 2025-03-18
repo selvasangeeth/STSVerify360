@@ -229,26 +229,37 @@ const Testrun = ({ selectedProject }) => {
                 <span className="value">{selectedTest.bugReferenceId}</span>
               </div>
 
-              <div className="detail-row">
-                <span className="label">Reference</span>
-                <span className="value">
-                  {selectedTest.reference && (
-                    <div className="reference-media">
-                      {/* Adding the image type prefix */}
-                      {selectedTest.reference.startsWith('/9j/') ? (
-                        <img
-                          src={`data:image/jpeg;base64,${selectedTest.reference}`}
-                          alt="Test reference"
-                          style={{ width: '100%', height: 'auto' }}
-                        />
-                      ) : (
-                        <p>Unsupported media type</p>
-                      )}
-                    </div>
-                  )}
-                </span>
-              </div>
               
+              {selectedTest.reference.startsWith('/9j/') ? (
+                <img
+                  src={`data:image/jpeg;base64,${selectedTest.reference}`}
+                  alt="Test reference"
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              ) : selectedTest.reference.startsWith('iVBORw0KGgo') ? (
+                <img
+                  src={`data:image/png;base64,${selectedTest.reference}`}
+                  alt="Test reference"
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              ) : selectedTest.reference.startsWith('R0lG') ? (
+                <img
+                  src={`data:image/gif;base64,${selectedTest.reference}`}
+                  alt="Test reference"
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              ) : selectedTest.reference.startsWith('AAAB') ? ( // Example prefix for base64-encoded audio/video (MP4, WebM, etc.)
+                <video controls style={{ width: '100%' }}>
+                  <source
+                    src={`data:video/mp4;base64,${selectedTest.reference}`}
+                    type="video/mp4"
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <p>Unsupported media type</p>
+              )}
+
               <div className="detail-row">
                 <span className="label">Bug Priority</span>
                 <span className="value">
