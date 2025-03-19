@@ -68,7 +68,7 @@
 }
 
 .add-case-btn {
-  background-color: #f52109;
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -177,7 +177,7 @@
   align-items: center;
 }
 
-.edit-btn,
+
 .view-btn {
   background: none;
   border: none;

@@ -329,7 +329,7 @@ projects.map((project) => (
           <div 
             className={`nav-item ${activeTab === '/modules' ? 'active' : ''}`}
             onClick={() => handleNavClick('/modules')}
-            style={{ backgroundColor: activeTab === '/modules' ? 'orange' : '' }}
+            style={{ backgroundColor: activeTab === '/modules' ? '#be5133' : '' }}
           >
             <span className="nav-icon">📊</span>
             <span>Modules</span>
@@ -337,7 +337,7 @@ projects.map((project) => (
           <div 
             className={`nav-item ${activeTab === '/testrun' ? 'active' : ''}`}
             onClick={() => handleNavClick('/testrun')}
-            style={{ backgroundColor: activeTab === '/testrun' ? 'orange' : '' }}
+            style={{ backgroundColor: activeTab === '/testrun' ? '#be5133' : '' }}
           >
             <span className="nav-icon">📋</span>
             <span>Test Runs</span>
@@ -345,7 +345,7 @@ projects.map((project) => (
           <div 
             className={`nav-item ${activeTab === '/metrics' ? 'active' : ''}`}
             onClick={() => handleNavClick('/metrics')}
-            style={{ backgroundColor: activeTab === '/metrics' ? 'orange' : '' }}
+            style={{ backgroundColor: activeTab === '/metrics' ? '#be5133' : '' }}
           >
             <span className="nav-icon">📈</span>
             <span>Metrics</span>
@@ -353,7 +353,7 @@ projects.map((project) => (
           <div 
             className={`nav-item ${activeTab === '/testers' ? 'active' : ''}`}
             onClick={() => handleNavClick('/testers')}
-            style={{ backgroundColor: activeTab === '/testers' ? 'orange' : '' }}
+            style={{ backgroundColor: activeTab === '/testers' ? '#be5133' : '' }}
           >
             <span className="nav-icon">👥</span>
             <span>Testers</span>
@@ -361,7 +361,7 @@ projects.map((project) => (
           <div 
             className={`nav-item ${activeTab === '/activity' ? 'active' : ''}`}
             onClick={handleActivityClick} // Update to handle click
-            style={{ backgroundColor: activeTab === '/activity' ? 'orange' : '' }}
+            style={{ backgroundColor: activeTab === '/activity' ? '#be5133' : '' }}
           >
             <span className="nav-icon">📝</span>
             <span>Activity</span>

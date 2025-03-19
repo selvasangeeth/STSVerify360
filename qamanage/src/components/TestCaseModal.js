@@ -266,8 +266,16 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
-        <button className="close-button" onClick={onClose}>×</button>
-          <h2>{isAddMode ? 'Add New Case' : 'Test Case Details'}</h2>
+        <h2>
+        {isAddMode ? 'Add New Case' : 'Test Case Details'}
+        <button 
+  className="close-btn" 
+  onClick={onClose} 
+  style={{ display:'flex',justifyContent:'flex end',textAlign: 'right', position: 'absolute', top: '-15px', right: '-10px', background: 'white', border: 'none', fontSize: '28px', cursor: 'pointer', color: 'black' }}
+>
+  ×
+</button>
+</h2>
          
         </div>
 
@@ -286,6 +294,16 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
                       testCaseId: e.target.value
                     })}
                     disabled={isViewMode}
+                    style={{
+                      width: '85%', 
+                      padding: '12px', 
+                      border: '1px solid #e0e0e0', 
+                      borderRadius: '3px', 
+                      fontSize: '14px', 
+                      height: '10px',
+                      backgroundColor: isViewMode ? '#f5f5f5' : 'white',
+                      cursor: isViewMode ? 'not-allowed' : 'text'
+                    }}
                   />
                 </div>
                 <div className="form-group">
@@ -315,6 +333,16 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
                     description: e.target.value
                   })}
                   disabled={isViewMode}
+                  style={{
+                    width: '95%', 
+                    padding: '12px', 
+                    border: '1px solid #e0e0e0', 
+                    borderRadius: '3px', 
+                    fontSize: '14px', 
+                    height: '10px',
+                    backgroundColor: isViewMode ? '#f5f5f5' : 'white',
+                    cursor: isViewMode ? 'not-allowed' : 'text'
+                  }}
                 />
               </div>
 
@@ -561,7 +589,19 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
                 <>
                   <button 
                     type="button" 
-                    className="add-result-btn"
+                    style={{ 
+                      height: "35px", 
+                      background: "#277dd8", 
+                      border: "1px solid #ddd", 
+                      width: "115px", 
+                      borderRadius:"20px",
+                      color: "white",
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "center",
+                      textAlign: "center",
+                      cursor: "pointer"
+                    }} 
                     onClick={handleAddResult}
                   >
                     Add Result
@@ -575,13 +615,6 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
                   </button>
                 </>
               )}
-              <button 
-                type="button" 
-                className="cancel-btn" 
-                onClick={onClose}
-              >
-                Close
-              </button>
             </div>
           </form>
         </div>
