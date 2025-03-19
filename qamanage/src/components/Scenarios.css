@@ -112,6 +112,14 @@ td {
   background-color: #f8f9fa;
 }
 
+.add-scenario-row input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
 .id-text {
   color: #6c757d;
   font-size: 12px;

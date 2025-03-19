@@ -137,6 +137,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     setShowDropdown(false);
     console.log("projectlog :"+project.projectId);
     fetchModules(project.projectId); // Fetch modules for the selected project
+    setActiveTab('/modules'); // Set active tab to modules
     navigate(`/modules?projectId=${project.projectId}`);
   };
 

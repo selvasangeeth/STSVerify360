@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const Register = () => {
     const [Email, setEmail] = useState("");
-    const [Name,setName] = useState("");
+    const [Name, setName] = useState("");
     const [Password, setPassword] = useState("");
     const [ConfirmPassword, setConfirmPassword] = useState("");
     const [Role, setRole] = useState("");
@@ -23,7 +23,7 @@ const Register = () => {
 
         try {
             const response = await axios.post('/register', {
-                Name : Name,
+                Name: Name,
                 Email: Email,
                 Password: Password,
                 Role: Role
@@ -40,7 +40,8 @@ const Register = () => {
                 toast(response.data.msg);
             }
         } catch (error) {
-            console.log(error);
+            console.error('Error during registration:', error);
+            toast('Error during registration. Please try again.');
         }
     };
 
@@ -49,7 +50,7 @@ const Register = () => {
             <h2>Get Started with SPAN</h2>
 
             <form onSubmit={handleSubmit}>
-            <label>Name</label>
+                <label>Name</label>
                 <input
                     type="text"
                     name="Name"
@@ -79,7 +80,7 @@ const Register = () => {
                     <option value="">Select Role</option>
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
-                    <option value ="superAdmin">SuperAdmin</option>
+                    <option value="superAdmin">SuperAdmin</option>
                 </select>
 
                 <label>Password</label>

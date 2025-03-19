@@ -1,40 +1,39 @@
 import React, { useState } from 'react';
 import axios from './axios';
 import './AddModuleModal.css';
-
-
+import { toast } from "react-toastify";
 
 const AddModuleModal = ({ projectId, onClose, onModuleAdded }) => {
   const [moduleData, setModuleData] = useState({
     moduleName: '',
     subModule: '',
-    projectId : projectId
+    projectId: projectId
   });
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  console.log("projectId : "+projectId);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      setError(null);
 
       const response = await axios.post('/createModule', {
         projectId,
         ...moduleData
       });
-       console.log("msg : "+response.data.msg);
-      if (response.data.msg ==="Module Created Successfully") {
+
+      if (response.data.msg === "Module Created Successfully") {
+        // Call onModuleAdded with the new module data
         onModuleAdded(response.data.data);
-        window.location.reload();
+        // Close the modal
         onClose();
+        // Show single success message
+        toast.success("Module created successfully!");
       } else {
-        setError(response.data.message);
+        toast.error(response.data.message || "Failed to create module");
       }
     } catch (error) {
       console.error('Error adding module:', error);
-      setError(error.response?.data?.message || 'Error adding module');
+      toast.error(error.response?.data?.message || 'Error adding module');
     } finally {
       setLoading(false);
     }
@@ -44,7 +43,6 @@ const AddModuleModal = ({ projectId, onClose, onModuleAdded }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>Add New Module</h2>
-        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Module Name</label>
@@ -70,24 +68,21 @@ const AddModuleModal = ({ projectId, onClose, onModuleAdded }) => {
               required
             />
           </div>
-          {/* <div className="form-group">
-            <label>Username</label>
-            <input
-              type="text"
-              value={moduleData.username}
-              onChange={(e) => setModuleData({
-                ...moduleData,
-                username: e.target.value
-              })}
-              required
-            /> */}
-          {/* </div> */}
           <div className="modal-buttons">
-            <button className="cancel-button" onClick={onClose}>
+            <button 
+              type="button" 
+              className="cancel-button" 
+              onClick={onClose}
+              disabled={loading}
+            >
               Cancel
             </button>
-            <button className="add-button" type="submit">
-              Add Module
+            <button 
+              type="submit" 
+              className="add-button"
+              disabled={loading}
+            >
+              {loading ? 'Adding...' : 'Add Module'}
             </button>
           </div>
         </form>

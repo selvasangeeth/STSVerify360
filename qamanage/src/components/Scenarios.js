@@ -13,7 +13,7 @@ const Scenarios = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddInput, setShowAddInput] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState(null);
@@ -37,12 +37,13 @@ const Scenarios = () => {
   }, [moduleId]);
 
   const fetchModuleDetails = async () => {
-    // try {
-    //   const response = await axios.get(`/getModules/${moduleId}`);
-    //   setModuleDetails(response.data.sc);
-    // } catch (error) {
-    //   console.error('Error fetching module details:', error);
-    // }
+    try {
+      const response = await axios.get(`/getModules/${moduleId}`);
+      setModuleDetails(response.data.sc);
+    } catch (error) {
+      console.error('Error fetching module details:', error);
+      setError('Error fetching module details. Please try again.');
+    }
   };
 
   const fetchScenarios = async () => {
@@ -54,7 +55,6 @@ const Scenarios = () => {
       const response = await axios.get(`/getScenario/${moduleId}`);
       console.log(response.data);
       console.log('Scenarios response:', response.data);
-      
 
       if (response.data.msg === "Success Scenario Fetch") {
         setScenarios(response.data.data);
@@ -85,15 +85,14 @@ const Scenarios = () => {
       console.log('Add scenario response:', response.data);
 
       if (response.data.msg === "Scenario Created Successfully") {
-        setScenarios([response.data.data, ...scenarios]);
-        setShowAddModal(false);
+        setScenarios([...scenarios, response.data.data]);
+        setShowAddInput(false);
         setNewScenario({
           scenarioIdstr: '',
           description: '',
           taskId: '',
           subTaskId: '',
         });
-        window.location.reload();
       } else {
         setError(response.data.message);
       }
@@ -146,13 +145,23 @@ const Scenarios = () => {
 };
 
   const handleScenarioClick = (scenarioId, projectId, moduleId) => {
-    console.log(scenarioId);
-    console.log("sdewfewf : " + moduleId);
-    navigate(`/modules/scenarios/testcases/${scenarioId}/${projectId}/${moduleId}`);
+    try {
+      console.log(scenarioId);
+      console.log("sdewfewf : " + moduleId);
+      navigate(`/modules/scenarios/testcases/${scenarioId}/${projectId}/${moduleId}`);
+    } catch (error) {
+      console.error('Error navigating to test cases:', error);
+      setError('Error navigating to test cases. Please try again.');
+    }
   };
 
   const handleBackClick = () => {
-    navigate('/modules');
+    try {
+      navigate('/modules');
+    } catch (error) {
+      console.error('Error navigating back:', error);
+      setError('Error navigating back. Please try again.');
+    }
   };
 
   const filteredScenarios = scenarios.filter(scenario =>
@@ -188,7 +197,7 @@ const Scenarios = () => {
           />
         </div>
         <div className="button-container">
-          <button className="add-button" onClick={() => setShowAddModal(true)}>
+          <button className="add-button" onClick={() => setShowAddInput(true)}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
             </svg>
@@ -247,78 +256,65 @@ const Scenarios = () => {
                 </td>
               </tr>
             ))}
+            {showAddInput && (
+              <tr className="add-scenario-row">
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Scenario ID"
+                    value={newScenario.scenarioIdstr}
+                    onChange={(e) => setNewScenario({ ...newScenario, scenarioIdstr: e.target.value })}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleAddScenario(e);
+                      }
+                    }}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Task ID"
+                    value={newScenario.taskId}
+                    onChange={(e) => setNewScenario({ ...newScenario, taskId: e.target.value })}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleAddScenario(e);
+                      }
+                    }}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Sub Task ID"
+                    value={newScenario.subTaskId}
+                    onChange={(e) => setNewScenario({ ...newScenario, subTaskId: e.target.value })}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleAddScenario(e);
+                      }
+                    }}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Description"
+                    value={newScenario.description}
+                    onChange={(e) => setNewScenario({ ...newScenario, description: e.target.value })}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleAddScenario(e);
+                      }
+                    }}
+                  />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
-
-      {showAddModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Add New Scenario</h2>
-            <form onSubmit={handleAddScenario}>
-              <div className="form-group">
-                <label>Scenario ID</label>
-                <input
-                  type="text"
-                  value={newScenario.scenarioIdstr}
-                  onChange={(e) => setNewScenario({
-                    ...newScenario,
-                    scenarioIdstr: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Task ID</label>
-                <input
-                  type="text"
-                  value={newScenario.taskId}
-                  onChange={(e) => setNewScenario({
-                    ...newScenario,
-                    taskId: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Sub Task ID</label>
-                <input
-                  type="text"
-                  value={newScenario.subTaskId}
-                  onChange={(e) => setNewScenario({
-                    ...newScenario,
-                    subTaskId: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea
-                  value={newScenario.description}
-                  onChange={(e) => setNewScenario({
-                    ...newScenario,
-                    description: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="cancel-btn"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="submit-btn">
-                  Add Scenario
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {showEditModal && (
         <div className="modal-overlay">

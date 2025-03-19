@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from './axios';
-import AddModuleModal from './AddModuleModal';
-import EditModuleModal from './EditModuleModal'; // Import the EditModuleModal component
 import './Modules.css';
 import './common.css';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import EditModuleModal from './EditModuleModal'; // Import the EditModuleModal component
 
 const Modules = ({ selectedProject }) => {
   const navigate = useNavigate();
@@ -15,7 +14,14 @@ const Modules = ({ selectedProject }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddRow, setShowAddRow] = useState(false);
+  const [newModuleData, setNewModuleData] = useState({
+    moduleName: '',
+    subModule: '',
+    lastTestedBy: 'Not Tested',
+    scenariosCount: 0,
+    casesCount: 0
+  });
   const [activeMenu, setActiveMenu] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedModule, setSelectedModule] = useState(null);
@@ -46,8 +52,30 @@ const Modules = ({ selectedProject }) => {
     navigate(`/modules/scenarios/${moduleId}/${projectId}`);
   };
 
-  const handleModuleAdded = (newModule) => {
-    setModules([newModule, ...modules]);
+  const handleModuleAdded = async () => {
+    try {
+      const response = await axios.post('/createModule', {
+        projectId: selectedProject.projectId,
+        ...newModuleData
+      });
+      if (response.data.msg === "Module Created Successfully") {
+        setModules([...modules, response.data.data]);
+        setShowAddRow(false);
+        setNewModuleData({
+          moduleName: '',
+          subModule: '',
+          lastTestedBy: 'Not Tested',
+          scenariosCount: 0,
+          casesCount: 0
+        });
+        toast.success("Module added successfully");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error adding module:', error);
+      toast.error('Error adding module');
+    }
   };
 
   const handleMenuClick = (e, moduleId) => {
@@ -56,7 +84,6 @@ const Modules = ({ selectedProject }) => {
   };
 
   const handleEdit = (module) => {
-    console.log(module);
     setSelectedModule(module);
     setShowEditModal(true);
   };
@@ -72,21 +99,15 @@ const Modules = ({ selectedProject }) => {
           "Content-Type": "application/json"
         }
       });
-  
-      // Check the response to confirm the success
-      console.log(response.data.msg);
       if (response.data.msg === "Module deleted successfully") {
-        // Remove the module from the UI (optional)
         setModules(modules.filter((module) => module._id !== moduleId));
         toast.success("Module removed successfully");
       }
-  
     } catch (error) {
       console.error("Error removing module:", error);
       toast.error("Failed to remove module");
     }
   };
-  
 
   const handleModuleUpdated = (updatedModule) => {
     setModules(modules.map(module => module._id === updatedModule._id ? updatedModule : module));
@@ -122,6 +143,12 @@ const Modules = ({ selectedProject }) => {
     }
   }, [activeMenu]);
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleModuleAdded();
+    }
+  };
+
   if (loading) return <div className="loading">Loading modules...</div>;
 
   if (!selectedProject) {
@@ -142,7 +169,7 @@ const Modules = ({ selectedProject }) => {
           />
         </div>
         <div className="button-container">
-          <button className="add-button" onClick={() => setShowAddModal(true)} style={{ backgroundColor: 'orange' }}>
+          <button className="add-button" onClick={() => setShowAddRow(true)}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
             </svg>
@@ -150,7 +177,6 @@ const Modules = ({ selectedProject }) => {
           </button>
         </div>
       </div>
-
       <div className="modules-table">
         <table>
           <thead>
@@ -164,13 +190,43 @@ const Modules = ({ selectedProject }) => {
             </tr>
           </thead>
           <tbody>
+            {showAddRow && (
+              <tr>
+                <td>
+                  <input
+                    type="text"
+                    value={newModuleData.moduleName}
+                    onChange={(e) => setNewModuleData({ ...newModuleData, moduleName: e.target.value })}
+                    placeholder="Module Name"
+                    className="input-field"
+                    onKeyPress={handleKeyPress}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    value={newModuleData.subModule}
+                    onChange={(e) => setNewModuleData({ ...newModuleData, subModule: e.target.value })}
+                    placeholder="Submodule Name"
+                    className="input-field"
+                    onKeyPress={handleKeyPress}
+                  />
+                </td>
+                <td>{newModuleData.lastTestedBy}</td>
+                <td>{newModuleData.scenariosCount}</td>
+                <td>{newModuleData.casesCount}</td>
+                <td>
+                  {/* No Save and Cancel buttons */}
+                </td>
+              </tr>
+            )}
             {filteredModules.map((module) => (
               <tr key={module._id} className="module-row">
                 <td className="module-name" onClick={() => handleModuleClick(module._id, selectedProject.projectId)}>
-                  <div>{module.moduleName}</div>
+                  <div className="text-ellipsis">{module.moduleName}</div>
                   <div className="id-text">{module.moduleId}</div>
                 </td>
-                <td>{module.subModule}</td>
+                <td className="text-ellipsis">{module.subModule}</td>
                 <td>
                   <div>{module.lastTestedBy}</div>
                   <div className="date-text">
@@ -200,13 +256,6 @@ const Modules = ({ selectedProject }) => {
         </table>
       </div>
       <ToastContainer/>
-      {showAddModal && (
-        <AddModuleModal
-          projectId={selectedProject.projectId}
-          onClose={() => setShowAddModal(false)}
-          onModuleAdded={handleModuleAdded}
-        />
-      )}
       {showEditModal && (
         <EditModuleModal
           module={selectedModule}

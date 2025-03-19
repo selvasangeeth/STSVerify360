@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-// import { loginStart, loginSuccess, loginFailure } from '../redux/authSlice';
 import axios from "./axios";
 import './Login.css';
 
@@ -10,9 +9,10 @@ const Login = () => {
     email: '',
     password: ''
   });
+  const [error, setError] = useState(null); // Add error state
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector((state) => state.auth);
+  const { isLoading } = useSelector((state) => state.auth);
 
   const handleChange = (e) => {
     setFormData({
@@ -23,7 +23,6 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // dispatch(loginStart());
     try {
       const response = await axios.post(
         '/login',
@@ -43,11 +42,11 @@ const Login = () => {
         navigate("/dashboard");  // Navigate to the dashboard
       } else {
         console.log(response.data.msg);
-        // You can display an error message here if login fails
+        setError(response.data.msg); // Set error message if login fails
       }
     } catch (error) {
-      console.log(error);
-      // Handle error (e.g., show an error message)
+      console.error('Error during login:', error);
+      setError('Error during login. Please try again.'); // Set error message if an exception occurs
     }
   };
 
