@@ -28,7 +28,7 @@ const createTestCase = async (req, res) => {
         expectedResult: expectedResult,
         createdBy: createdById,
       })
-      console.log("ksdhksbd");
+    
       const associatedScenario = await testScenarioModel.findById(scenarioId).populate('scenarioIdstr');
       const associatedModule = await modulee.findById(moduleId).populate('moduleName');
       const associatedProject = await project.findById(projectId);
