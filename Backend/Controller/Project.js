@@ -133,7 +133,7 @@ const getProject = async (req, res) => {
       };
     });
 
-    console.log(processedProjects);
+    // console.log(processedProjects);
     res.status(200).json({ projects: processedProjects });
   } catch (err) {
     console.error("Error fetching projects:", err);

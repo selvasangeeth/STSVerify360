@@ -232,12 +232,12 @@ const deleteModule = async (req, res) => {
       console.log(err);
     }
 
-    return res.status(200).json({ msg: 'Project deleted successfully' });
+    return res.status(200).json({ msg: 'Module deleted successfully' });
 
 
   } catch (err) {
-    console.error("Error deleting project:", err);
-    return res.status(500).json({ msg: 'Failed to delete project' });
+    console.error("Error deleting Module:", err);
+    return res.status(500).json({ msg: 'Failed to delete Module' });
   }
 };
 
