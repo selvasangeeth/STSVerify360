@@ -116,7 +116,7 @@ const getProject = async (req, res) => {
       return res.status(200).json({ projects });
     }
 
-    const projects = await ProjectDetails.find().select('projectName projectLogo _id');  // Include _id
+    const projects = await ProjectDetails.find().select('projectName projectLogo _id'); 
     // superAdmin
   
 
@@ -135,6 +135,7 @@ const getProject = async (req, res) => {
     });
     
 
+    // console.log(processedProjects);
     res.status(200).json({ projects: processedProjects });
   } catch (err) {
     console.error("Error fetching projects:", err);

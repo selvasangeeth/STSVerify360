@@ -83,6 +83,10 @@ const testRunSchema = mongoose.Schema({
            type: mongoose.Schema.Types.ObjectId,
            ref: 'Project'
        },
+
+    testCaseCreatedAt :{
+        type: Date,
+    }
 });
 
 module.exports = mongoose.model("Testrun", testRunSchema);
