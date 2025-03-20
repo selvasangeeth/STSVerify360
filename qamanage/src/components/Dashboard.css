@@ -325,7 +325,7 @@
   padding: 10px;
 }
 .nav-item.active {
-  background-color: orange;
+  background-color: #F52109;;
   color: white;
 }
 .nav-icon {
@@ -546,13 +546,14 @@
 .modal-actions .cancel-btn {
   padding: 8px 24px;
   background: #fff;
-  color: #333;
+  color: white;
   border: 1px solid #ddd;
   border-radius: 20px;
   cursor: pointer;
   min-width: 100px;
   font-size: 14px;
   transition: background-color 0.2s;
+  
 }
 .modal-actions .cancel-btn:hover {
   background-color: #f5f5f5;
@@ -581,6 +582,7 @@
   min-width: 100px;
   font-size: 14px;
   transition: background-color 0.2s;
+  width: 30%;
 }
 .modal-actions .submit-btn:hover {
   background: #0056b3;

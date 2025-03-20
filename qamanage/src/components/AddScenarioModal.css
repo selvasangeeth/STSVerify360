@@ -74,8 +74,12 @@
   background-color: #0056b3;
 } 
 .modal-actions button[type="button"] {
-  background: white;
+  background: #277dd8;
   border: 1px solid #ddd;
+  width: 100px;
+  border-radius: 20px;
+  color: white;
+  height: 35px;
 }
 
 .modal-actions button[type="submit"] {

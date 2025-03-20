@@ -28,7 +28,7 @@ const createTestCase = async (req, res) => {
         expectedResult: expectedResult,
         createdBy: createdById,
       })
-      console.log("ksdhksbd");
+    
       const associatedScenario = await testScenarioModel.findById(scenarioId).populate('scenarioIdstr');
       const associatedModule = await modulee.findById(moduleId).populate('moduleName');
       const associatedProject = await project.findById(projectId);
@@ -161,9 +161,10 @@ const updateTestCaseStatus = async (req, res) => {
       testCaseData: testCaseDetails.testCaseData,
       steps : testCaseDetails.steps,
       testCaseCreatedAt :testCaseDetails.timestamp,
+      timestamp : Date.now(),
     })  
     console.log("TestRun Created")
-    console.log(testRunCreate);
+    // console.log(testRunCreate);
     const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioIdstr}/${testCaseName.testCaseId}`;
     console.log("TestLog Creating....")
     const TestCaseUpdateLog = await log.create({
@@ -189,28 +190,8 @@ const updateTestCaseStatus = async (req, res) => {
   }
 };
 
-//getTestCase
 
-// const getTestCase= async (req, res) => {
-//   try {
-//     const scenarioId= req.params.scenarioId; 
-
-//     const sc = await testScenarioModel.findById(scenarioId);
-//     if (!sc) {
-//       return res.status(404).json({ msg: "Scenario not found" });
-//     }
-//     const testCas = await testCaseModel.find({  scenario: scenarioId });
-
-//     if (testCas.length === 0) {
-//       return res.status(404).json({ msg: "No TestCase found for this Scenario" });
-//     }
-//     res.status(200).json({ msg :"success",data : testCas });
-//   } catch (err) {
-//     console.error("Error fetching TestCase:", err);
-//     res.status(500).json({ msg: "Failed to fetch TestCase" });
-//   }
-// };
-
+//get TestCase
 
 const getTestCase = async (req, res) => {
   try {

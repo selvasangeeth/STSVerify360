@@ -105,6 +105,7 @@ const updateProject = async (req, res) => {
 //get project based on Role
 const getProject = async (req, res) => {
   try {
+    
     const userId = req.user.id; // userId extraction from jwt
     const user = await userDetails.findById(userId);
     const role = user.Role;
@@ -132,8 +133,9 @@ const getProject = async (req, res) => {
         projectLogo: logoBuffer ? logoBuffer.toString('base64') : null,
       };
     });
+    
 
-    console.log(processedProjects);
+    // console.log(processedProjects);
     res.status(200).json({ projects: processedProjects });
   } catch (err) {
     console.error("Error fetching projects:", err);
