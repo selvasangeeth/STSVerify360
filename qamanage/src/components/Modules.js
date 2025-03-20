@@ -169,11 +169,7 @@ const Modules = ({ selectedProject }) => {
           />
         </div>
         <div className="button-container">
-<<<<<<< HEAD
           <button className="add-button" onClick={() => setShowAddRow(true)}>
-=======
-          <button className="add-button" onClick={() => setShowAddModal(true)} >
->>>>>>> b6333818579d401f93a6509d9b0b4abe1633c881
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
             </svg>

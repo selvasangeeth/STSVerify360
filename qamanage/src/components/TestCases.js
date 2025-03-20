@@ -164,6 +164,7 @@ const TestCases = () => {
               <th>Created By</th>
               <th>Tested By</th>
               <th>Case Type</th>
+              <th>ExpectedResult</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -194,6 +195,9 @@ const TestCases = () => {
                   <span className={`case-type-badge ${testCase.caseType?.toLowerCase()}`}>
                     {testCase.caseType}
                   </span>
+                </td>
+                <td>
+                  {testCase.expectedResult || "No Excepted Result"}
                 </td>
                 <td>
                   <span className={`status-badge ${testCase.status?.toLowerCase()}`}>
