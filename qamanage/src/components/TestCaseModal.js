@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './TestCaseModal.css';
 import axios from "./axios";
 
-const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, testCasei,onSave, mode = 'view' }) => {
+const TestCaseModal = ({ testCase, scenarioId, onClose,genId, projectId, moduleId, testCasei,onSave, mode = 'view' }) => {
+  const[genTId,setgenTId] = useState(genId);
   const [editedCase, setEditedCase] = useState(testCase || {
-    testCaseId: '',
+    testCaseId: genTId,
     caseType: '',
     description: '',
     expectedResult: '',
@@ -16,6 +17,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
     moduleId: moduleId
   });
 
+ 
   const [newResult, setNewResult] = useState({
     testRegion: '',
     testStatus: '',
@@ -38,6 +40,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
     
     setEditedCase({
       ...editedCase,
+      testCaseId : genTId,
       results: updatedResults
     });
 
@@ -50,7 +53,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
       bugPriority: ''
     });
   };
-
+console.log("sdsf"+genTId);
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(editedCase);
@@ -58,6 +61,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
     try {
       console.log("started creating");
       const response = await axios.post("/createTestCase", editedCase);
+      console.log(editedCase);
       console.log("From Backend: " + response.data.msg);
 
       if (response.data.msg === "TestCase Created Successfully") {
@@ -178,11 +182,8 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
                 <input
                   type="text"
                   placeholder="Enter the Test case ID"
-                  value={editedCase.testCaseId}
-                  onChange={(e) => setEditedCase({
-                    ...editedCase,
-                    testCaseId: e.target.value
-                  })}
+                  value={genTId === '' ? genId : genTId}
+                  onChange={(e) => setgenTId(e.target.value)} 
                 />
               </div>
               <div className="form-group">

@@ -5,6 +5,7 @@ import './Scenarios.css';
 import './common.css';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
+
 const Scenarios = () => {
   const { moduleId, projectId } = useParams();
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Scenarios = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState(null);
+  const [genId,setGenId] = useState("");
   const [newScenario, setNewScenario] = useState({
     scenarioIdstr: '',
     description: '',
@@ -76,8 +78,11 @@ const Scenarios = () => {
       const scenarioData = {
         moduleId,
         ...newScenario,
+        scenarioIdstr: genId, 
       };
       console.log("ModuleId  : " + moduleId);
+      console.log(":genidddd"+genId);
+      
 
       console.log('Sending scenario data:', scenarioData);
 
@@ -164,6 +169,27 @@ const Scenarios = () => {
     }
   };
 
+  const handleGetIds = async () => {
+    console.log(projectId);
+    console.log(moduleId);
+    console.log("Fetching Ids");
+  
+    try {
+      // Send projectId and moduleId as query params in the GET request
+      const response = await axios.get('/getIds', {
+        params: {
+          projectId: projectId,  // Send as query parameter
+          moduleId: moduleId     // Send as query parameter
+        }
+      });
+  
+      setGenId(response.data.genSceId);
+      console.log("genIdd"+ genId);
+      console.log(response.data.genSceId); // Handle the response
+    } catch (err) {
+      console.log("Error fetching IDs:", err);
+    }
+  };
   const filteredScenarios = scenarios.filter(scenario =>
     scenario.scenarioIdstr.includes(searchTerm) ||
     scenario.description.includes(searchTerm) ||
@@ -197,13 +223,19 @@ const Scenarios = () => {
           />
         </div>
         <div className="button-container">
-          <button className="add-button" onClick={() => setShowAddInput(true)}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            Add Scenario
-          </button>
-        </div>
+  <button 
+    className="add-button" 
+    onClick={() => { 
+      setShowAddInput(true); 
+      handleGetIds(); 
+    }}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+    Add Scenario
+  </button>
+</div>
+
       </div>
 
       <div className="scenarios-table">
@@ -262,8 +294,8 @@ const Scenarios = () => {
                   <input
                     type="text"
                     placeholder="Scenario ID"
-                    value={newScenario.scenarioIdstr}
-                    onChange={(e) => setNewScenario({ ...newScenario, scenarioIdstr: e.target.value })}
+                    value={genId}
+                    onChange={(e) => setGenId(e.target.value)} 
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         handleAddScenario(e);

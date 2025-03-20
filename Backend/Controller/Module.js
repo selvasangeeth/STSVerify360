@@ -22,7 +22,7 @@ const createModule = async (req, res) => {
         projectId: projectId,
         createdBy: createdById,
       })
-      console.log(creat);
+      // console.log(creat);
       const associatedProject = await project.findById(projectId);
       if (!associatedProject) {
         return res.status(404).json({ msg: "Project not found" });
@@ -55,36 +55,6 @@ const createModule = async (req, res) => {
   }
 }
 
-//getModule
-
-// const getModules = async (req, res) => {
-//   try {
-//     const { projectId } = req.params;
-//     console.log("Received projectId:", projectId);
-
-//     if (!mongoose.Types.ObjectId.isValid(projectId)) {
-//       return res.status(400).json({ msg: "Invalid Project ID" });
-//     }
-//     console.log("ProjectId validated");
-
-
-//     const proj = await project.findById(projectId);
-//     if (!proj) {
-//       return res.status(404).json({ msg: "Project not found" });
-//     }
-
-//     const modules = await modulee.find({ projectId: projectId });
-//     console.log("Modules found:", modules);
-
-//     if (modules.length === 0) {
-//       return res.status(404).json({ msg: "No modules found for this project" });
-//     }
-//     res.status(200).json({ msg: "Module Fetched Success", data: modules });
-//   } catch (err) {
-//     console.error("Error fetching modules:", err);
-//     res.status(500).json({ msg: "Failed to fetch modules" });
-//   }
-// };
 
 const getModules = async (req, res) => {
   try {

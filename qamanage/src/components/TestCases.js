@@ -14,6 +14,7 @@ const TestCases = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [genId, setGenId] = useState("");
   const [newTestCase, setNewTestCase] = useState({
     testCaseName: '',
     description: '',
@@ -90,12 +91,27 @@ const TestCases = () => {
     });
   };
 
-  const handleAddClick = () => {
+  const handleAddClick = async () => {
     setModalState({
       isOpen: true,
       mode: 'add',
       testCase: null
     });
+    console.log("Scenario");
+    console.log(scenarioId);
+    try {
+
+      const response = await axios.get("/getTestIds", {
+        params: {
+          scenarioId: scenarioId
+        }
+      })
+      // console.log(response.data.genSceId);
+      setGenId(response.data.genSceId);
+    }
+    catch (err) {
+      console.log(err);
+    }
   };
 
   const handleModalClose = () => {
@@ -186,7 +202,7 @@ const TestCases = () => {
                 </td>
                 <td>
                   <div className="user-info">
-                    <div className="name">{testCase.testedBy?.testerName||'-'}
+                    <div className="name">{testCase.testedBy?.testerName || '-'}
                     </div>
                     {testCase.testedBy?.testDate?.substring(0, 10) || ''}
                   </div>
@@ -233,7 +249,8 @@ const TestCases = () => {
           scenarioId={scenarioId}
           moduleId={moduleId}
           projectId={projectId}
-          testCasei={modalState.testCase ? modalState.testCase._id : null} 
+          genId={genId}
+          testCasei={modalState.testCase ? modalState.testCase._id : null}
           onClose={handleModalClose}
           onSave={handleModalSave}
         />

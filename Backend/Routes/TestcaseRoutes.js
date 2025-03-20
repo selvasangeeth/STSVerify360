@@ -14,11 +14,13 @@ const auth = require("../Middleware/auth");
 //   }
 
 
-const {createTestCase, updateTestCaseStatus,getTestCase} = require("../Controller/Testcase");
+const {createTestCase, updateTestCaseStatus,getTestCase, getTestIds} = require("../Controller/Testcase");
 
 router.post("/createTestCase",auth,createTestCase);
 router.post("/updatedTestCase",auth,upload.single('reference'),updateTestCaseStatus)
 router.get("/getTestCase/:scenarioId",auth,getTestCase);
+router.get("/getTestIds",auth,getTestIds);
+
 
 
 
