@@ -26,6 +26,7 @@ const Modules = ({ selectedProject }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedModule, setSelectedModule] = useState(null);
   const actionMenuRef = useRef(null);
+  const [editingModule, setEditingModule] = useState(null);
 
   useEffect(() => {
     if (selectedProject) {
@@ -84,8 +85,33 @@ const Modules = ({ selectedProject }) => {
   };
 
   const handleEdit = (module) => {
-    setSelectedModule(module);
-    setShowEditModal(true);
+    setEditingModule(module);
+  };
+
+  const handleEditKeyPress = async (e, moduleId) => {
+    if (e.key === 'Enter') {
+      try {
+        const response = await axios.put("/mod/updateModule", {
+          newModuleName: editingModule.moduleName,
+          newSubModuleName: editingModule.subModule,
+          projectId: selectedProject.projectId,
+          moduleId: moduleId
+        });
+
+        if (response.data.msg === "Module Updated Success") {
+          setModules(modules.map(mod => 
+            mod._id === moduleId ? response.data.data : mod
+          ));
+          setEditingModule(null);
+          toast.success("Module updated successfully");
+        }
+      } catch (error) {
+        console.error('Error updating module:', error);
+        toast.error("Failed to update module");
+      }
+    } else if (e.key === 'Escape') {
+      setEditingModule(null);
+    }
   };
 
   const handleRemove = async (moduleId) => {
@@ -177,6 +203,7 @@ const Modules = ({ selectedProject }) => {
           </button>
         </div>
       </div>
+
       <div className="modules-table">
         <table>
           <thead>
@@ -222,19 +249,54 @@ const Modules = ({ selectedProject }) => {
             )}
             {filteredModules.map((module) => (
               <tr key={module._id} className="module-row">
-                <td className="module-name" onClick={() => handleModuleClick(module._id, selectedProject.projectId)}>
-                  <div className="text-ellipsis">{module.moduleName}</div>
-                  <div className="id-text">{module.moduleId}</div>
-                </td>
-                <td className="text-ellipsis">{module.subModule}</td>
                 <td>
-                  <div>{module.lastTestedBy}</div>
-                  <div className="date-text">
-                    { module.lastTested === "Not Tested" ? module.lastTested : new Date(module.lastTested).toLocaleDateString()}
+                  {editingModule?._id === module._id ? (
+                    <input
+                      type="text"
+                      className="input-field"
+                      value={editingModule.moduleName}
+                      onChange={(e) => setEditingModule({
+                        ...editingModule,
+                        moduleName: e.target.value
+                      })}
+                      onKeyPress={(e) => handleEditKeyPress(e, module._id)}
+                      onKeyDown={(e) => e.key === 'Escape' && setEditingModule(null)}
+                      autoFocus
+                    />
+                  ) : (
+                    <div className="content-cell" onClick={() => handleModuleClick(module._id, selectedProject.projectId)}>
+                      <div>{module.moduleName}</div>
+                      <div className="id-text">{module.moduleId}</div>
+                    </div>
+                  )}
+                </td>
+                <td>
+                  {editingModule?._id === module._id ? (
+                    <input
+                      type="text"
+                      className="input-field"
+                      value={editingModule.subModule}
+                      onChange={(e) => setEditingModule({
+                        ...editingModule,
+                        subModule: e.target.value
+                      })}
+                      onKeyPress={(e) => handleEditKeyPress(e, module._id)}
+                      onKeyDown={(e) => e.key === 'Escape' && setEditingModule(null)}
+                    />
+                  ) : (
+                    <div className="content-cell">{module.subModule}</div>
+                  )}
+                </td>
+                <td>
+                  <div className="content-cell">
+                    <div>{module.lastTestedBy}</div>
+                    <div className="date-text">
+                      {module.lastTested === "Not Tested" ? module.lastTested : new Date(module.lastTested).toLocaleDateString()}
+                    </div>
                   </div>
                 </td>
-                <td>{module.scenariosCount || 0}</td>
-                <td>{module.casesCount || 0}</td>
+                <td className="content-cell">{module.scenariosCount || 0}</td>
+                <td className="content-cell">{module.casesCount || 0}</td>
                 <td>
                   <div className="action-button" onClick={(e) => handleMenuClick(e, module._id)}>
                     ⋮

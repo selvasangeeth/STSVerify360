@@ -172,32 +172,76 @@
 }
 
 .action-buttons {
+  position: relative;
   display: flex;
-  gap: 12px;
-  align-items: center;
+  justify-content: center;
 }
 
-
-.view-btn {
+.three-dot-menu {
   background: none;
   border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 20px;
   color: #666;
-  transition: color 0.2s;
+  cursor: pointer;
+  padding: 4px 8px;
+  position: relative;
 }
 
-.edit-btn:hover,
-.view-btn:hover {
+.three-dot-menu:hover {
   color: #333;
 }
 
-.edit-btn svg,
-.view-btn svg {
-  stroke-width: 1.5px;
+.action-icon {
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.action-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 120px;
+}
+
+.action-menu-dropdown button {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #333;
+  font-size: 14px;
+  text-align: left;
+}
+
+.action-menu-dropdown button:hover {
+  background: #f5f5f5;
+}
+
+/* Style for Remove button and its icon */
+.action-menu-dropdown button:last-child {
+  color: #dc3545;
+}
+
+.action-menu-dropdown button:last-child .action-icon {
+  color: #dc3545;
+}
+
+/* Style for Edit button and its icon */
+.action-menu-dropdown button:nth-child(2) .action-icon {
+  color: #007bff;
+}
+
+/* Style for View button and its icon */
+.action-menu-dropdown button:first-child .action-icon {
+  color: #28a745;
 }
 
 /* Modal Styles */
@@ -320,4 +364,136 @@
   top: 0;
   background-color: white;
   z-index: 1;
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.date-info div:first-child::before {
+  content: "Created: ";
+  color: #888;
+}
+
+.date-info div:last-child::before {
+  content: "Updated: ";
+  color: #888;
+}
+
+.user-info div:first-child::before {
+  content: "Created by: ";
+  color: #888;
+}
+
+.user-info div:last-child::before {
+  content: "Updated by: ";
+  color: #888;
+}
+
+/* Adjust column widths */
+.testcases-table th:nth-child(1) { width: 15%; } /* Test Case */
+.testcases-table th:nth-child(2) { width: 10%; } /* Case Type */
+.testcases-table th:nth-child(3) { width: 15%; } /* Expected Result */
+.testcases-table th:nth-child(4) { width: 15%; } /* Test Case Data */
+.testcases-table th:nth-child(5) { width: 10%; } /* Status */
+.testcases-table th:nth-child(6) { width: 15%; } /* Created/Updated By */
+.testcases-table th:nth-child(7) { width: 15%; } /* Steps */
+.testcases-table th:nth-child(8) { width: 5%; } /* Action */
+
+/* Make table cells wrap text properly */
+.testcases-table td {
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 200px;
+}
+
+/* Status badge styles */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge.pass {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-badge.fail {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.status-badge.untested {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+/* Remove the date-info styles since we're not using them anymore */
+.date-info,
+.date-info div:first-child::before,
+.date-info div:last-child::before {
+  display: none;
+}
+
+.input-field {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #f8f9fa;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: white;
+}
+
+/* Adjust the new row styling */
+tbody tr:first-child {
+  background-color: #f8f9fa;
+}
+
+tbody tr:first-child td {
+  padding: 8px;
+}
+
+/* Make input fields take full width of their cells */
+td .input-field {
+  width: calc(100% - 16px);
+  margin: 0;
+}
+
+/* Style the select dropdown to match other inputs */
+select.input-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+select.input-field:hover {
+  border-color: #adb5bd;
+}
+
+select.input-field:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+/* Style the options */
+select.input-field option {
+  padding: 8px;
+  background-color: white;
 }   

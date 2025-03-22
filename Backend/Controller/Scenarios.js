@@ -13,12 +13,12 @@ const createScenario = async (req, res) => {
     console.log("Request body:", req.body);
 
     const { scenarioIdstr, moduleId, taskId, subTaskId, description, projectId } = req.body;
+   
 
     if (!scenarioIdstr) {
       return res.status(400).json({ msg: "scenarioIdstr is required" });
     }
 
-    // Check if the scenario already exists
     const scenar = await scenario.findOne({ scenarioIdstr });
     if (scenar) {
       return res.json({ msg: "Scenario already exists" });
@@ -33,7 +33,8 @@ const createScenario = async (req, res) => {
         createdBy: createdById,
       });
 
-      // Retrieve associated Module and Project
+      console.log("Scenario created");
+     console.log(creat);
       const associatedModule = await modulee.findById(moduleId);
       const associatedProject = await project.findById(projectId);
 
@@ -48,7 +49,7 @@ const createScenario = async (req, res) => {
       console.log(creat.scenarioIdstr)
       const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${creat.scenarioIdstr}`;
       try {
-        // Ensure log.create() is called correctly
+        
         const UserName = await userDetails.findById(createdById).populate('Name');
         const logEntry = await log.create({
           action: "Created",
@@ -182,50 +183,91 @@ const updateScenario = async (req, res) => {
 const deleteScenario = async (req, res) => {
   const scenarioId = req.params.scenarioId;
   try {
-      
-      const { projectId, moduleId } = req.query;
-      const deletedById = req.user.id;
-      
-      // console.log(scenarioId);
-      // console.log(req.query);
 
-      const sc = await scenario.findById(scenarioId);
+    const { projectId, moduleId } = req.query;
+    const deletedById = req.user.id;
 
-      if (!sc) {
-          return res.json({ msg: "Scenario does not exist" });
-      }
+    // console.log(scenarioId);
+    // console.log(req.query);
 
-      const moduleName = await modulee.findById(moduleId).populate('moduleName');
-      const scenarioName = await scenario.findById(scenarioId).populate('scenarioIdstr');
-      const projectName = await project.findById(projectId).populate('projectName');
-      await scenario.findByIdAndDelete(scenarioId);
-      const UserName = await userDetails.findById(deletedById).populate('Name');
-      const path = `${projectName.projectName}/${moduleName.moduleName}/${scenarioName.scenarioIdstr}`;
+    const sc = await scenario.findById(scenarioId);
 
-      // Log the action
-      try {
-          const deleteScenariolog = await log.create({
-              action: "Deleted",
-              entityType: "Scenario",
-              entityId: moduleId,
-              user: UserName.Name,
-              path: path,
-              projectId: projectId,
-              details: `Scenario Deleted: ${scenarioName.scenarioIdstr}`
-          });
-          // console.log("deleteModulelog", deleteScenariolog);
-      } catch (err) {
-          console.log(err);
-      }
+    if (!sc) {
+      return res.json({ msg: "Scenario does not exist" });
+    }
 
-      return res.status(200).json({ msg: 'Scenario deleted successfully' });
+    const moduleName = await modulee.findById(moduleId).populate('moduleName');
+    const scenarioName = await scenario.findById(scenarioId).populate('scenarioIdstr');
+    const projectName = await project.findById(projectId).populate('projectName');
+    await scenario.findByIdAndDelete(scenarioId);
+    const UserName = await userDetails.findById(deletedById).populate('Name');
+    const path = `${projectName.projectName}/${moduleName.moduleName}/${scenarioName.scenarioIdstr}`;
+
+    // Log the action
+    try {
+      const deleteScenariolog = await log.create({
+        action: "Deleted",
+        entityType: "Scenario",
+        entityId: moduleId,
+        user: UserName.Name,
+        path: path,
+        projectId: projectId,
+        details: `Scenario Deleted: ${scenarioName.scenarioIdstr}`
+      });
+      // console.log("deleteModulelog", deleteScenariolog);
+    } catch (err) {
+      console.log(err);
+    }
+
+    return res.status(200).json({ msg: 'Scenario deleted successfully' });
   } catch (err) {
-      console.error("Error deleting Scenario:", err);
-      return res.status(500).json({ msg: 'Failed to delete Scenario' });
+    console.error("Error deleting Scenario:", err);
+    return res.status(500).json({ msg: 'Failed to delete Scenario' });
+  }
+};
+
+// generate the ScenarioId
+const getIds = async (req, res) => {
+
+  try {
+    
+    const { projectId, moduleId } = req.query;  
+    console.log(req.query);  
+
+    if (!projectId || !moduleId) {
+      return res.status(400).json({ message: "Missing projectId or moduleId" });
+    }
+
+    const projectD = await project.findById(projectId);
+    if (!projectD) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    const projectName = projectD.projectName;
+
+   
+    const module = await modulee.findById(moduleId);
+    if (!module) {
+      return res.status(404).json({ message: "Module not found" });
+    }
+    const moduleName = module.moduleName;
+
+
+    const scenarioCount = await scenario.countDocuments({ module: moduleId });
+
+    const result = `${projectName}_${moduleName.substring(0, 2)}_TS${(scenarioCount + 1).toString().padStart(3, '0')}`;
+
+    // console.log(result);
+    return res.status(200).json({ genSceId: result });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
 
 
 
-module.exports = { createScenario, getScenario, updateScenario,deleteScenario};
+
+
+module.exports = { createScenario, getScenario, updateScenario, deleteScenario,getIds};

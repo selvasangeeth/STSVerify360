@@ -1,263 +1,11 @@
-// import React, { useState, useEffect } from 'react';
-// import { useParams, useNavigate } from 'react-router-dom';
-// import axios from './axios';
-// import './TestCases.css';
-// import './common.css';
-// import TestCaseModal from './TestCaseModal';
-
-// const TestCases = () => {
-//   const { projectId, moduleId, scenarioId } = useParams();
-//   const navigate = useNavigate();
-//   const [testCases, setTestCases] = useState([]);
-//   const [scenarioDetails, setScenarioDetails] = useState(null);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [showAddModal, setShowAddModal] = useState(false);
-//   const [newTestCase, setNewTestCase] = useState({
-//     testCaseName: '',
-//     description: '',
-//     expectedResult: '',
-//     priority: 'Medium',
-//     status: 'Active'
-//   });
-//   const [viewingTestCase, setViewingTestCase] = useState(null);
-//   const [modalState, setModalState] = useState({
-//     isOpen: false,
-//     mode: null, // 'view', 'edit', or 'add'
-//     testCase: null
-//   });
-
-
-
-//   useEffect(() => {
-//     if (scenarioId) {
-//       fetchScenarioDetails();
-//       fetchTestCases();
-//     }
-//   }, [scenarioId]);
-
-//   const fetchScenarioDetails = async () => {
-//     try {
-//       const response = await axios.get(`getTestCase/${scenarioId}`);
-//       if (response.data.success) {
-//         setScenarioDetails(response.data.data);
-//       }
-//     } catch (error) {
-//       console.error('Error fetching scenario details:', error);
-//     }
-  
-//   };
-
-//   const fetchTestCases = async () => {
-//     try {
-//         setLoading(true);
-//         setError(null);
-//         const response = await axios.get(`/getTestCase/${scenarioId}`);
-//         console.log(response.data.data); // Debugging
-//         console.log("Fetched test cases:", response.data.data); // Debugging
-//         if (response.data.msg === "success") {
-//             const testCasesData = Array.isArray(response.data.data) ? response.data.data : [];
-//             // Ensure description exists
-//             const updatedTestCases = testCasesData.map(tc => ({
-//                 ...tc,
-//                 description: tc.description || 'No Description'
-//             }));
-//             setTestCases(updatedTestCases);
-//         }
-//     } catch (error) {
-//         console.error('Error fetching test cases:', error);
-//         setError('Error fetching test cases. Please try again.');
-//     } finally {
-//         setLoading(false);
-//     }
-//   }
-
-//   const handleAddTestCase = (newTestCase) => {
-//     setTestCases([newTestCase, ...testCases]);
-//   };
-
-//   const handleBackClick = () => {
-//     navigate(-1); // Goes back to scenarios
-//   };
-
-//   const handleViewClick = (testCase) => {
-//     setModalState({
-//       isOpen: true,
-//       mode: 'view',
-//       testCase
-//     });
-//   };
-
-//   const handleEditClick = (testCase) => {
-//     setModalState({
-//       isOpen: true,
-//       mode: 'edit',
-//       testCase
-//     });
-//   };
-
-//   const handleAddClick = () => {
-//     setModalState({
-//       isOpen: true,
-//       mode: 'add',
-//       testCase: null
-//     });
-//   };
-
-//   const handleModalClose = () => {
-//     setModalState({
-//       isOpen: false,
-//       mode: null,
-//       testCase: null
-//     });
-//   };
-
-//   const handleModalSave = (newTestCase) => {
-//     if (modalState.mode === 'add') {
-//       const testCase = {
-//         ...newTestCase,
-//         _id: Date.now().toString(),
-//         createdBy: {
-//           name: 'Surya Prabhu T',
-//           date: new Date().toLocaleDateString('en-US', {
-//             month: 'long',
-//             day: '2-digit',
-//             year: 'numeric'
-//           })
-//         },
-//         status: 'Untested'
-//       };
-//       setTestCases([testCase, ...testCases]);
-//     }
-//     handleModalClose();
-//   };
-
-//   const filteredTestCases = Array.isArray(testCases) ? testCases.filter(testCase =>
-//     testCase.testCaseId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//     testCase.description?.toLowerCase().includes(searchTerm.toLowerCase())
-//   ) : [];
-
-//   if (loading) {
-//     return <div className="loading">Loading test cases...</div>;
-//   }
-
-//   return (
-//     <div className="testcases-container">
-//       <div className="top-section">
-//         <div className="breadcrumb-section"></div>
-//         <div className="profile-section"></div>
-//       </div>
-
-//       <div className="search-section">
-//         <div className="search-bar">
-//           <input
-//             type="text"
-//             placeholder="Search By Test Case ID"
-//             value={searchTerm}
-//             onChange={(e) => setSearchTerm(e.target.value)}
-//           />
-//         </div>
-//         <button className="add-case-btn" onClick={handleAddClick}>
-//           + Add Case
-//         </button>
-//       </div>
-
-//       <div className="testcases-table">
-//         <table>
-//           <thead>
-//             <tr>
-//               <th>Test Case ({testCases.length})</th>
-//               <th>Created By</th>
-//               <th>Tested By</th>
-//               <th>Case Type</th>
-//               <th>ExpectedResult</th>
-//               <th>Status</th>
-//               <th>Action</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {filteredTestCases.map((testCase) => (
-//               <tr key={testCase._id}>
-//                 <td>
-//                   <div className="test-case-info">
-//                     <div className="test-case-id">{testCase.testCaseId}</div>
-//                     <div className="test-case-desc">{testCase.TestCasesDescription}</div>
-//                   </div>
-//                 </td>
-//                 <td>
-//                   <div className="user-info">
-//                     <div className="name">{testCase.createdBy?.Name}</div>
-//                     <div className="date">{testCase.createdBy?.Date}</div>
-//                   </div>
-//                 </td>
-//                 <td>
-//                   <div className="user-info">
-//                     <div className="name">{testCase.testedBy?.testerName||'-'}
-//                     </div>
-//                     {testCase.testedBy?.testDate?.substring(0, 10) || ''}
-//                   </div>
-//                 </td>
-//                 <td>
-//                   <span className={`case-type-badge ${testCase.caseType?.toLowerCase()}`}>
-//                     {testCase.caseType}
-//                   </span>
-//                 </td>
-//                 <td>
-//                   {testCase.expectedResult || "No Excepted Result"}
-//                 </td>
-//                 <td>
-//                   <span className={`status-badge ${testCase.status?.toLowerCase()}`}>
-//                     {testCase.testStatus}
-//                   </span>
-//                 </td>
-//                 <td>
-//                   <div className="action-buttons">
-//                     <button className="edit-btn" title="Edit">
-//                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-//                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-//                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-//                       </svg>
-//                     </button>
-//                     <button className="view-btn" title="View" onClick={() => handleViewClick(testCase)}>
-//                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-//                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-//                         <circle cx="12" cy="12" r="3" />
-//                       </svg>
-//                     </button>
-//                   </div>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-
-//       {modalState.isOpen && (
-//         <TestCaseModal
-//           testCase={modalState.testCase}
-//           mode={modalState.mode}
-//           scenarioId={scenarioId}
-//           moduleId={moduleId}
-//           projectId={projectId}
-//           testCasei={modalState.testCase ? modalState.testCase._id : null} 
-//           onClose={handleModalClose}
-//           onSave={handleModalSave}
-//         />
-//       )}
-//     </div>
-//   );
-// };
-
-// export default TestCases;
-
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from './axios';
 import './TestCases.css';
 import './common.css';
 import TestCaseModal from './TestCaseModal';
+import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+
 const TestCases = () => {
   const { projectId, moduleId, scenarioId } = useParams();
   const navigate = useNavigate();
@@ -266,13 +14,16 @@ const TestCases = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [genId, setGenId] = useState('');
+  const [showAddRow, setShowAddRow] = useState(false);
   const [newTestCase, setNewTestCase] = useState({
-    testCaseName: '',
-    description: '',
+    testCaseId: '',
+    caseType: '',
     expectedResult: '',
-    priority: 'Medium',
-    status: 'Active'
+    testCaseData: '',
+    steps: '',
+    createdBy: { Name: 'Current User' },
+    testStatus: 'Untested'
   });
   const [viewingTestCase, setViewingTestCase] = useState(null);
   const [modalState, setModalState] = useState({
@@ -280,12 +31,15 @@ const TestCases = () => {
     mode: null, // 'view', 'edit', or 'add'
     testCase: null
   });
+  const [activeActionMenu, setActiveActionMenu] = useState(null);
+
   useEffect(() => {
     if (scenarioId) {
       fetchScenarioDetails();
       fetchTestCases();
     }
   }, [scenarioId]);
+
   const fetchScenarioDetails = async () => {
     try {
       const response = await axios.get(`getTestCase/${scenarioId}`);
@@ -296,6 +50,7 @@ const TestCases = () => {
       console.error('Error fetching scenario details:', error);
     }
   };
+
   const fetchTestCases = async () => {
     try {
         setLoading(true);
@@ -318,13 +73,16 @@ const TestCases = () => {
     } finally {
         setLoading(false);
     }
-};
+  };
+
   const handleAddTestCase = (newTestCase) => {
     setTestCases([newTestCase, ...testCases]);
   };
+
   const handleBackClick = () => {
     navigate(-1); // Goes back to scenarios
   };
+
   const handleViewClick = (testCase) => {
     setModalState({
       isOpen: true,
@@ -332,6 +90,7 @@ const TestCases = () => {
       testCase
     });
   };
+
   const handleEditClick = (testCase) => {
     setModalState({
       isOpen: true,
@@ -339,13 +98,32 @@ const TestCases = () => {
       testCase
     });
   };
-  const handleAddClick = () => {
+
+  const handleAddClick = async () => {
     setModalState({
       isOpen: true,
       mode: 'add',
       testCase: null
     });
+    console.log("Scenario");
+    console.log(scenarioId);
+    try {
+      const response = await axios.get("/getTestIds", {
+        params: {
+          scenarioId: scenarioId
+        }
+      })
+      console.log("hgcjzckhcjscj"+response.data.genSceId);
+      setGenId(response.data.genSceId);
+      console.log("genId");
+      console.log(genId);
+    }
+    catch (err) {
+      console.log(err);
+    }
   };
+
+
   const handleModalClose = () => {
     setModalState({
       isOpen: false,
@@ -353,6 +131,7 @@ const TestCases = () => {
       testCase: null
     });
   };
+
   const handleModalSave = (newTestCase) => {
     if (modalState.mode === 'add') {
       const testCase = {
@@ -372,19 +151,76 @@ const TestCases = () => {
     }
     handleModalClose();
   };
+
+  const handleActionMenuClick = (e, testCaseId) => {
+    e.stopPropagation();
+    setActiveActionMenu(activeActionMenu === testCaseId ? null : testCaseId);
+  };
+
+  const handleActionMenuItemClick = (action, testCase) => {
+    setActiveActionMenu(null); // Close the menu
+    
+    switch(action) {
+      case 'view':
+        handleViewClick(testCase);
+        break;
+      case 'edit':
+        handleEditClick(testCase);
+        break;
+      case 'remove':
+        // Add remove functionality here if needed
+        console.log('Remove test case:', testCase);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleKeyPress = async (e) => {
+    if (e.key === 'Enter') {
+      try {
+        const response = await axios.post("/createTestCase", {
+          ...newTestCase,
+          scenarioId,
+          projectId,
+          moduleId
+        });
+
+        if (response.data.msg === "TestCase Created Successfully") {
+          setTestCases([...testCases, response.data.data]);
+          setShowAddRow(false);
+          setNewTestCase({
+            testCaseId: '',
+            caseType: '',
+            expectedResult: '',
+            testCaseData: '',
+            steps: '',
+            createdBy: { Name: 'Current User' },
+            testStatus: 'Untested'
+          });
+        }
+      } catch (error) {
+        console.error('Error creating test case:', error);
+      }
+    }
+  };
+
   const filteredTestCases = Array.isArray(testCases) ? testCases.filter(testCase =>
     testCase.testCaseId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     testCase.description?.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
+
   if (loading) {
     return <div className="loading">Loading test cases...</div>;
   }
+
   return (
     <div className="testcases-container">
       <div className="top-section">
         <div className="breadcrumb-section"></div>
         <div className="profile-section"></div>
       </div>
+
       <div className="search-section">
         <div className="search-bar">
           <input
@@ -394,24 +230,90 @@ const TestCases = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button className="add-case-btn" onClick={handleAddClick}>
+        <button className="add-case-btn" onClick={() => {handleAddClick();}}>
           + Add Case
         </button>
       </div>
+
       <div className="testcases-table">
         <table>
           <thead>
             <tr>
               <th>Test Case ({testCases.length})</th>
-              <th>Created By</th>
-              <th>Tested By</th>
               <th>Case Type</th>
               <th>Expected Result</th>
+              <th>Test Case Data</th>
               <th>Status</th>
+              <th>Created By/Tested By</th>
+              <th>Steps</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
+            {showAddRow && (
+              <tr>
+                <td>
+                  <input
+                    type="text"
+                    className="input-field"
+                    placeholder="Enter Test Case ID"
+                    value={newTestCase.testCaseId}
+                    onChange={(e) => setNewTestCase({ ...newTestCase, testCaseId: e.target.value })}
+                    onKeyPress={handleKeyPress}
+                  />
+                </td>
+                <td>
+                  <select
+                    className="input-field"
+                    value={newTestCase.caseType}
+                    onChange={(e) => setNewTestCase({ ...newTestCase, caseType: e.target.value })}
+                  >
+                    <option value="">Select Case Type</option>
+                    <option value="Positive">Positive</option>
+                    <option value="Negative">Negative</option>
+                  </select>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className="input-field"
+                    placeholder="Expected Result"
+                    value={newTestCase.expectedResult}
+                    onChange={(e) => setNewTestCase({ ...newTestCase, expectedResult: e.target.value })}
+                    onKeyPress={handleKeyPress}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className="input-field"
+                    placeholder="Test Case Data"
+                    value={newTestCase.testCaseData}
+                    onChange={(e) => setNewTestCase({ ...newTestCase, testCaseData: e.target.value })}
+                    onKeyPress={handleKeyPress}
+                  />
+                </td>
+                <td>
+                  <span className="status-badge untested">Untested</span>
+                </td>
+                <td>
+                  <div className="user-info">
+                    <div className="name">Current User</div>
+                  </div>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className="input-field"
+                    placeholder="Steps"
+                    value={newTestCase.steps}
+                    onChange={(e) => setNewTestCase({ ...newTestCase, steps: e.target.value })}
+                    onKeyPress={handleKeyPress}
+                  />
+                </td>
+                <td></td>
+              </tr>
+            )}
             {filteredTestCases.map((testCase) => (
               <tr key={testCase._id}>
                 <td>
@@ -421,45 +323,52 @@ const TestCases = () => {
                   </div>
                 </td>
                 <td>
-                  <div className="user-info">
-                    <div className="name">{testCase.createdBy?.Name}</div>
-                    <div className="date">{testCase.createdBy?.Date}</div>
-                  </div>
-                </td>
-                <td>
-                  <div className="user-info">
-                    <div className="name">{testCase.testedBy?.testerName||'-'}
-                    </div>
-                    {testCase.testedBy?.testDate?.substring(0, 10) || ''}
-                  </div>
-                </td>
-                <td>
                   <span className={`case-type-badge ${testCase.caseType?.toLowerCase()}`}>
                     {testCase.caseType}
                   </span>
                 </td>
                 <td>
-                  {testCase.expectedResult || 'No Expected Result Provided'}
+                  {testCase.expectedResult || 'No Expected Result'}
                 </td>
                 <td>
-                  <span className={`status-badge ${testCase.status?.toLowerCase()}`}>
-                    {testCase.testStatus}
+                  {testCase.testCaseData || 'No Test Case Data'}
+                </td>
+                <td>
+                  <span className={`status-badge ${testCase.testStatus?.toLowerCase()}`}>
+                    {testCase.testStatus || 'Untested'}
                   </span>
                 </td>
                 <td>
+                  <div className="user-info">
+                    <div className="name">{testCase.createdBy?.Name || '-'}</div>
+                    <div className="name">{testCase.testedBy?.testerName || '-'}</div>
+                    {/* <div className="name">{testCase.testedBy?.testDate || '-'}</div> */}
+                  </div>
+                </td>
+                <td>
+                  {testCase.steps || 'No Steps Available'}
+                </td>
+                <td>
                   <div className="action-buttons">
-                    <button className="edit-btn" title="Edit">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
+                    <button 
+                      className="three-dot-menu" 
+                      onClick={(e) => handleActionMenuClick(e, testCase._id)}
+                    >
+                      ⋮
                     </button>
-                    <button className="view-btn" title="View" onClick={() => handleViewClick(testCase)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    </button>
+                    {activeActionMenu === testCase._id && (
+                      <div className="action-menu-dropdown">
+                        <button onClick={() => handleActionMenuItemClick('view', testCase)}>
+                          <FaEye className="action-icon" /> View
+                        </button>
+                        <button onClick={() => handleActionMenuItemClick('edit', testCase)}>
+                          <FaEdit className="action-icon" /> Edit
+                        </button>
+                        <button onClick={() => handleActionMenuItemClick('remove', testCase)}>
+                          <FaTrash className="action-icon" /> Remove
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -467,14 +376,17 @@ const TestCases = () => {
           </tbody>
         </table>
       </div>
+
       {modalState.isOpen && (
         <TestCaseModal
           testCase={modalState.testCase}
           mode={modalState.mode}
+          
           scenarioId={scenarioId}
           moduleId={moduleId}
           projectId={projectId}
-          testCasei={modalState.testCase ? modalState.testCase._id : null}
+          genId={genId}
+          testCasei={modalState.testCase ? modalState.testCase._id : null} 
           onClose={handleModalClose}
           onSave={handleModalSave}
         />
@@ -482,4 +394,5 @@ const TestCases = () => {
     </div>
   );
 };
+
 export default TestCases;

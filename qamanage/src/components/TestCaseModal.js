@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './TestCaseModal.css';
 import axios from "./axios";
 
-const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, testCasei,onSave, mode = 'view' }) => {
+const TestCaseModal = ({ testCase, scenarioId, onClose,genId, projectId, moduleId, testCasei,onSave, mode = 'view' }) => {
+  
   const [editedCase, setEditedCase] = useState(testCase || {
     testCaseId: '',
     caseType: '',
@@ -15,6 +16,8 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
     projectId: projectId,
     moduleId: moduleId
   });
+
+  
 
   const [newResult, setNewResult] = useState({
     testRegion: '',
@@ -51,13 +54,15 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
     });
   };
 
+  console.log(editedCase);
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(editedCase);
-
+    editedCase.testCaseId = genId;
     try {
       console.log("started creating");
       const response = await axios.post("/createTestCase", editedCase);
+      console.log(editedCase);
       console.log("From Backend: " + response.data.msg);
 
       if (response.data.msg === "TestCase Created Successfully") {
@@ -178,11 +183,8 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, projectId, moduleId, tes
                 <input
                   type="text"
                   placeholder="Enter the Test case ID"
-                  value={editedCase.testCaseId}
-                  onChange={(e) => setEditedCase({
-                    ...editedCase,
-                    testCaseId: e.target.value
-                  })}
+                  value={genId}
+                  disabled
                 />
               </div>
               <div className="form-group">

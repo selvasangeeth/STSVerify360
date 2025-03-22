@@ -1,6 +1,8 @@
 .scenarios-container {
   padding: 20px;
   background-color: #f8f9fa;
+  min-height: 100vh;
+  overflow: auto;
 }
 
 .scenarios-header {
@@ -44,39 +46,54 @@
 
 .scenarios-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background-color: white;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
+  margin-bottom: 20px;
 }
 
 .scenarios-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   background-color: #1a365d;
   color: white;
-  padding: 12px;
+  padding: 15px;
   text-align: left;
+  white-space: nowrap;
 }
 
 .scenarios-table td {
-  padding: 12px;
+  padding: 15px;
   border-bottom: 1px solid #eee;
+  background: white;
+  max-width: 300px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  vertical-align: top;
 }
 
 .scenario-info {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
 }
 
 .scenario-desc {
-  color: #666;
-  font-size: 13px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow: visible;
 }
 
 .creator-info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
 }
 
 .created-date {

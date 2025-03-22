@@ -215,5 +215,38 @@ const getTestCase = async (req, res) => {
   }
 };
 
+//Generate Id
 
-module.exports = { createTestCase, updateTestCaseStatus, getTestCase };
+const getTestIds = async (req, res) => {
+
+  try {
+    
+    const {scenarioId} = req.query;  
+    console.log("getTestid");
+    console.log(req.query);  
+
+    if (!scenarioId) {
+      return res.status(400).json({ msg: "scenarioId" });
+    }
+   
+    const scenarioidgen = await testScenarioModel.findById(scenarioId);
+    if (!scenarioidgen) {
+      return res.status(404).json({ message: "Scebario not found" });
+    }
+    const scenarioid = scenarioidgen.scenarioIdstr;
+
+
+    const TestCaseCount = await testCaseModel.countDocuments({scenarioId:scenarioId});
+
+    const result = `${scenarioid}_TC${(TestCaseCount + 1).toString().padStart(3, '0')}`;
+
+    console.log(result);
+    return res.status(200).json({ msg : "success",genSceId: result });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { createTestCase, updateTestCaseStatus, getTestCase,getTestIds };

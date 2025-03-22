@@ -2,6 +2,7 @@
   padding: 20px;
   background-color: #f8f9fa;
   min-height: 100vh;
+  overflow: auto;
 }
 
 .scenarios-header {
@@ -79,29 +80,37 @@
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  overflow: hidden;
+  overflow: visible;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background-color: #f8f9fa;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #14365d;
+  color: white;
   padding: 15px;
   text-align: left;
   font-weight: 600;
-  color: #495057;
-  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
 }
 
 td {
   padding: 15px;
   border-bottom: 1px solid #dee2e6;
+  background: white;
+  max-width: 300px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  vertical-align: top;
 }
 
 .scenario-row {
@@ -127,10 +136,11 @@ td {
 }
 
 .description-text {
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow: visible;
+  line-height: 1.5;
 }
 
 .date-text {

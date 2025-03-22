@@ -61,12 +61,39 @@ tr:nth-child(even) {
   border: none;
   cursor: pointer;
   font-size: 20px;
-} 
-.clickable-id{
+}
+
+.modules-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  max-width: 300px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  vertical-align: top;
+}
+
+.modules-table th {
+  background: #14365d;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.content-cell {
+  max-height: none;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.clickable-id {
   color: #007bff;
   cursor: pointer;
   text-decoration: underline;
 }
+
 .clickable-id:hover {
   color: #0056b3;
 }

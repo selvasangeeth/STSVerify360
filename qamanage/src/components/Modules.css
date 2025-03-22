@@ -2,6 +2,7 @@
   padding: 20px;
   background-color: #F8F9FA;
   min-height: 100vh;
+  overflow: auto;
 }
 .modules-header {
   margin-bottom: 20px;
@@ -33,40 +34,57 @@
   background-color: #0056B3;
 }
 .modules-table {
-  background-color: white;
+  background: white;
   border-radius: 8px;
+  overflow: visible;
+  margin-bottom: 20px;
+  width: 100%;
+  min-height: 200px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  overflow: hidden;
 }
 table {
   width: 100%;
-  border-collapse: collapse;
-}
-thead {
-  background-color: #F8F9FA;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #14365d;
   padding: 15px;
-  text-align: left;
+  color: white;
   font-weight: 600;
-  color: #495057;
-  border-bottom: 2px solid #DEE2E6;
+  white-space: nowrap;
 }
 td {
   padding: 15px;
   border-bottom: 1px solid #DEE2E6;
+  background: white;
+  max-width: 300px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  vertical-align: top;
+}
+.content-cell {
+  max-height: none;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 .module-name {
   color: #007BFF;
-  text-decoration: underline;
   cursor: pointer;
+}
+.module-name:hover {
+  text-decoration: underline;
 }
 .module-row {
   cursor: pointer;
   transition: background-color 0.2s;
 }
 .module-row:hover {
-  background-color: #F8F9FA;
+  background-color: #f8f9fa;
 }
 .id-text {
   color: #6C757D;
@@ -174,11 +192,30 @@ td {
   color: white;
   cursor: pointer;
 }
-.input-.input-field {
+.input-field {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+}
+/* Style for the editing row */
+tr.editing {
+  background-color: #f8f9fa;
+}
+tr.editing td {
+  padding: 8px;
+}
+/* Make input fields take full width of their cells */
+td .input-field {
+  width: calc(100% - 16px);
+  margin: 0;
 }
 .text-ellipsis {
   white-space: nowrap;
@@ -229,4 +266,11 @@ td {
     width: 95%;
     padding: 15px;
   }
+}
+/* Remove the no-modules related styles */
+.no-modules-container,
+.no-modules-content,
+.no-modules-icon,
+.create-module-btn {
+  display: none;
 }
