@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import EditModuleModal from './EditModuleModal'; // Import the EditModuleModal component
+import Pagination from './Pagination/Pagination'; // Import Pagination component
 
 const Modules = ({ selectedProject }) => {
   const navigate = useNavigate();
@@ -27,6 +28,10 @@ const Modules = ({ selectedProject }) => {
   const [selectedModule, setSelectedModule] = useState(null);
   const actionMenuRef = useRef(null);
   const [editingModule, setEditingModule] = useState(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [modulesPerPage, setModulesPerPage] = useState(10);
 
   useEffect(() => {
     if (selectedProject) {
@@ -145,6 +150,12 @@ const Modules = ({ selectedProject }) => {
     module.subModuleName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Pagination logic
+  const indexOfLastModule = currentPage * modulesPerPage;
+  const indexOfFirstModule = indexOfLastModule - modulesPerPage;
+  const currentModules = filteredModules.slice(indexOfFirstModule, indexOfLastModule);
+  const totalPages = Math.ceil(filteredModules.length / modulesPerPage);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
@@ -247,7 +258,7 @@ const Modules = ({ selectedProject }) => {
                 </td>
               </tr>
             )}
-            {filteredModules.map((module) => (
+            {currentModules.map((module) => (
               <tr key={module._id} className="module-row">
                 <td>
                   {editingModule?._id === module._id ? (
@@ -317,6 +328,13 @@ const Modules = ({ selectedProject }) => {
           </tbody>
         </table>
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        rowsPerPage={modulesPerPage}
+        onRowsPerPageChange={setModulesPerPage}
+      />
       <ToastContainer/>
       {showEditModal && (
         <EditModuleModal

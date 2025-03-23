@@ -5,6 +5,7 @@ import './TestCases.css';
 import './common.css';
 import TestCaseModal from './TestCaseModal';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import Pagination from './Pagination/Pagination'; // Import Pagination component
 
 const TestCases = () => {
   const { projectId, moduleId, scenarioId } = useParams();
@@ -32,6 +33,10 @@ const TestCases = () => {
     testCase: null
   });
   const [activeActionMenu, setActiveActionMenu] = useState(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [testCasesPerPage, setTestCasesPerPage] = useState(10);
 
   useEffect(() => {
     if (scenarioId) {
@@ -210,6 +215,12 @@ const TestCases = () => {
     testCase.description?.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
 
+  // Pagination logic
+  const indexOfLastTestCase = currentPage * testCasesPerPage;
+  const indexOfFirstTestCase = indexOfLastTestCase - testCasesPerPage;
+  const currentTestCases = filteredTestCases.slice(indexOfFirstTestCase, indexOfLastTestCase);
+  const totalPages = Math.ceil(filteredTestCases.length / testCasesPerPage);
+
   if (loading) {
     return <div className="loading">Loading test cases...</div>;
   }
@@ -314,7 +325,7 @@ const TestCases = () => {
                 <td></td>
               </tr>
             )}
-            {filteredTestCases.map((testCase) => (
+            {currentTestCases.map((testCase) => (
               <tr key={testCase._id}>
                 <td>
                   <div className="test-case-info">
@@ -376,6 +387,14 @@ const TestCases = () => {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        rowsPerPage={testCasesPerPage}
+        onRowsPerPageChange={setTestCasesPerPage}
+      />
 
       {modalState.isOpen && (
         <TestCaseModal

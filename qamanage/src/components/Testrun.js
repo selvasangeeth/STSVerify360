@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from './axios'; // Make sure to import axios
 import './Testrun.css';
+import Pagination from './Pagination/Pagination'; // Import Pagination component
 
 const Modal = ({ onClose, children }) => {
   return (
@@ -29,6 +30,10 @@ const Testrun = ({ selectedProject }) => {
   const [customDate, setCustomDate] = useState(null);
   const [testRunsData, setTestRunsData] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [testRunsPerPage, setTestRunsPerPage] = useState(10);
 
   useEffect(() => {
     if (selectedProject) {
@@ -72,6 +77,12 @@ const Testrun = ({ selectedProject }) => {
       test.taskId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       test.subTaskId.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination logic
+  const indexOfLastTestRun = currentPage * testRunsPerPage;
+  const indexOfFirstTestRun = indexOfLastTestRun - testRunsPerPage;
+  const currentTestRuns = filteredData.slice(indexOfFirstTestRun, indexOfLastTestRun);
+  const totalPages = Math.ceil(filteredData.length / testRunsPerPage);
 
   return (
     <div className="test-runs-container">
@@ -122,8 +133,8 @@ const Testrun = ({ selectedProject }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((test, index) => (
+          {currentTestRuns.length > 0 ? (
+            currentTestRuns.map((test, index) => (
               <tr key={index}>
                 <td>{new Date(test.timestamp).toLocaleString()}</td>
                 <td>{test.testScenario}</td>
@@ -144,6 +155,15 @@ const Testrun = ({ selectedProject }) => {
           )}
         </tbody>
       </table>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        rowsPerPage={testRunsPerPage}
+        onRowsPerPageChange={setTestRunsPerPage}
+      />
+
       {showModal && selectedTest && (
         <Modal onClose={() => setShowModal(false)}>
           <div className="test-case-details">

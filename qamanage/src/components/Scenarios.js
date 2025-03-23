@@ -4,7 +4,7 @@ import axios from './axios';
 import './Scenarios.css';
 import './common.css';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-
+import Pagination from './Pagination/Pagination'; // Import Pagination component
 
 const Scenarios = () => {
   const { moduleId, projectId } = useParams();
@@ -18,7 +18,7 @@ const Scenarios = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState(null);
-  const [genId,setGenId] = useState("");
+  const [genId, setGenId] = useState("");
   const [newScenario, setNewScenario] = useState({
     scenarioIdstr: '',
     description: '',
@@ -26,6 +26,10 @@ const Scenarios = () => {
     subTaskId: '',
     projectId: projectId
   });
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [scenariosPerPage, setScenariosPerPage] = useState(10);
 
   useEffect(() => {
     console.log('Current moduleId:', moduleId);
@@ -147,7 +151,7 @@ const Scenarios = () => {
     } catch (error) {
         setError('Error removing scenario. Please try again.');
     }
-};
+  };
 
   const handleScenarioClick = (scenarioId, projectId, moduleId) => {
     try {
@@ -190,12 +194,19 @@ const Scenarios = () => {
       console.log("Error fetching IDs:", err);
     }
   };
+
   const filteredScenarios = scenarios.filter(scenario =>
     scenario.scenarioIdstr.includes(searchTerm) ||
     scenario.description.includes(searchTerm) ||
     scenario.taskId.includes(searchTerm) ||
     scenario.subTaskId.includes(searchTerm)
   );
+
+  // Pagination logic
+  const indexOfLastScenario = currentPage * scenariosPerPage;
+  const indexOfFirstScenario = indexOfLastScenario - scenariosPerPage;
+  const currentScenarios = filteredScenarios.slice(indexOfFirstScenario, indexOfLastScenario);
+  const totalPages = Math.ceil(filteredScenarios.length / scenariosPerPage);
 
   if (loading) {
     return <div className="loading">Loading scenarios...</div>;
@@ -223,19 +234,18 @@ const Scenarios = () => {
           />
         </div>
         <div className="button-container">
-  <button 
-    className="add-button" 
-    onClick={() => { 
-      setShowAddInput(true); 
-      handleGetIds(); 
-    }}>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-    Add Scenario
-  </button>
-</div>
-
+          <button 
+            className="add-button" 
+            onClick={() => { 
+              setShowAddInput(true); 
+              handleGetIds(); 
+            }}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Add Scenario
+          </button>
+        </div>
       </div>
 
       <div className="scenarios-table">
@@ -252,7 +262,7 @@ const Scenarios = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredScenarios.map((scenario) => (
+            {currentScenarios.map((scenario) => (
               <tr key={scenario._id} className="scenario-row">
                 <td>
                   <span
@@ -347,6 +357,14 @@ const Scenarios = () => {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        rowsPerPage={scenariosPerPage}
+        onRowsPerPageChange={setScenariosPerPage}
+      />
 
       {showEditModal && (
         <div className="modal-overlay">
