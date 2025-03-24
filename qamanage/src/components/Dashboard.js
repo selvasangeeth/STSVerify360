@@ -11,6 +11,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import logo from "../Assets/logo.ico";
 import { FaAlignJustify, FaEdit, FaTrash } from 'react-icons/fa';
+import QuoteDisplay from './QuoteDisplay';
+
 
 const DEFAULT_QUICK_LINKS = [
   {

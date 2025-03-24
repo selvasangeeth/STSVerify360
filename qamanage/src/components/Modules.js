@@ -8,6 +8,7 @@ import "react-toastify/ReactToastify.css";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import EditModuleModal from './EditModuleModal'; // Import the EditModuleModal component
 import Pagination from './Pagination/Pagination'; // Import Pagination component
+import QuoteDisplay from './QuoteDisplay';
 
 const Modules = ({ selectedProject }) => {
   const navigate = useNavigate();
@@ -189,7 +190,7 @@ const Modules = ({ selectedProject }) => {
   if (loading) return <div className="loading">Loading modules...</div>;
 
   if (!selectedProject) {
-    return <div>Please select a project to view modules.</div>;
+    return <QuoteDisplay />;
   }
 
   return (
