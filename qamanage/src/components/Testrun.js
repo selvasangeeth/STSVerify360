@@ -5,7 +5,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from './axios'; // Make sure to import axios
 import './Testrun.css';
 import Pagination from './Pagination/Pagination'; // Import Pagination component
-
 const Modal = ({ onClose, children }) => {
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -18,23 +17,19 @@ const Modal = ({ onClose, children }) => {
     </div>
   );
 };
-
 export { Modal };
-
 const Testrun = ({ selectedProject }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [testRegion, setTestRegion] = useState("Test Region");
   const [testStatus, setTestStatus] = useState("All Statuses");
   const [timePeriod, setTimePeriod] = useState("This Month");
   const [showModal, setShowModal] = useState(false);
-  const [customDate, setCustomDate] = useState(null); // Store only a single selected date
+  const [customDate, setCustomDate] = useState(null);
   const [testRunsData, setTestRunsData] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
-
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [testRunsPerPage, setTestRunsPerPage] = useState(10);
-
   useEffect(() => {
     if (selectedProject) {
       console.log("Selected Project ID:", selectedProject.projectId);
@@ -53,63 +48,31 @@ const Testrun = ({ selectedProject }) => {
         });
     }
   }, [selectedProject]);
-
   const handleTimePeriodChange = (e) => {
     const value = e.target.value;
     setTimePeriod(value);
     if (value === "Custom") {
-      setCustomDate(null); // Reset custom date when switching
+      setShowModal(true);
     }
   };
-
   const handleDateChange = (date) => {
-    // If a date is selected, update customDate and apply the filter for that date
     setCustomDate(date);
+    setShowModal(false);
   };
-
   const handleEyeClick = (test) => {
     setSelectedTest(test);
     setShowModal(true);
   };
-
-  const filteredData = (Array.isArray(testRunsData) ? testRunsData : []).filter((test) => {
-    // Date filtering logic
-    const testDate = new Date(test.timestamp);
-
-    let isWithinTimePeriod = true;
-
-    if (timePeriod === "This Month") {
-      const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-      isWithinTimePeriod = testDate >= startOfMonth;
-    } else if (timePeriod === "Last Month") {
-      const startOfLastMonth = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
-      const endOfLastMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
-      isWithinTimePeriod = testDate >= startOfLastMonth && testDate <= endOfLastMonth;
-    } else if (timePeriod === "Last 3 Months") {
-      const startOf3MonthsAgo = new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1);
-      isWithinTimePeriod = testDate >= startOf3MonthsAgo;
-    }
-
-    // Custom date filtering - Single date selection
-    if (timePeriod === "Custom" && customDate) {
-      isWithinTimePeriod = testDate.toDateString() === customDate.toDateString();
-    }
-
-    // General search term filtering
-    const isMatchingSearchTerm =
+  const filteredData = (Array.isArray(testRunsData) ? testRunsData : []).filter(
+    (test) =>
       test.taskId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      test.subTaskId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      test.testCaseName.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return isWithinTimePeriod && isMatchingSearchTerm;
-  });
-
+      test.subTaskId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   // Pagination logic
   const indexOfLastTestRun = currentPage * testRunsPerPage;
   const indexOfFirstTestRun = indexOfLastTestRun - testRunsPerPage;
   const currentTestRuns = filteredData.slice(indexOfFirstTestRun, indexOfLastTestRun);
   const totalPages = Math.ceil(filteredData.length / testRunsPerPage);
-
   return (
     <div className="test-runs-container">
       <h1>Test Runs for {selectedProject ? selectedProject.projectName : "Select a Project"}</h1>
@@ -145,19 +108,6 @@ const Testrun = ({ selectedProject }) => {
           </select>
         </div>
       </div>
-
-      {timePeriod === "Custom" && (
-        <div className="custom-date-picker">
-          <DatePicker
-            selected={customDate}
-            onChange={handleDateChange} // Update the selected custom date
-            inline
-            shouldCloseOnSelect={true} // Close the date picker after selecting a date
-            highlightDates={customDate ? [customDate] : []} // Ensure it's always an array
-          />
-        </div>
-      )}
-
       <table className="test-runs-table">
         <thead>
           <tr>
@@ -194,7 +144,6 @@ const Testrun = ({ selectedProject }) => {
           )}
         </tbody>
       </table>
-
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -202,17 +151,125 @@ const Testrun = ({ selectedProject }) => {
         rowsPerPage={testRunsPerPage}
         onRowsPerPageChange={setTestRunsPerPage}
       />
-
       {showModal && selectedTest && (
         <Modal onClose={() => setShowModal(false)}>
           <div className="test-case-details">
             <h2>Test Case Details</h2>
-            {/* Display selected test case details here */}
+            <div className="detail-row">
+              <span className="label">Test Case ID</span>
+              <span className="value">{selectedTest.testCaseName}</span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Test Case Type</span>
+              <span className="value">
+                <span className="test-status pass">{selectedTest.caseType}</span>
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Created By</span>
+              <span className="value">{selectedTest.testCaseCreatedBy}</span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Created At</span>
+              <span className="value">{new Date(selectedTest.testCaseCreatedAt).toLocaleString()}</span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Test Case Description</span>
+              <span className="value">{selectedTest.testDescription}</span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Expected Result</span>
+              <span className="value">{selectedTest.expectedResult}</span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Test Case Data</span>
+              <span className="value">{selectedTest.testCaseData}</span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Steps</span>
+              <span className="value">{selectedTest.steps}</span>
+            </div>
+            <div className="result-section">
+              <h3>Result</h3>
+              <div className="detail-row">
+                <span className="label">Tested By</span>
+                <span className="value">{selectedTest.testedBy}</span>
+              </div>
+              <div className="detail-row">
+                <span className="label">Tested On</span>
+                <span className="value">{new Date(selectedTest.timestamp).toLocaleString()}</span>
+              </div>
+              <div className="detail-row">
+                <span className="label">Test Region</span>
+                <span className="value">
+                  <span className="test-status live">{selectedTest.testRegion}</span>
+                </span>
+              </div>
+              <div className="detail-row">
+                <span className="label">Test Status</span>
+                <span className="value">
+                  <span className={`test-status ${selectedTest.testStatus?.toLowerCase()}`}>
+                    {selectedTest.testStatus}
+                  </span>
+                </span>
+              </div>
+              <div className="detail-row">
+                <span className="label">Comments</span>
+                <span className="value">{selectedTest.comments}</span>
+              </div>
+              <div className="detail-row">
+                <span className="label">Bug Reference ID</span>
+                <span className="value">{selectedTest.bugReferenceId}</span>
+              </div>
+              {selectedTest.reference.startsWith('/9j/') ? (
+                <img
+                  src={`data:image/jpeg;base64,${selectedTest.reference}`}
+                  alt="Test reference"
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              ) : selectedTest.reference.startsWith('iVBORw0KGgo') ? (
+                <img
+                  src={`data:image/png;base64,${selectedTest.reference}`}
+                  alt="Test reference"
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              ) : selectedTest.reference.startsWith('R0lG') ? (
+                <img
+                  src={`data:image/gif;base64,${selectedTest.reference}`}
+                  alt="Test reference"
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              ) : selectedTest.reference.startsWith('AAAB') ? ( // Example prefix for base64-encoded audio/video (MP4, WebM, etc.)
+                <video controls style={{ width: '100%' }}>
+                  <source
+                    src={`data:video/mp4;base64,${selectedTest.reference}`}
+                    type="video/mp4"
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <p>Unsupported media type</p>
+              )}
+              <div className="detail-row">
+                <span className="label">Bug Priority</span>
+                <span className="value">
+                  <span className="test-status fail">{selectedTest.bugPriority}</span>
+                </span>
+              </div>
+            </div>
           </div>
         </Modal>
       )}
     </div>
   );
 };
-
 export default Testrun;
+
+
+
+
+
+
+
+
+

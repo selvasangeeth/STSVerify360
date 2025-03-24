@@ -168,22 +168,26 @@ const Metrics = ({ selectedProject }) => {
         </div>
       </div>
       <div className="filters">
-        <select onChange={(e) => setSelectedModule(e.target.value)} value={selectedModule}>
-          <option value="">Select Module</option>
-          {modules.map((module) => (
-            <option key={module._id} value={module._id}>
-              {module.moduleName}
-            </option>
-          ))}
-        </select>
-        <select onChange={(e) => setSelectedScenario(e.target.value)} value={selectedScenario}>
-          <option value="">Select Scenario</option>
-          {scenarios.map((scenario) => (
-            <option key={scenario._id} value={scenario._id}>
-              {scenario.scenarioIdstr}
-            </option>
-          ))}
-        </select>
+        <div className="dropdown">
+          <select onChange={(e) => setSelectedModule(e.target.value)} value={selectedModule}>
+            <option value="">Select Module</option>
+            {modules.map((module) => (
+              <option key={module._id} value={module._id}>
+                {module.moduleName}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="dropdown">
+          <select onChange={(e) => setSelectedScenario(e.target.value)} value={selectedScenario}>
+            <option value="">Select Scenario</option>
+            {scenarios.map((scenario) => (
+              <option key={scenario._id} value={scenario._id}>
+                {scenario.scenarioIdstr}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       {renderContent()}
     </div>
