@@ -52,7 +52,7 @@ function App() {
               <AddAdmin />
             </ProtectedRoute>
           } />
-          <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><LogList /></Dashboard>} />
+          <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><LogList selectedProject={selectedProject} /></Dashboard>} />
           <Route path="/testrun" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Testrun selectedProject={selectedProject} /></Dashboard>} />
           <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Metrics selectedProject={selectedProject} /></Dashboard>} />
           <Route path="/testers" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Testers selectedProject={selectedProject} /></Dashboard>} /> {/* Add the Testers route */}

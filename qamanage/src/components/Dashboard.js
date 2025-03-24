@@ -363,7 +363,7 @@ projects.map((project) => (
           </div>
           <div 
             className={`nav-item ${activeTab === '/activity' ? 'active' : ''}`}
-            onClick={handleActivityClick} // Update to handle click
+            onClick={()=>handleNavClick('/activity')} // Update to handle click
             style={{ backgroundColor: activeTab === '/activity' ? '#be5133' : '' }}
           >
             <span className="nav-icon">📝</span>
