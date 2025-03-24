@@ -13,7 +13,6 @@ import logo from "../Assets/logo.ico";
 import { FaAlignJustify, FaEdit, FaTrash } from 'react-icons/fa';
 import QuoteDisplay from './QuoteDisplay';
 
-
 const DEFAULT_QUICK_LINKS = [
   {
     name: 'Data Quality Standards',
@@ -94,6 +93,14 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     };
 
     fetchProjects(); // Call the function when the component is mounted
+
+    // Check if there's a selected project in local storage
+    const storedProject = localStorage.getItem('selectedProject');
+    if (storedProject) {
+      const project = JSON.parse(storedProject);
+      onProjectSelect(project);
+      fetchModules(project.projectId);
+    }
   }, []);
 
   const fetchModules = async (projectId) => {
@@ -141,6 +148,8 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     fetchModules(project.projectId); // Fetch modules for the selected project
     setActiveTab('/modules'); // Set active tab to modules
     navigate(`/modules?projectId=${project.projectId}`);
+    // Save the selected project to local storage
+    localStorage.setItem('selectedProject', JSON.stringify(project));
   };
 
   const handleNavClick = (tab) => {
@@ -257,20 +266,20 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
 
         {/* Project Dropdown */}
         <div className="project-dropdown-container">
-      <div className="project-header">
-        <span
-          className="select-project"
-          onClick={() => setShowDropdown(!showDropdown)}
-        >
-          {selectedProject ? selectedProject.projectName : "Select Project"}
-        </span>
-        <button
-          className="dropdown-button"
-          onClick={() => setShowDropdown(!showDropdown)}
-        >
-          ▼
-        </button>
-      </div>
+          <div className="project-header">
+            <span
+              className="select-project"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              {selectedProject ? selectedProject.projectName : "Select Project"}
+            </span>
+            <button
+              className="dropdown-button"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              ▼
+            </button>
+          </div>
           {showDropdown && (
             <div className="project-dropdown">
               <button 
@@ -280,49 +289,43 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
                 + Add Project
               </button>
               <div className="projects-list">
-              {projects && projects.length > 0 ? (
-projects.map((project) => (
-<div 
-  key={project._id} 
-  className="project-item"
-  onClick={() => handleProjectSelect(project)} 
->
-  <div className="project-details">
-  {project.projectLogo && (
-<img
-  src={`data:image/jpeg;base64,${project.projectLogo}`}
-  alt={project.projectName}  
-  style={{
-    width: '40px',  
-    height: '40px',  
-    objectFit: 'contain', 
-    
-  }}
-/>
-)}
-
-{/* Display the project name */}
-<span
-  style={{
-    fontSize: '14px',
-    fontWeight: 'bold',  
-    top: '-15px',
-    position: 'relative',  
-    
-  }}
->
-  {project.projectName}
-</span>
-
-      
-  </div>
-</div>
-))
-) : (
-<p>No projects available</p> // Fallback message if there are no projects
-)}
-
-</div>
+                {projects && projects.length > 0 ? (
+                  projects.map((project) => (
+                    <div 
+                      key={project._id} 
+                      className="project-item"
+                      onClick={() => handleProjectSelect(project)} 
+                    >
+                      <div className="project-details">
+                        {project.projectLogo && (
+                          <img
+                            src={`data:image/jpeg;base64,${project.projectLogo}`}
+                            alt={project.projectName}  
+                            style={{
+                              width: '40px',  
+                              height: '40px',  
+                              objectFit: 'contain', 
+                            }}
+                          />
+                        )}
+                        {/* Display the project name */}
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: 'bold',  
+                            top: '-15px',
+                            position: 'relative',  
+                          }}
+                        >
+                          {project.projectName}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No projects available</p> // Fallback message if there are no projects
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -433,24 +436,22 @@ projects.map((project) => (
                   required
                 />
               </div>
-<div className="form-group">
-<label>Project Logo</label>
-<div className="file-input">
-<input
-type="file"
-accept="image/*"
-onChange={loadFile} // Use the loadFile function to handle the file
-/>
-{newProject.logo && (
-<div className="project-item">
-<img src={URL.createObjectURL(newProject.logo)} alt="Project Logo" />
-<span className="project-name">{newProject.projectName || "Project Name"}</span>
-</div>
-)}
-</div>
-</div>
-
-
+              <div className="form-group">
+                <label>Project Logo</label>
+                <div className="file-input">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={loadFile} // Use the loadFile function to handle the file
+                  />
+                  {newProject.logo && (
+                    <div className="project-item">
+                      <img src={URL.createObjectURL(newProject.logo)} alt="Project Logo" />
+                      <span className="project-name">{newProject.projectName || "Project Name"}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="modal-actions">
                 <button 
                   type="button" 
@@ -467,7 +468,7 @@ onChange={loadFile} // Use the loadFile function to handle the file
           </div>
         </div>
       )}
-<ToastContainer/>
+      <ToastContainer/>
       {/* Add Module Modal */}
       {showAddModuleModal && (
         <AddModuleModal
@@ -517,154 +518,121 @@ onChange={loadFile} // Use the loadFile function to handle the file
           </div>
         </div>
       )}
-
       {showEditQuickLinkModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Edit Document</h2>
-            <form onSubmit={handleEditQuickLink}>
-              <div className="form-group">
-                <label>Document Name</label>
-                <input
-                  type="text"
-                  value={newQuickLink.name}
-                  onChange={(e) => setNewQuickLink({ ...newQuickLink, name: e.target.value })}
-                  placeholder="Enter the document name"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Enter Document Link</label>
-                <input
-                  type="url"
-                  value={newQuickLink.url}
-                  onChange={(e) => setNewQuickLink({ ...newQuickLink, url: e.target.value })}
-                  placeholder="Enter the document link"
-                  required
-                />
-              </div>
-              <div className="modal-actions">
-                <button 
-                  type="button" 
-                  onClick={() => setShowEditQuickLinkModal(false)}
-                  className="cancel-btn"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="submit-btn">
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Edit Document</h2>
+      <form onSubmit={handleEditQuickLink}>
+        <div className="form-group">
+          <label>Document Name</label>
+          <input
+            type="text"
+            value={newQuickLink.name}
+            onChange={(e) => setNewQuickLink({ ...newQuickLink, name: e.target.value })}
+            required
+          />
         </div>
-      )}
-
-      {showRemoveQuickLinkModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Confirm Remove Document</h2>
-            <p>Are you sure you want to remove this document named <strong>{selectedQuickLink.name}</strong>?</p>
-            <p>This action cannot be undone.</p>
-            <div className="modal-actions">
-              <button 
-                type="button" 
-                onClick={() => setShowRemoveQuickLinkModal(false)}
-                className="cancel-btn"
-              >
-                Cancel
-              </button>
-              <button 
-                type="button" 
-                onClick={handleRemoveQuickLink}
-                className="remove-btn"
-              >
-                Remove
-              </button>
-            </div>
-          </div>
+        <div className="form-group">
+          <label>Document URL</label>
+          <input
+            type="url"
+            value={newQuickLink.url}
+            onChange={(e) => setNewQuickLink({ ...newQuickLink, url: e.target.value })}
+            required
+          />
         </div>
-      )}
-
-      {showRemoveConfirmModal && (
-        <div className="modal-overlay">
-          <div className="modal-content remove-confirm-modal">
-            <h2>
-              <span className="warning-icon">⚠️</span>
-              Confirm Remove Document
-            </h2>
-            <p>Are you sure you want to remove this document named</p>
-            <p className="document-name">{quickLinks[linkToRemove]?.name}?</p>
-            <p className="warning-text">This action cannot be undone.</p>
-            <div className="modal-actions">
-              <button 
-                className="cancel-btn"
-                onClick={() => setShowRemoveConfirmModal(false)}
-              >
-                Cancel
-              </button>
-              <button 
-                className="remove-btn"
-                onClick={confirmRemoveLink}
-              >
-                Remove
-              </button>
-            </div>
-          </div>
+        <div className="modal-actions">
+          <button 
+            type="button" 
+            onClick={() => setShowEditQuickLinkModal(false)}
+            className="cancel-btn"
+          >
+            Cancel
+          </button>
+          <button type="submit" className="submit-btn">
+            Save Changes
+          </button>
         </div>
-      )}
-
-      {showEditModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Edit Quick Link</h2>
-            <form onSubmit={handleEditSubmit}>
-              <div className="form-group">
-                <label>Link Name</label>
-                <input
-                  type="text"
-                  value={editFormData.name}
-                  onChange={(e) => setEditFormData({
-                    ...editFormData,
-                    name: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Link URL</label>
-                <input
-                  type="url"
-                  value={editFormData.url}
-                  onChange={(e) => setEditFormData({
-                    ...editFormData,
-                    url: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="modal-actions">
-                <button 
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowEditModal(false)}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="submit-btn"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-      
+      </form>
     </div>
-  );
+  </div>
+)}
+
+{showRemoveConfirmModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Confirm Removal</h2>
+      <p>Are you sure you want to remove this quick link?</p>
+      <div className="modal-actions">
+        <button 
+          type="button" 
+          onClick={() => setShowRemoveConfirmModal(false)}
+          className="cancel-btn"
+        >
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          onClick={confirmRemoveLink}
+          className="submit-btn"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{showEditModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Edit Quick Link</h2>
+      <form onSubmit={handleEditSubmit}>
+        <div className="form-group">
+          <label>Link Name</label>
+          <input
+            type="text"
+            value={editFormData.name}
+            onChange={(e) => setEditFormData({
+              ...editFormData,
+              name: e.target.value
+            })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Link URL</label>
+          <input
+            type="url"
+            value={editFormData.url}
+            onChange={(e) => setEditFormData({
+              ...editFormData,
+              url: e.target.value
+            })}
+            required
+          />
+        </div>
+        <div className="modal-actions">
+          <button 
+            type="button"
+            className="cancel-btn"
+            onClick={() => setShowEditModal(false)}
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            className="submit-btn"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+</div>
+);
 };
 
 export default Dashboard;
