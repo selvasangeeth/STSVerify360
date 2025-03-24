@@ -121,7 +121,7 @@ function App() {
           <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><LogList /></Dashboard>} />
           {/* Pass the selectedProject prop to the Testrun component */}
           <Route path="/testrun" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Testrun selectedProject={selectedProject} /></Dashboard>} />
-          <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Metrics /></Dashboard>} />
+          <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Metrics selectedProject={selectedProject} /></Dashboard>} />
         </Routes>
       </Router>
     </Provider>

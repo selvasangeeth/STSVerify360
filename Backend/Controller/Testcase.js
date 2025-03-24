@@ -222,8 +222,6 @@ const getTestIds = async (req, res) => {
   try {
     
     const {scenarioId} = req.query;  
-    console.log("getTestid");
-    console.log(req.query);  
 
     if (!scenarioId) {
       return res.status(400).json({ msg: "scenarioId" });
@@ -240,7 +238,7 @@ const getTestIds = async (req, res) => {
 
     const result = `${scenarioid}_TC${(TestCaseCount + 1).toString().padStart(3, '0')}`;
 
-    console.log(result);
+    // console.log(result);
     return res.status(200).json({ msg : "success",genSceId: result });
 
   } catch (error) {

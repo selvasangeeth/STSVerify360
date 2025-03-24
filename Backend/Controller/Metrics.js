@@ -15,7 +15,7 @@ const getMetricsModules = async (req, res) => {
   }
 };
 
-// Get all scenarios for a specific module
+
 const getMetricsScenario = async (req, res) => {
   try {
     const scenarios = await Scenario.find({ module: req.params.moduleId }).select("scenarioIdstr _id");
@@ -25,7 +25,7 @@ const getMetricsScenario = async (req, res) => {
   }
 };
 
-// Get test case status for a specific scenario
+
 const  getMetricsTestCase = async (req, res) => {
   try {
     const testCases = await TestCase.find({ scenarioId: req.params.scenarioId }).select("testStatus");
@@ -35,11 +35,45 @@ const  getMetricsTestCase = async (req, res) => {
       untested: 0
     };
 
-    // Count the number of passed, failed, and untested test cases
+  
     testCases.forEach(testCase => {
-      if (testCase.testStatus === "Passed") {
+      if (testCase.testStatus === "Pass") {
         statusCount.passed++;
-      } else if (testCase.testStatus === "Failed") {
+      } else if (testCase.testStatus === "Fail") {
+        statusCount.failed++;
+      } else {
+        statusCount.untested++;
+      }
+    });
+
+    // console.log(statusCount);
+    res.status(200).json(statusCount);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+
+// get status for whole module 
+const getMetricsTestCaseByModule = async (req, res) => {
+  try {
+
+    const scenarios = await Scenario.find({ module: req.params.moduleId }).select("_id");
+
+   
+    const testCases = await TestCase.find({ scenarioId: { $in: scenarios.map(scenario => scenario._id) } }).select("testStatus");
+
+    const statusCount = {
+      passed: 0,
+      failed: 0,
+      untested: 0
+    };
+
+   
+    testCases.forEach(testCase => {
+      if (testCase.testStatus === "Pass") {
+        statusCount.passed++;
+      } else if (testCase.testStatus === "Fail") {
         statusCount.failed++;
       } else {
         statusCount.untested++;
@@ -52,4 +86,4 @@ const  getMetricsTestCase = async (req, res) => {
   }
 };
 
-module.exports = { getMetricsModules,getMetricsScenario,getMetricsTestCase };
+module.exports = { getMetricsModules,getMetricsScenario,getMetricsTestCase,getMetricsTestCaseByModule };

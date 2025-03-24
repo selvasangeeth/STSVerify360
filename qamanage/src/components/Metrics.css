@@ -264,7 +264,7 @@
 }
 
 .pie-container {
-  width: 300px;
+  width: 300px;  /* Medium size of pie chart */
   height: 300px;
   margin: 0 auto;
   position: relative;
@@ -330,4 +330,21 @@
   padding: 0 150px 0 150px;
   color: #666;
   font-size: 12px;
-} 
+}
+
+.test-case-stats {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.test-case-stats div {
+  margin: 0 10px;
+  color: #333;
+}
+
+.test-case-stats span {
+  font-weight: bold;
+  color: #007bff;
+}
