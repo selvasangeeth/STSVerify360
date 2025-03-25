@@ -5,6 +5,8 @@ import './Scenarios.css';
 import './common.css';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import Pagination from './Pagination/Pagination'; // Import Pagination component
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.css";
 
 const Scenarios = () => {
   const { moduleId, projectId } = useParams();
@@ -102,6 +104,7 @@ const Scenarios = () => {
           taskId: '',
           subTaskId: '',
         });
+        toast.success("Scenario added successfully");
       } else {
         setError(response.data.message);
       }
@@ -122,6 +125,7 @@ const Scenarios = () => {
       if (response.data.msg === "Scenario Updated Successfully") {
         setScenarios(scenarios.map(scenario => scenario._id === selectedScenario._id ? response.data.data : scenario));
         setShowEditModal(false);
+        toast.success("Scenario updated successfully");
       } else {
         setError(response.data.message);
       }
@@ -148,8 +152,10 @@ const Scenarios = () => {
         console.log(response.data.msg);
         setScenarios(scenarios.filter(scenario => scenario._id !== selectedScenario._id));
         setShowRemoveModal(false);
+        toast.success("Scenario removed successfully");
     } catch (error) {
         setError('Error removing scenario. Please try again.');
+        toast.error('Error removing scenario');
     }
   };
 
@@ -208,6 +214,17 @@ const Scenarios = () => {
   const currentScenarios = filteredScenarios.slice(indexOfFirstScenario, indexOfLastScenario);
   const totalPages = Math.ceil(filteredScenarios.length / scenariosPerPage);
 
+  const handleCancelAdd = () => {
+    setShowAddInput(false);
+    setNewScenario({
+      scenarioIdstr: '',
+      description: '',
+      taskId: '',
+      subTaskId: '',
+      projectId: projectId
+    });
+  };
+
   if (loading) {
     return <div className="loading">Loading scenarios...</div>;
   }
@@ -262,42 +279,6 @@ const Scenarios = () => {
             </tr>
           </thead>
           <tbody>
-            {currentScenarios.map((scenario) => (
-              <tr key={scenario._id} className="scenario-row">
-                <td>
-                  <span
-                    className="clickable-id"
-                    onClick={() => handleScenarioClick(scenario._id, projectId, moduleId)}
-                  >
-                    {scenario.scenarioIdstr}
-                  </span>
-                </td>
-                <td>{scenario.taskId}</td>
-                <td>{scenario.subTaskId}</td>
-                <td>
-                  <div className="description-text">{scenario.scenarioDescription}</div>
-                </td>
-                <td>
-                  <div className="date-text">
-                    {new Date(scenario.timestamp).toLocaleDateString()}
-                  </div>
-                </td>
-                <td>{scenario.testCaseCount || 0}</td>
-                <td>
-                  <button className="action-btn" onClick={() => setSelectedScenario(scenario)}>⋮</button>
-                  {selectedScenario === scenario && (
-                    <div className="action-menu">
-                      <div className="action-item" onClick={() => setShowEditModal(true)}>
-                        <FaEdit /> Edit
-                      </div>
-                      <div className="action-item" onClick={() => setShowRemoveModal(true)}>
-                        <FaTrash /> Remove
-                      </div>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
             {showAddInput && (
               <tr className="add-scenario-row">
                 <td>
@@ -352,8 +333,47 @@ const Scenarios = () => {
                     }}
                   />
                 </td>
+                <td colSpan="3" className="cancel-cell">
+                  <button className="cancel-button" onClick={handleCancelAdd}>Cancel</button>
+                </td>
               </tr>
             )}
+            {currentScenarios.map((scenario) => (
+              <tr key={scenario._id} className="scenario-row">
+                <td>
+                  <span
+                    className="clickable-id"
+                    onClick={() => handleScenarioClick(scenario._id, projectId, moduleId)}
+                  >
+                    {scenario.scenarioIdstr}
+                  </span>
+                </td>
+                <td>{scenario.taskId}</td>
+                <td>{scenario.subTaskId}</td>
+                <td>
+                  <div className="description-text">{scenario.scenarioDescription}</div>
+                </td>
+                <td>
+                  <div className="date-text">
+                    {new Date(scenario.timestamp).toLocaleDateString()}
+                  </div>
+                </td>
+                <td>{scenario.testCaseCount || 0}</td>
+                <td>
+                  <button className="action-btn" onClick={() => setSelectedScenario(scenario)}>⋮</button>
+                  {selectedScenario === scenario && (
+                    <div className="action-menu">
+                      <div className="action-item" onClick={() => setShowEditModal(true)}>
+                        <FaEdit /> Edit
+                      </div>
+                      <div className="action-item" onClick={() => setShowRemoveModal(true)}>
+                        <FaTrash /> Remove
+                      </div>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -365,6 +385,8 @@ const Scenarios = () => {
         rowsPerPage={scenariosPerPage}
         onRowsPerPageChange={setScenariosPerPage}
       />
+
+      <ToastContainer />
 
       {showEditModal && (
         <div className="modal-overlay">

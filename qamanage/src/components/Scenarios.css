@@ -351,3 +351,21 @@ td {
 .clickable-id:hover {
   color: #0056b3;
 }
+
+/* Add this to your Scenarios.css file */
+.cancel-cell {
+  text-align: right;
+}
+
+.cancel-button {
+  background-color: #6C757D;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background-color: #5A6268;
+}

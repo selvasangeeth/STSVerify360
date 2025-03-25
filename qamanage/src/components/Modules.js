@@ -187,6 +187,17 @@ const Modules = ({ selectedProject }) => {
     }
   };
 
+  const handleCancelAdd = () => {
+    setShowAddRow(false);
+    setNewModuleData({
+      moduleName: '',
+      subModule: '',
+      lastTestedBy: 'Not Tested',
+      scenariosCount: 0,
+      casesCount: 0
+    });
+  };
+
   if (loading) return <div className="loading">Loading modules...</div>;
 
   if (!selectedProject) {
@@ -255,7 +266,7 @@ const Modules = ({ selectedProject }) => {
                 <td>{newModuleData.scenariosCount}</td>
                 <td>{newModuleData.casesCount}</td>
                 <td>
-                  {/* No Save and Cancel buttons */}
+                  <button className="cancel-button" onClick={handleCancelAdd}>Cancel</button>
                 </td>
               </tr>
             )}
