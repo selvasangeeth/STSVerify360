@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from './axios';
 import './TestCases.css';
@@ -39,6 +39,8 @@ const TestCases = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [testCasesPerPage, setTestCasesPerPage] = useState(10);
 
+  const actionMenuRef = useRef(null);
+
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (scenarioId) {
@@ -46,6 +48,19 @@ const TestCases = () => {
       fetchTestCases();
     }
   }, [scenarioId]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+        setActiveActionMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   /* eslint-enable react-hooks/exhaustive-deps */
 
   const fetchScenarioDetails = async () => {
@@ -363,7 +378,7 @@ const TestCases = () => {
                       ⋮
                     </button>
                     {activeActionMenu === testCase._id && (
-                      <div className="action-menu-dropdown">
+                      <div className="action-menu-dropdown" ref={actionMenuRef}>
                         <button onClick={() => handleActionMenuItemClick('view', testCase)}>
                           <FaEye className="action-icon" /> View
                         </button>

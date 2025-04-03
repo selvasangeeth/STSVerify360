@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from './axios';
 import './Scenarios.css';
@@ -17,7 +17,6 @@ const Scenarios = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddInput, setShowAddInput] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState(null);
   const [genId, setGenId] = useState("");
@@ -33,6 +32,10 @@ const Scenarios = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [scenariosPerPage, setScenariosPerPage] = useState(10);
 
+  const [editingScenario, setEditingScenario] = useState(null);
+  const [editedValues, setEditedValues] = useState({});
+  const actionMenuRef = useRef(null);
+
   useEffect(() => {
     console.log('Current moduleId:', moduleId);
   }, [moduleId]);
@@ -42,6 +45,20 @@ const Scenarios = () => {
       fetchScenarios();
     }
   }, [moduleId]);
+
+  // Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+        setSelectedScenario(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const fetchScenarios = async () => {
     try {
@@ -103,24 +120,44 @@ const Scenarios = () => {
     }
   };
 
-  const handleEditScenario = async (e) => {
-    e.preventDefault();
+  const startEditing = (scenario) => {
+    setEditingScenario(scenario._id);
+    setEditedValues({
+      scenarioIdstr: scenario.scenarioIdstr,
+      taskId: scenario.taskId,
+      subTaskId: scenario.subTaskId,
+      scenarioDescription: scenario.scenarioDescription
+    });
+    setSelectedScenario(null); // Close the action menu
+  };
+
+  const cancelEditing = () => {
+    setEditingScenario(null);
+    setEditedValues({});
+  };
+
+  const handleEditScenario = async (scenarioId) => {
     try {
       setError(null);
-      console.log(selectedScenario);
-      console.log("project"+projectId);
-      console.log("modid :" + moduleId);
-      const response = await axios.put(`/updateScenario/${selectedScenario._id}`, {scenarioUpdate : selectedScenario,projectId : projectId,moduleId:moduleId});
-      console.log(response.data.msg);
+      const response = await axios.put(`/updateScenario/${scenarioId}`, {
+        scenarioUpdate: { ...editedValues },
+        projectId: projectId,
+        moduleId: moduleId
+      });
+
       if (response.data.msg === "Scenario updated successfully") {
-        setScenarios(scenarios.map(scenario => scenario._id === selectedScenario._id ? response.data.data : scenario));
-        setShowEditModal(false);
+        setScenarios(scenarios.map(scenario => 
+          scenario._id === scenarioId ? { ...scenario, ...editedValues } : scenario
+        ));
+        setEditingScenario(null);
+        setEditedValues({});
         toast.success("Scenario updated successfully");
       } else {
         setError(response.data.message);
       }
     } catch (error) {
       setError('Error updating scenario. Please try again.');
+      toast.error('Error updating scenario');
     }
   };
 
@@ -160,14 +197,6 @@ const Scenarios = () => {
     }
   };
 
-  const handleBackClick = () => {
-    try {
-      navigate('/modules');
-    } catch (error) {
-      console.error('Error navigating back:', error);
-      setError('Error navigating back. Please try again.');
-    }
-  };
 
   const handleGetIds = async () => {
     console.log(projectId);
@@ -331,17 +360,73 @@ const Scenarios = () => {
             {currentScenarios.map((scenario) => (
               <tr key={scenario._id} className="scenario-row">
                 <td>
-                  <span
-                    className="clickable-id"
-                    onClick={() => handleScenarioClick(scenario._id, projectId, moduleId)}
-                  >
-                    {scenario.scenarioIdstr}
-                  </span>
+                  {editingScenario === scenario._id ? (
+                    <input
+                      type="text"
+                      value={editedValues.scenarioIdstr}
+                      onChange={(e) => setEditedValues({ ...editedValues, scenarioIdstr: e.target.value })}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleEditScenario(scenario._id);
+                        }
+                      }}
+                    />
+                  ) : (
+                    <span
+                      className="clickable-id"
+                      onClick={() => handleScenarioClick(scenario._id, projectId, moduleId)}
+                    >
+                      {scenario.scenarioIdstr}
+                    </span>
+                  )}
                 </td>
-                <td>{scenario.taskId}</td>
-                <td>{scenario.subTaskId}</td>
                 <td>
-                  <div className="description-text">{scenario.scenarioDescription}</div>
+                  {editingScenario === scenario._id ? (
+                    <input
+                      type="text"
+                      value={editedValues.taskId}
+                      onChange={(e) => setEditedValues({ ...editedValues, taskId: e.target.value })}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleEditScenario(scenario._id);
+                        }
+                      }}
+                    />
+                  ) : (
+                    scenario.taskId
+                  )}
+                </td>
+                <td>
+                  {editingScenario === scenario._id ? (
+                    <input
+                      type="text"
+                      value={editedValues.subTaskId}
+                      onChange={(e) => setEditedValues({ ...editedValues, subTaskId: e.target.value })}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleEditScenario(scenario._id);
+                        }
+                      }}
+                    />
+                  ) : (
+                    scenario.subTaskId
+                  )}
+                </td>
+                <td>
+                  {editingScenario === scenario._id ? (
+                    <input
+                      type="text"
+                      value={editedValues.scenarioDescription}
+                      onChange={(e) => setEditedValues({ ...editedValues, scenarioDescription: e.target.value })}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleEditScenario(scenario._id);
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="description-text">{scenario.scenarioDescription}</div>
+                  )}
                 </td>
                 <td>
                   <div className="date-text">
@@ -349,27 +434,37 @@ const Scenarios = () => {
                   </div>
                 </td>
                 <td>{scenario.testCaseCount || 0}</td>
-                <td style={{ position: "relative" }}>
-    <button 
-        className="action-btn" 
-        onClick={(e) => {
-            e.stopPropagation(); 
-            setSelectedScenario(scenario);
-        }}
-    >
-        ⋮
-    </button>
-    {selectedScenario === scenario && (
-        <div className="action-menu">
-            <div className="action-item" onClick={() => setShowEditModal(true)}>
-                <FaEdit /> Edit
-            </div>
-            <div className="action-item" onClick={() => setShowRemoveModal(true)}>
-                <FaTrash /> Remove
-            </div>
-        </div>
-    )}
-</td>
+                <td>
+                  {editingScenario === scenario._id ? (
+                    <div className="edit-actions">
+                      <button className="text-btn cancel" onClick={() => setEditingScenario(null)}>
+                        Clear
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ position: "relative" }}>
+                      <button 
+                        className="action-btn" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedScenario(selectedScenario === scenario ? null : scenario);
+                        }}
+                      >
+                        ⋮
+                      </button>
+                      {selectedScenario === scenario && (
+                        <div className="action-menu" ref={actionMenuRef}>
+                          <div className="action-item" onClick={() => startEditing(scenario)}>
+                            <FaEdit /> Edit
+                          </div>
+                          <div className="action-item" onClick={() => setShowRemoveModal(true)}>
+                            <FaTrash /> Remove
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -385,75 +480,6 @@ const Scenarios = () => {
       />
 
       <ToastContainer />
-
-      {showEditModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Edit Scenario</h2>
-            <form onSubmit={handleEditScenario}>
-              <div className="form-group">
-                <label>Scenario ID</label>
-                <input
-                  type="text"
-                  value={selectedScenario.scenarioIdstr}
-                  onChange={(e) => setSelectedScenario({
-                    ...selectedScenario,
-                    scenarioIdstr: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Task ID</label>
-                <input
-                  type="text"
-                  value={selectedScenario.taskId}
-                  onChange={(e) => setSelectedScenario({
-                    ...selectedScenario,
-                    taskId: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Sub Task ID</label>
-                <input
-                  type="text"
-                  value={selectedScenario.subTaskId}
-                  onChange={(e) => setSelectedScenario({
-                    ...selectedScenario,
-                    subTaskId: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea
-                  value={selectedScenario.scenarioDescription}
-                  onChange={(e) => setSelectedScenario({
-                    ...selectedScenario,
-                    scenarioDescription: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="cancel-btn"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="submit-btn">
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {showRemoveModal && (
         <div className="modal-overlay">

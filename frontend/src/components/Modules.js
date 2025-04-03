@@ -210,7 +210,6 @@ const Modules = ({ selectedProject }) => {
 
   return (
     <div className="modules-container">
-      <h2>Modules for {selectedProject.projectName}</h2>
       <div className="actions-container">
         <div className="search-container">
           <input
@@ -270,7 +269,11 @@ const Modules = ({ selectedProject }) => {
                 <td>{newModuleData.scenariosCount}</td>
                 <td>{newModuleData.casesCount}</td>
                 <td>
-                  <button className="cancel-button" onClick={handleCancelAdd}>Cancel</button>
+                  <div className="edit-actions">
+                    <button className="text-btn cancel" onClick={handleCancelAdd}>
+                      Cancel
+                    </button>
+                  </div>
                 </td>
               </tr>
             )}
@@ -332,19 +335,27 @@ const Modules = ({ selectedProject }) => {
                   <td className="content-cell">{module.scenariosCount || 0}</td>
                   <td className="content-cell">{module.casesCount || 0}</td>
                   <td>
-                    <div className="action-button" onClick={(e) => handleMenuClick(e, module._id)}>
-                      ⋮
-                      {activeMenu === module._id && (
-                        <div className="action-menu" ref={actionMenuRef}>
-                          <div className="action-item" onClick={() => handleEdit(module)}>
-                            <FaEdit /> Edit
+                    {editingModule?._id === module._id ? (
+                      <div className="edit-actions">
+                        <button className="text-btn cancel" onClick={() => setEditingModule(null)}>
+                          Clear
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="action-button" onClick={(e) => handleMenuClick(e, module._id)}>
+                        ⋮
+                        {activeMenu === module._id && (
+                          <div className="action-menu" ref={actionMenuRef}>
+                            <div className="action-item" onClick={() => handleEdit(module)}>
+                              <FaEdit /> Edit
+                            </div>
+                            <div className="action-item" onClick={() => handleRemove(module._id)}>
+                              <FaTrash /> Remove
+                            </div>
                           </div>
-                          <div className="action-item" onClick={() => handleRemove(module._id)}>
-                            <FaTrash /> Remove
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))

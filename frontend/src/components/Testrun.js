@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaEye } from "react-icons/fa";
-// import DatePicker from "react-datepicker";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from './axios'; // Make sure to import axios
 import './Testrun.css';
@@ -20,12 +20,14 @@ const Modal = ({ onClose, children }) => {
 export { Modal };
 const Testrun = ({ selectedProject }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [testRegion, setTestRegion] = useState("Test Region");
+  const [testRegion, setTestRegion] = useState("All Regions");
   const [testStatus, setTestStatus] = useState("All Statuses");
   const [timePeriod, setTimePeriod] = useState("This Month");
   const [showModal, setShowModal] = useState(false);
   const [testRunsData, setTestRunsData] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [testRunsPerPage, setTestRunsPerPage] = useState(10);
@@ -51,17 +53,65 @@ const Testrun = ({ selectedProject }) => {
     const value = e.target.value;
     setTimePeriod(value);
     if (value === "Custom") {
-      setShowModal(true);
+      setShowDatePicker(true);
+    } else {
+      setShowDatePicker(false);
+      setSelectedDate(null);
     }
+  };
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    setShowDatePicker(false); // Close the date picker when a date is selected
   };
   const handleEyeClick = (test) => {
     setSelectedTest(test);
     setShowModal(true);
   };
-  const filteredData = (Array.isArray(testRunsData) ? testRunsData : []).filter(
-    (test) =>
-      test.taskId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      test.subTaskId.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter functions
+  const filterByDate = (test) => {
+    const testDate = new Date(test.timestamp);
+    const today = new Date();
+
+    if (timePeriod === "Custom" && selectedDate) {
+      const testDay = new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate());
+      const selectedDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+      return testDay.getTime() === selectedDay.getTime();
+    }
+
+    switch (timePeriod) {
+      case "This Month":
+        return testDate.getMonth() === today.getMonth() && 
+               testDate.getFullYear() === today.getFullYear();
+      case "Last Month":
+        const lastMonth = today.getMonth() - 1;
+        const year = lastMonth === -1 ? today.getFullYear() - 1 : today.getFullYear();
+        const month = lastMonth === -1 ? 11 : lastMonth;
+        return testDate.getMonth() === month && testDate.getFullYear() === year;
+      case "Last 3 Months":
+        const ninetyDaysAgo = new Date(today.getTime() - (90 * 24 * 60 * 60 * 1000));
+        return testDate >= ninetyDaysAgo;
+      default:
+        return true;
+    }
+  };
+  const filterByRegion = (test) => {
+    return testRegion === "All Regions" || test.testRegion === testRegion;
+  };
+  const filterByStatus = (test) => {
+    return testStatus === "All Statuses" || test.testStatus === testStatus;
+  };
+  const filterBySearch = (test) => {
+    return (
+      test.taskId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      test.subTaskId?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+  // Apply all filters
+  const filteredData = testRunsData.filter(test => 
+    filterByDate(test) &&
+    filterByRegion(test) &&
+    filterByStatus(test) &&
+    filterBySearch(test)
   );
   // Pagination logic
   const indexOfLastTestRun = currentPage * testRunsPerPage;
@@ -70,7 +120,6 @@ const Testrun = ({ selectedProject }) => {
   const totalPages = Math.ceil(filteredData.length / testRunsPerPage);
   return (
     <div className="test-runs-container">
-      <h1>Test Runs for {selectedProject ? selectedProject.projectName : "Select a Project"}</h1>
       <div className="search-filters-row">
         <div className="search-bar">
           <FaSearch className="search-icon" />
@@ -83,7 +132,7 @@ const Testrun = ({ selectedProject }) => {
         </div>
         <div className="filters">
           <select value={testRegion} onChange={(e) => setTestRegion(e.target.value)}>
-            <option>Test Region</option>
+            <option>All Regions</option>
             <option>Sprint</option>
             <option>Staging</option>
             <option>UAT</option>
@@ -91,9 +140,8 @@ const Testrun = ({ selectedProject }) => {
           </select>
           <select value={testStatus} onChange={(e) => setTestStatus(e.target.value)}>
             <option>All Statuses</option>
-            <option>Completed</option>
-            <option>In Progress</option>
-            <option>Failed</option>
+            <option>Pass</option>
+            <option>Fail</option>
           </select>
           <select value={timePeriod} onChange={handleTimePeriodChange}>
             <option>This Month</option>
@@ -103,6 +151,17 @@ const Testrun = ({ selectedProject }) => {
           </select>
         </div>
       </div>
+      {showDatePicker && (
+        <div className="datepicker-popup">
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateSelect}
+            inline
+            calendarClassName="custom-calendar"
+            dateFormat="MMMM d, yyyy"
+          />
+        </div>
+      )}
       <table className="test-runs-table">
         <thead>
           <tr>
@@ -125,7 +184,11 @@ const Testrun = ({ selectedProject }) => {
                 <td>{test.testCaseName}</td>
                 <td>{test.testDescription}</td>
                 <td>{test.subTaskId}</td>
-                <td>{test.testStatus}</td>
+                <td>
+                  <span className={`status-badge ${test.testStatus?.toLowerCase()}`}>
+                    {test.testStatus}
+                  </span>
+                </td>
                 <td>{test.testedBy}</td>
                 <td className="action-cell">
                   <FaEye className="action-eye" onClick={() => handleEyeClick(test)} />
@@ -216,34 +279,27 @@ const Testrun = ({ selectedProject }) => {
                 <span className="label">Bug Reference ID</span>
                 <span className="value">{selectedTest.bugReferenceId}</span>
               </div>
-              {selectedTest.reference.startsWith('/9j/') ? (
-                <img
-                  src={`data:image/jpeg;base64,${selectedTest.reference}`}
-                  alt="Test reference"
-                  style={{ width: '100%', height: 'auto' }}
-                />
-              ) : selectedTest.reference.startsWith('iVBORw0KGgo') ? (
-                <img
-                  src={`data:image/png;base64,${selectedTest.reference}`}
-                  alt="Test reference"
-                  style={{ width: '100%', height: 'auto' }}
-                />
-              ) : selectedTest.reference.startsWith('R0lG') ? (
-                <img
-                  src={`data:image/gif;base64,${selectedTest.reference}`}
-                  alt="Test reference"
-                  style={{ width: '100%', height: 'auto' }}
-                />
-              ) : selectedTest.reference.startsWith('AAAB') ? ( // Example prefix for base64-encoded audio/video (MP4, WebM, etc.)
-                <video controls style={{ width: '100%' }}>
-                  <source
-                    src={`data:video/mp4;base64,${selectedTest.reference}`}
-                    type="video/mp4"
-                  />
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <p>Unsupported media type</p>
+              {selectedTest.reference && (
+                <div className="detail-row">
+                  <span className="label">Reference</span>
+                  <span className="value">
+                    {selectedTest.reference.startsWith('/9j/') ? (
+                      <img
+                        src={`data:image/jpeg;base64,${selectedTest.reference}`}
+                        alt="Test reference"
+                        style={{ maxWidth: '100%', height: 'auto' }}
+                      />
+                    ) : selectedTest.reference.startsWith('iVBORw0KGgo') ? (
+                      <img
+                        src={`data:image/png;base64,${selectedTest.reference}`}
+                        alt="Test reference"
+                        style={{ maxWidth: '100%', height: 'auto' }}
+                      />
+                    ) : (
+                      <p>Unsupported media type</p>
+                    )}
+                  </span>
+                </div>
               )}
               <div className="detail-row">
                 <span className="label">Bug Priority</span>

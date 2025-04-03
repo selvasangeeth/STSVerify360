@@ -41,8 +41,8 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   
   // eslint-disable-next-line no-unused-vars
   const [showLogs, setShowLogs] = useState(false); // State to show logs
-  const [showAddQuickLinkModal, setShowAddQuickLinkModal] = useState(false); // State to show add quick link modal
-  const [newQuickLink, setNewQuickLink] = useState({ name: '', url: '' }); // State for new quick link
+  const [showAddQuickLinkModal, setShowAddQuickLinkModal] = useState(false);
+  const [newQuickLink, setNewQuickLink] = useState({ name: '', url: '' });
   const [showEditQuickLinkModal, setShowEditQuickLinkModal] = useState(false);
   const [activeQuickLink, setActiveQuickLink] = useState(null);
   const [showRemoveConfirmModal, setShowRemoveConfirmModal] = useState(false);
@@ -328,7 +328,12 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
         <div className="quick-links-section">
           <div className="quick-links-header">
             <h3>Quick Links</h3>
-            <button className="add-quick-link">+</button>
+            <button 
+              className="add-quick-link"
+              onClick={() => setShowAddQuickLinkModal(true)}
+            >
+              +
+            </button>
           </div>
           <ul className="quick-links-list">
             {quickLinks.map((link, index) => (
@@ -432,21 +437,23 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
       {showAddQuickLinkModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Add Quick Link</h2>
+            <h2>Add New Document</h2>
             <form onSubmit={handleAddQuickLink}>
               <div className="form-group">
-                <label>Link Name</label>
+                <label>Document Name</label>
                 <input
                   type="text"
+                  placeholder="Enter the document name"
                   value={newQuickLink.name}
                   onChange={(e) => setNewQuickLink({ ...newQuickLink, name: e.target.value })}
                   required
                 />
               </div>
               <div className="form-group">
-                <label>Link URL</label>
+                <label>Enter Document Link</label>
                 <input
                   type="url"
+                  placeholder="Enter the document name"
                   value={newQuickLink.url}
                   onChange={(e) => setNewQuickLink({ ...newQuickLink, url: e.target.value })}
                   required
@@ -461,7 +468,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
                   Cancel
                 </button>
                 <button type="submit" className="submit-btn">
-                  Add Link
+                  Add Document
                 </button>
               </div>
             </form>

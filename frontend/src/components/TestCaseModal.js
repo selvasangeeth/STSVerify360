@@ -408,8 +408,11 @@ const TestCaseModal = ({ testCase, scenarioId, onClose,genId, projectId, moduleI
             onChange={(e) => setNewResult({ ...newResult, testRegion: e.target.value })}
           >
             <option>Choose the Test Region</option>
-            <option value="Production">Production</option>
+            <option value="Sprint">Sprint</option>
             <option value="Staging">Staging</option>
+            <option value="UAT">UAT</option>
+            {/* <option value="Sanbox">Sandbox</option> */}
+            <option value="Live">Live</option>
           </select>
         </div>
         <div className="form-group">

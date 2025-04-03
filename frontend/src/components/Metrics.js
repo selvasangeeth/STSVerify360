@@ -145,7 +145,6 @@ const Metrics = ({ selectedProject }) => {
   return (
     <div className="metrics-container">
       <div className="metrics-header">
-        <h3>Metrics for {selectedProject ? selectedProject.projectName : "Project"}</h3>
         <div className="metrics-tabs">
           <button
             className={`metrics-tab ${activeTab === "bugs" ? "active" : ""}`}
