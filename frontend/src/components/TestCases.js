@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from './axios';
 import './TestCases.css';
 import './common.css';
@@ -9,10 +9,12 @@ import Pagination from './Pagination/Pagination'; // Import Pagination component
 
 const TestCases = () => {
   const { projectId, moduleId, scenarioId } = useParams();
-  const navigate = useNavigate();
   const [testCases, setTestCases] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [scenarioDetails, setScenarioDetails] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [genId, setGenId] = useState('');
@@ -26,7 +28,6 @@ const TestCases = () => {
     createdBy: { Name: 'Current User' },
     testStatus: 'Untested'
   });
-  const [viewingTestCase, setViewingTestCase] = useState(null);
   const [modalState, setModalState] = useState({
     isOpen: false,
     mode: null, // 'view', 'edit', or 'add'
@@ -38,12 +39,14 @@ const TestCases = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [testCasesPerPage, setTestCasesPerPage] = useState(10);
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (scenarioId) {
       fetchScenarioDetails();
       fetchTestCases();
     }
   }, [scenarioId]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const fetchScenarioDetails = async () => {
     try {
@@ -78,14 +81,6 @@ const TestCases = () => {
     } finally {
         setLoading(false);
     }
-  };
-
-  const handleAddTestCase = (newTestCase) => {
-    setTestCases([newTestCase, ...testCases]);
-  };
-
-  const handleBackClick = () => {
-    navigate(-1); // Goes back to scenarios
   };
 
   const handleViewClick = (testCase) => {

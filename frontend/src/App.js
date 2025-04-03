@@ -1,5 +1,5 @@
   import React, { useState } from 'react';
-  import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+  import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
   import { Provider } from 'react-redux';
   import { store } from './redux/store';
   import Login from './components/Login';
@@ -14,7 +14,6 @@
   import Modules from './components/Modules';
   import LogList from './components/LogList';
   import Testrun from "./components/Testrun";
-  import Breadcrumbs from './components/Breadcrumbs';
   import Metrics from './components/Metrics';
   import Testers from './components/Testers'; // Import the Testers component
 

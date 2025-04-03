@@ -5,15 +5,11 @@ import "react-toastify/ReactToastify.css";
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
-// import AddProjectModal from './AddProjectModal';
+
 import AddModuleModal from './AddModuleModal';
-// import TestScenarios from './TestScenarios';
-// import Modules from './Modules';
+
 import LogList from './LogList'; // Import LogList component
 import { toast, ToastContainer } from "react-toastify";
-import logo from "../Assets/logo.ico";
-// import { FaAlignJustify, FaEdit, FaTrash } from 'react-icons/fa';
-// import QuoteDisplay from './QuoteDisplay';
 
 const DEFAULT_QUICK_LINKS = [
   {
@@ -35,22 +31,19 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const location = useLocation();
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState(location.pathname); // Set initial active tab based on current path
+  // eslint-disable-next-line no-unused-vars
   const [modules, setModules] = useState([]);
   const [projects, setProjects] = useState([]);
-  // const [loading, setLoading] = useState(false);
   const [quickLinks, setQuickLinks] = useState(DEFAULT_QUICK_LINKS);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  // const [activeMenu, setActiveMenu] = useState(null);
+  
   const [showAddModuleModal, setShowAddModuleModal] = useState(false);
-  // const [view, setView] = useState('modules');
-  // const [selectedModule, setSelectedModule] = useState(null);
+  
+  // eslint-disable-next-line no-unused-vars
   const [showLogs, setShowLogs] = useState(false); // State to show logs
   const [showAddQuickLinkModal, setShowAddQuickLinkModal] = useState(false); // State to show add quick link modal
   const [newQuickLink, setNewQuickLink] = useState({ name: '', url: '' }); // State for new quick link
   const [showEditQuickLinkModal, setShowEditQuickLinkModal] = useState(false);
-  // const [showRemoveQuickLinkModal, setShowRemoveQuickLinkModal] = useState(false);
-  // const [selectedQuickLink, setSelectedQuickLink] = useState(null);
-  // const actionMenuRef = useRef(null);
   const [activeQuickLink, setActiveQuickLink] = useState(null);
   const [showRemoveConfirmModal, setShowRemoveConfirmModal] = useState(false);
   const [linkToRemove, setLinkToRemove] = useState(null);
@@ -83,6 +76,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
 
 
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -94,9 +88,8 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
       }
     };
 
-    fetchProjects(); // Call the function when the component is mounted
+    fetchProjects();
 
-    // Check if there's a selected project in local storage
     const storedProject = localStorage.getItem('selectedProject');
     if (storedProject) {
       const project = JSON.parse(storedProject);
@@ -104,6 +97,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
       fetchModules(project.projectId);
     }
   }, []);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const fetchModules = async (projectId) => {
     if (!projectId) {

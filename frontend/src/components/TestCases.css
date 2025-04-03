@@ -461,3 +461,13 @@ select.input-field option {
   padding: 8px;
   background-color: white;
 }
+/* Add these styles for the module name hyperlink */
+.test-case-info .test-case-id {
+  color: #007bff; /* Blue color for hyperlinks */
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.test-case-info .test-case-id:hover {
+  text-decoration: underline;
+}

@@ -71,6 +71,19 @@ td {
   overflow: visible;
   white-space: pre-wrap;
   word-wrap: break-word;
+  cursor: pointer;
+}
+.content-cell div:first-child {
+  color: #007bff;  /* Blue hyperlink color */
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+.content-cell:hover div:first-child {
+  text-decoration: underline;
+}
+.content-cell .id-text {
+  color: #6C757D;
+  font-size: 12px;
 }
 .module-name {
   color: #007BFF;

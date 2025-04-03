@@ -24,7 +24,6 @@ const Testrun = ({ selectedProject }) => {
   const [testStatus, setTestStatus] = useState("All Statuses");
   const [timePeriod, setTimePeriod] = useState("This Month");
   const [showModal, setShowModal] = useState(false);
-  const [customDate, setCustomDate] = useState(null);
   const [testRunsData, setTestRunsData] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   // Pagination state
@@ -54,10 +53,6 @@ const Testrun = ({ selectedProject }) => {
     if (value === "Custom") {
       setShowModal(true);
     }
-  };
-  const handleDateChange = (date) => {
-    setCustomDate(date);
-    setShowModal(false);
   };
   const handleEyeClick = (test) => {
     setSelectedTest(test);
