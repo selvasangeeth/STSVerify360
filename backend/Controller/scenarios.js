@@ -112,17 +112,14 @@ const updateScenario = async (req, res) => {
   const scenarioId = req.params.scenarioId;
 
   try {
-    console.log("Scenario upadte Module");
-
+ 
     const updatedBy = req.user.id;
     const { scenarioUpdate, projectId, moduleId } = req.body;
-    // console.log(scenarioUpdate );
-    // console.log("projId : "+projectId);
-    // console.log("Update peoject id :" + projectId);  
+  
     const scenarioIdstr = scenarioUpdate.scenarioIdstr;
     const taskId = scenarioUpdate.taskId;
     const subTaskId = scenarioUpdate.subTaskId;
-    const description = scenarioUpdate.description;
+    const description = scenarioUpdate.scenarioDescription;
     const sc = await scenario.findById(scenarioId);
 
 

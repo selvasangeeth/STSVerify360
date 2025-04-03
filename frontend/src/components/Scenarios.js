@@ -39,20 +39,9 @@ const Scenarios = () => {
 
   useEffect(() => {
     if (moduleId) {
-      fetchModuleDetails();
       fetchScenarios();
     }
   }, [moduleId]);
-
-  const fetchModuleDetails = async () => {
-    try {
-      const response = await axios.get(`/getModules/${moduleId}`);
-      setModuleDetails(response.data.sc);
-    } catch (error) {
-      console.error('Error fetching module details:', error);
-      setError('Error fetching module details. Please try again.');
-    }
-  };
 
   const fetchScenarios = async () => {
     try {
@@ -122,7 +111,8 @@ const Scenarios = () => {
       console.log("project"+projectId);
       console.log("modid :" + moduleId);
       const response = await axios.put(`/updateScenario/${selectedScenario._id}`, {scenarioUpdate : selectedScenario,projectId : projectId,moduleId:moduleId});
-      if (response.data.msg === "Scenario Updated Successfully") {
+      console.log(response.data.msg);
+      if (response.data.msg === "Scenario updated successfully") {
         setScenarios(scenarios.map(scenario => scenario._id === selectedScenario._id ? response.data.data : scenario));
         setShowEditModal(false);
         toast.success("Scenario updated successfully");
@@ -440,10 +430,10 @@ const Scenarios = () => {
               <div className="form-group">
                 <label>Description</label>
                 <textarea
-                  value={selectedScenario.description}
+                  value={selectedScenario.scenarioDescription}
                   onChange={(e) => setSelectedScenario({
                     ...selectedScenario,
-                    description: e.target.value
+                    scenarioDescription: e.target.value
                   })}
                   required
                 />

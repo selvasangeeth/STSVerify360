@@ -109,9 +109,11 @@ const updateModule = async (req, res) => {
       const projectName = await project.findById(projectId).populate('projectName');
       // console.log(projectName.projectName);
       const path = `${projectName.projectName}/${moduleName}`;
+
+      
       //log
-      try {
-        const updatedModule = await log.create({
+      
+         await log.create({
           action: "Updated",
           entityType: "Module",
           entityId: moduleId,
@@ -121,11 +123,7 @@ const updateModule = async (req, res) => {
           timestamp: Date.now(),
           details: ` ${oldModuleName}/${oldSubModuleName} updated to ${newModuleName}/${newSubModuleName}`
         })
-        console.log("Updated Module : " + updatedModule)
-      }
-      catch (err) {
-        console.log(err);
-      }
+      
       return res.json({ msg: "Module updated successfully", data: mod });
     }
   }

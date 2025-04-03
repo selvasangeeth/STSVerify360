@@ -36,9 +36,12 @@ const Modules = ({ selectedProject }) => {
 
   useEffect(() => {
     if (selectedProject) {
+      // Reset the modules state when the selected project changes
+      setModules([]);
       fetchModules(selectedProject.projectId);
     }
-  }, [selectedProject]);
+  }, [selectedProject]); // Dependency on selectedProject
+
 
   const fetchModules = async (projectId) => {
     try {
@@ -104,12 +107,13 @@ const Modules = ({ selectedProject }) => {
           moduleId: moduleId
         });
 
-        if (response.data.msg === "Module Updated Success") {
-          setModules(modules.map(mod => 
+        console.log(response.data.msg);
+        if (response.data.msg === "Module updated successfully") {
+          setModules(modules.map(mod =>
             mod._id === moduleId ? response.data.data : mod
           ));
           setEditingModule(null);
-          toast.success("Module updated successfully");
+          toast.success("Module Updated Successfully");
         }
       } catch (error) {
         console.error('Error updating module:', error);
@@ -270,74 +274,81 @@ const Modules = ({ selectedProject }) => {
                 </td>
               </tr>
             )}
-            {currentModules.map((module) => (
-              <tr key={module._id} className="module-row">
-                <td>
-                  {editingModule?._id === module._id ? (
-                    <input
-                      type="text"
-                      className="input-field"
-                      value={editingModule.moduleName}
-                      onChange={(e) => setEditingModule({
-                        ...editingModule,
-                        moduleName: e.target.value
-                      })}
-                      onKeyPress={(e) => handleEditKeyPress(e, module._id)}
-                      onKeyDown={(e) => e.key === 'Escape' && setEditingModule(null)}
-                      autoFocus
-                    />
-                  ) : (
-                    <div className="content-cell" onClick={() => handleModuleClick(module._id, selectedProject.projectId)}>
-                      <div>{module.moduleName}</div>
-                      <div className="id-text">{module.moduleId}</div>
-                    </div>
-                  )}
-                </td>
-                <td>
-                  {editingModule?._id === module._id ? (
-                    <input
-                      type="text"
-                      className="input-field"
-                      value={editingModule.subModule}
-                      onChange={(e) => setEditingModule({
-                        ...editingModule,
-                        subModule: e.target.value
-                      })}
-                      onKeyPress={(e) => handleEditKeyPress(e, module._id)}
-                      onKeyDown={(e) => e.key === 'Escape' && setEditingModule(null)}
-                    />
-                  ) : (
-                    <div className="content-cell">{module.subModule}</div>
-                  )}
-                </td>
-                <td>
-                  <div className="content-cell">
-                    <div>{module.lastTestedBy}</div>
-                    <div className="date-text">
-                      {module.lastTested === "Not Tested" ? module.lastTested : new Date(module.lastTested).toLocaleDateString()}
-                    </div>
-                  </div>
-                </td>
-                <td className="content-cell">{module.scenariosCount || 0}</td>
-                <td className="content-cell">{module.casesCount || 0}</td>
-                <td>
-                  <div className="action-button" onClick={(e) => handleMenuClick(e, module._id)}>
-                    ⋮
-                    {activeMenu === module._id && (
-                      <div className="action-menu" ref={actionMenuRef}>
-                        <div className="action-item" onClick={() => handleEdit(module)}>
-                          <FaEdit /> Edit
-                        </div>
-                        <div className="action-item" onClick={() => handleRemove(module._id)}>
-                          <FaTrash /> Remove
-                        </div>
-                      </div>
-                    )}
-                  </div>
+            {currentModules.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center" }} className="no-modules">
+                  No modules found
                 </td>
               </tr>
-            ))}
-          </tbody>
+            ) : (
+              currentModules.map((module) => (
+                <tr key={module._id} className="module-row">
+                  <td>
+                    {editingModule?._id === module._id ? (
+                      <input
+                        type="text"
+                        className="input-field"
+                        value={editingModule.moduleName}
+                        onChange={(e) => setEditingModule({
+                          ...editingModule,
+                          moduleName: e.target.value
+                        })}
+                        onKeyPress={(e) => handleEditKeyPress(e, module._id)}
+                        onKeyDown={(e) => e.key === 'Escape' && setEditingModule(null)}
+                        autoFocus
+                      />
+                    ) : (
+                      <div className="content-cell" onClick={() => handleModuleClick(module._id, selectedProject.projectId)}>
+                        <div>{module.moduleName}</div>
+                        <div className="id-text">{module.moduleId}</div>
+                      </div>
+                    )}
+                  </td>
+                  <td>
+                    {editingModule?._id === module._id ? (
+                      <input
+                        type="text"
+                        className="input-field"
+                        value={editingModule.subModule}
+                        onChange={(e) => setEditingModule({
+                          ...editingModule,
+                          subModule: e.target.value
+                        })}
+                        onKeyPress={(e) => handleEditKeyPress(e, module._id)}
+                        onKeyDown={(e) => e.key === 'Escape' && setEditingModule(null)}
+                      />
+                    ) : (
+                      <div className="content-cell">{module.subModule}</div>
+                    )}
+                  </td>
+                  <td>
+                    <div className="content-cell">
+                      <div>{module.lastTestedBy}</div>
+                      <div className="date-text">
+                        {module.lastTested === "Not Tested" ? module.lastTested : new Date(module.lastTested).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="content-cell">{module.scenariosCount || 0}</td>
+                  <td className="content-cell">{module.casesCount || 0}</td>
+                  <td>
+                    <div className="action-button" onClick={(e) => handleMenuClick(e, module._id)}>
+                      ⋮
+                      {activeMenu === module._id && (
+                        <div className="action-menu" ref={actionMenuRef}>
+                          <div className="action-item" onClick={() => handleEdit(module)}>
+                            <FaEdit /> Edit
+                          </div>
+                          <div className="action-item" onClick={() => handleRemove(module._id)}>
+                            <FaTrash /> Remove
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}</tbody>
         </table>
       </div>
       <Pagination
@@ -347,12 +358,12 @@ const Modules = ({ selectedProject }) => {
         rowsPerPage={modulesPerPage}
         onRowsPerPageChange={setModulesPerPage}
       />
-      <ToastContainer/>
+      <ToastContainer />
       {showEditModal && (
         <EditModuleModal
           module={selectedModule}
           moduleId={selectedModule._id}
-          projectId = {selectedProject.projectId}
+          projectId={selectedProject.projectId}
           onClose={() => setShowEditModal(false)}
           onModuleUpdated={handleModuleUpdated}
         />
