@@ -369,3 +369,39 @@ td {
 .cancel-button:hover {
   background-color: #5A6268;
 }
+
+.action-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6C757D;
+  padding: 5px 10px;
+  border-radius: 4px;
+  position: relative;
+}
+
+.action-menu {
+  position: absolute;
+  top: 100%; /* Aligns below the button */
+  left: 0; /* Aligns it with the button */
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  width: 120px;
+}
+
+.action-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+}
+
+.action-item:hover {
+  background: #f1f1f1;
+}

@@ -359,19 +359,27 @@ const Scenarios = () => {
                   </div>
                 </td>
                 <td>{scenario.testCaseCount || 0}</td>
-                <td>
-                  <button className="action-btn" onClick={() => setSelectedScenario(scenario)}>⋮</button>
-                  {selectedScenario === scenario && (
-                    <div className="action-menu">
-                      <div className="action-item" onClick={() => setShowEditModal(true)}>
-                        <FaEdit /> Edit
-                      </div>
-                      <div className="action-item" onClick={() => setShowRemoveModal(true)}>
-                        <FaTrash /> Remove
-                      </div>
-                    </div>
-                  )}
-                </td>
+                <td style={{ position: "relative" }}>
+    <button 
+        className="action-btn" 
+        onClick={(e) => {
+            e.stopPropagation(); 
+            setSelectedScenario(scenario);
+        }}
+    >
+        ⋮
+    </button>
+    {selectedScenario === scenario && (
+        <div className="action-menu">
+            <div className="action-item" onClick={() => setShowEditModal(true)}>
+                <FaEdit /> Edit
+            </div>
+            <div className="action-item" onClick={() => setShowRemoveModal(true)}>
+                <FaTrash /> Remove
+            </div>
+        </div>
+    )}
+</td>
               </tr>
             ))}
           </tbody>
