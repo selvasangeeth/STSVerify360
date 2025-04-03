@@ -14,6 +14,7 @@ const moduleRoute = require("./Routes/ModuleRoutes");
 const testCaseRoute = require("./Routes/TestcaseRoutes");
 const testRunRoute = require("./Routes/TestRunRoutes");
 const metricsRoute = require("./Routes/MetricsRoute");
+const LogList = require("./Routes/LogListRoutes");
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ const app = express();
     app.use("/", testCaseRoute);
     app.use("/", testRunRoute);
     app.use("/",metricsRoute);
+    app.use("/",LogList);
 
     const PORT = process.env.PORT;
     app.listen(PORT, () => {
