@@ -315,14 +315,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
             <span>Metrics</span>
           </div>
           <div 
-            className={`nav-item ${activeTab === '/testers' ? 'active' : ''}`}
-            onClick={() => handleNavClick('/testers')}
-            style={{ backgroundColor: activeTab === '/testers' ? '#be5133' : '' }}
-          >
-            <span className="nav-icon">👥</span>
-            <span>Testers</span>
-          </div>
-          <div 
             className={`nav-item ${activeTab === '/activity' ? 'active' : ''}`}
             onClick={()=>handleNavClick('/activity')} // Update to handle click
             style={{ backgroundColor: activeTab === '/activity' ? '#be5133' : '' }}

@@ -15,18 +15,6 @@
   import LogList from './components/LogList';
   import Testrun from "./components/Testrun";
   import Metrics from './components/Metrics';
-  import Testers from './components/Testers'; // Import the Testers component
-
-  // const AppLayout = ({ children }) => {
-  //   const location = useLocation();
-  //   const excludePaths = ["/login", "/register"];
-  //   return (
-  //     <div>
-  //       {!excludePaths.includes(location.pathname) && <Breadcrumbs />}
-  //       {children}
-  //     </div>
-  //   );
-  // };
 
   function App() {
     const [selectedProject, setSelectedProject] = useState(null);
@@ -54,7 +42,6 @@
             <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><LogList selectedProject={selectedProject} /></Dashboard>} />
             <Route path="/testrun" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Testrun selectedProject={selectedProject} /></Dashboard>} />
             <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Metrics selectedProject={selectedProject} /></Dashboard>} />
-            <Route path="/testers" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Testers selectedProject={selectedProject} /></Dashboard>} /> {/* Add the Testers route */}
           </Routes>
         </Router>
       </Provider>
