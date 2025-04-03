@@ -57,6 +57,7 @@ const createScenario = async (req, res) => {
           entityId: creat._id,
           user: UserName.Name,
           timestamp: Date.now(),
+          projectId : projectId,
           path: path,
           details: `Created Scenario: ${scenarioIdstr}`,
         });
@@ -160,6 +161,7 @@ const updateScenario = async (req, res) => {
           user: UserName.Name,
           path: path,
           projectId: projectId,
+          timestamp : Date.now(),
           details: ` ${oldScenarioIdstr}/${oldTaskId}/${oldSubTask}/${oldDescription} updated to ${scenarioIdstr}/${taskId}/${subTaskId}/${description}`
 
         })
@@ -179,7 +181,7 @@ const updateScenario = async (req, res) => {
 
 
 //deleteScenario 
-
+  
 const deleteScenario = async (req, res) => {
   const scenarioId = req.params.scenarioId;
   try {
@@ -212,6 +214,7 @@ const deleteScenario = async (req, res) => {
         user: UserName.Name,
         path: path,
         projectId: projectId,
+        timestamp : Date.now(),
         details: `Scenario Deleted: ${scenarioName.scenarioIdstr}`
       });
       // console.log("deleteModulelog", deleteScenariolog);

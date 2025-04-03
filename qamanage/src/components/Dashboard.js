@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import './Dashboard.css';
+import "react-toastify/ReactToastify.css";
+
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
-import './Dashboard.css';
-import AddProjectModal from './AddProjectModal';
+// import AddProjectModal from './AddProjectModal';
 import AddModuleModal from './AddModuleModal';
-import TestScenarios from './TestScenarios';
-import Modules from './Modules';
+// import TestScenarios from './TestScenarios';
+// import Modules from './Modules';
 import LogList from './LogList'; // Import LogList component
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
 import logo from "../Assets/logo.ico";
-import { FaAlignJustify, FaEdit, FaTrash } from 'react-icons/fa';
-import QuoteDisplay from './QuoteDisplay';
+// import { FaAlignJustify, FaEdit, FaTrash } from 'react-icons/fa';
+// import QuoteDisplay from './QuoteDisplay';
 
 const DEFAULT_QUICK_LINKS = [
   {
@@ -35,20 +37,20 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const [activeTab, setActiveTab] = useState(location.pathname); // Set initial active tab based on current path
   const [modules, setModules] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [quickLinks, setQuickLinks] = useState(DEFAULT_QUICK_LINKS);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  const [activeMenu, setActiveMenu] = useState(null);
+  // const [activeMenu, setActiveMenu] = useState(null);
   const [showAddModuleModal, setShowAddModuleModal] = useState(false);
-  const [view, setView] = useState('modules');
-  const [selectedModule, setSelectedModule] = useState(null);
+  // const [view, setView] = useState('modules');
+  // const [selectedModule, setSelectedModule] = useState(null);
   const [showLogs, setShowLogs] = useState(false); // State to show logs
   const [showAddQuickLinkModal, setShowAddQuickLinkModal] = useState(false); // State to show add quick link modal
   const [newQuickLink, setNewQuickLink] = useState({ name: '', url: '' }); // State for new quick link
   const [showEditQuickLinkModal, setShowEditQuickLinkModal] = useState(false);
-  const [showRemoveQuickLinkModal, setShowRemoveQuickLinkModal] = useState(false);
-  const [selectedQuickLink, setSelectedQuickLink] = useState(null);
-  const actionMenuRef = useRef(null);
+  // const [showRemoveQuickLinkModal, setShowRemoveQuickLinkModal] = useState(false);
+  // const [selectedQuickLink, setSelectedQuickLink] = useState(null);
+  // const actionMenuRef = useRef(null);
   const [activeQuickLink, setActiveQuickLink] = useState(null);
   const [showRemoveConfirmModal, setShowRemoveConfirmModal] = useState(false);
   const [linkToRemove, setLinkToRemove] = useState(null);
@@ -79,7 +81,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     }
   };
 
-  const API_BASE_URL = 'http://localhost:5000/api';
+
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -159,35 +161,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     }
   };
 
-  const handleDelete = async (projectId) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/projects/${projectId}`);
-      setProjects(projects.filter(p => p._id !== projectId));
-    } catch (error) {
-      console.error('Error deleting project:', error);
-    }
-  };
-
-  const handleMenuClick = (e, projectId) => {
-    e.stopPropagation();
-    setActiveMenu(activeMenu === projectId ? null : projectId);
-  };
-
-  const handleMenuOption = (e, option, project) => {
-    e.stopPropagation();
-    switch(option) {
-      case 'edit':
-        console.log('Edit project:', project.name);
-        break;
-      case 'delete':
-        console.log('Delete project:', project.name);
-        break;
-      default:
-        break;
-    }
-    setActiveMenu(null);
-  };
-
   const handleModuleAdded = (newModule) => {
     console.log('New module added:', newModule);
     setModules(prevModules => [newModule, ...prevModules]);
@@ -234,19 +207,10 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     setEditFormData({ name: '', url: '' });
   };
 
-  const handleModuleClick = (module) => {
-    setSelectedModule(module);
-    setView('scenarios');
-  };
+  
+  
 
-  const isActivePath = (path) => {
-    return location.pathname.startsWith(path);
-  };
 
-  const handleActivityClick = () => {
-    setShowLogs(true);
-    setActiveTab('/activity'); // Set active tab to activity
-  };
 
   const handleAddQuickLink = (e) => {
     e.preventDefault();
@@ -260,7 +224,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
       <div className="sidebar">
         {/* Logo Section */}
         <div className="logo-section">
-          <img src={logo} alt="VERIFY 360" className="logo" />
+          {/* <img src={logo} alt="VERIFY 360" className="logo" /> */}
           <h1>Quality Arc</h1>
         </div>
 

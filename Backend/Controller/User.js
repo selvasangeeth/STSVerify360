@@ -9,9 +9,9 @@ require('dotenv').config();
 // register
 const registerUser = async (req, res) => {
   const { Name,Email, Password, Role } = req.body;
-  console.log(Email);
-  console.log(Password);
-  console.log(Role);
+  // console.log(Email);
+  // console.log(Password);
+  // console.log(Role);
   const hashedPassword = await bcrypt.hash(Password, 10);
   const user = await userDetails.findOne({ Email });
   if (user) {

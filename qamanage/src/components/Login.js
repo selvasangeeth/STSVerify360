@@ -10,7 +10,7 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState(null); // Add error state
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading } = useSelector((state) => state.auth);
 
