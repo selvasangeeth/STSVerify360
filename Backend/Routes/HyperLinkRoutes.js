@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../Middleware/auth");
 
-const { createHyperLink, deleteHyperLink, getHyperLink, updateHyperLink } = require("../Controller/HyperLink");
+const { createHyperLink, deleteHyperLink, getHyperLink, updateHyperLink } = require("../Controller/hyperLink");
 
 router.post("/createHyperLink",auth,createHyperLink)
 router.delete("/deleteHyperLink/:id",auth,deleteHyperLink);

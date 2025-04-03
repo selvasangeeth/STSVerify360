@@ -4,7 +4,7 @@ const upload = require("../Middleware/storeFiles")
 const auth = require("../Middleware/auth");
 
 
-const { registerUser,loginUser, updateUser } = require("../Controller/User"); 
+const { registerUser,loginUser, updateUser } = require("../Controller/user"); 
 
 
 router.post("/register", registerUser);

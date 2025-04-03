@@ -4,7 +4,7 @@ const auth = require("../Middleware/auth");
 
 
 
-const { getMetricsModules, getMetricsScenario, getMetricsTestCase, getMetricsTestCaseByModule } = require("../Controller/Metrics");
+const { getMetricsModules, getMetricsScenario, getMetricsTestCase, getMetricsTestCaseByModule } = require("../Controller/metrics");
 
 router.get("/metrics/getModules/:projectId",auth,getMetricsModules)
 router.get("/metrics/getScenarios/:moduleId",auth,getMetricsScenario);

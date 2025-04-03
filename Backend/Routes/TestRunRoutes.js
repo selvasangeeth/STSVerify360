@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require("../Middleware/auth");
 
 
-const { getTestRuns } = require("../Controller/Testrun");
+const { getTestRuns } = require("../Controller/testRun");
 
 
 

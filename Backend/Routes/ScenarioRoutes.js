@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../Middleware/auth");
 
-const {createScenario,getScenario, updateScenario, deleteScenario, getIds} = require("../Controller/Scenarios");
+const {createScenario,getScenario, updateScenario, deleteScenario, getIds} = require("../Controller/scenarios");
 
 router.post("/createScenario",auth,createScenario)
 router.get("/getScenario/:moduleId",auth,getScenario);

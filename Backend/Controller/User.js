@@ -1,125 +1,105 @@
+//import models
+
 const userDetails = require("../Model/User.model");
-const bcrypt = require("bcrypt");
 const log = require("../Model/Log.model")
+
+//import authentication
+const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
-const path = require('path');
-require('dotenv').config();
 
 
 // register
 const registerUser = async (req, res) => {
-  const { Name,Email, Password, Role } = req.body;
-  // console.log(Email);
-  // console.log(Password);
-  // console.log(Role);
-  const hashedPassword = await bcrypt.hash(Password, 10);
-  const user = await userDetails.findOne({ Email });
-  if (user) {
-    return res.json({ msg: "User already exists" });
-  }
-  else {
-    const creat = await userDetails.create({
-      Name,
-      Email,
-      Password: hashedPassword,
-      Role: Role
-    });
-    try {
-      await log.create({
-        action: "Registered",
-        entityType: "User",
-        entityId: creat._id,
-        timestamp: Date.now(),
-        details: "User Registered"
-      })
-      console.log("success log")
-    } catch (err) {
-      console.log(err);
-    }
-    return res
-      .json({ msg: "User created successfully", data: creat });
-  }
 
+  try {
+
+    const { Name, Email, Password, Role } = req.body;
+    const hashedPassword = await bcrypt.hash(Password, 10);
+    const user = await userDetails.findOne({ Email });
+
+    if (user) {
+      return res.json({ msg: "User already exists" });
+    }
+
+    else {
+
+      // registerUser
+      const createUser = await userDetails.create({
+        Name,
+        Email,
+        Password: hashedPassword,
+        Role: Role
+      });
+      
+      return res.status(201).json({ msg: "User created successfully", data: createUser });
+
+    }
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "An error occurred while processing your request. Please try again later", error: err });
+  }
 }
 
 //Login
 
 const loginUser = async (req, res) => {
 
+  try{
   const { Email, Password } = req.body;
   const user = await userDetails.findOne({ Email });
+
   if (!user) {
-    return res.json({ msg: "User not found Please Register !!" });
+    return res.status(404).json({ msg: "User not found. Please Register!" });
   }
 
   const paswd = user.Password;
   const match = await bcrypt.compare(Password, paswd);
 
   if (!match) {
-    return res.json({ msg: "Invalid Details" });
+    return res.status(401).json({ msg: "Invalid details" });
   }
 
   //jwt auth
- const UserName = await userDetails.findById(user._id).populate('Name');
- const token = jwt.sign(  { id: user._id, email: user.email, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+  const UserName = await userDetails.findById(user._id).populate('Name');
+  const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
   res.cookie("jwt", token, { httpOnly: true, maxAge: 3600000 });
 
-  try {
-    await log.create({
-      action: "LoggedIn",
-      entityType: "User",
-      entityId: user._id,
-      timestamp: Date.now(),
-      details: "User LoggedIn",
-      user : UserName.Name,
+  return res.status(200).json({ msg: "LoginSuccess", Role: user.Role });
 
-    })
-  } catch (err) {
-    console.log(err);
-  }
-  return res.json({ msg: "LoginSuccess", Role: user.Role });
 }
+catch (err) {
+  return res.status(500).json({ msg: "An error occurred while processing your request. Please try again later", error: err });
+}
+}
+
 
 //update User
 
-const updateUser =async(req,res)=>{
-   try{
-        const userId = req.user.id;
-        const {Name,Email}=req.body;
-        // buffer.toString('base64')
-        const Profileimg = req.file.filename;
-        const user = await userDetails.findById(userId);
-        if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-        }
-        if (Name){
-          user.Name = Name;
-        }
-        if (Email) 
-          {
-            user.Email = Email; 
-          }
-        user.Profileimg = Profileimg;  
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { Name, Email } = req.body;
+    const Profileimg = req.file.filename;
+    const user = await userDetails.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (Name) {
+      user.Name = Name;
+    }
+    if (Email) {
+      user.Email = Email;
+    }
 
-        const UserName = await userDetails.findById(userId).populate('Name'); 
+    user.Profileimg = Profileimg;
 
-        await log.create({
-          action: "Updated",
-          entityType: "User",
-          entityId: user._id,
-          timestamp: Date.now(),
-          user : UserName.Name,
-          details: "User Profile Updated",
-          
-        })
+    res.status(200).json({ msg: 'User updated successfully', data: user });
 
-        res.status(200).json({ msg: 'User updated successfully', data : user });
-   }
-   catch(err){
-    console.log(err);
-    res.status(500).json({ msg: 'Internal Server Error'});
-
-   }
+  }
+  catch (err) {
+    res.status(500).json({ msg: 'Internal Server Error' });
+  }
 }
 
-module.exports = { registerUser, loginUser,updateUser};
+module.exports = { registerUser, loginUser, updateUser };

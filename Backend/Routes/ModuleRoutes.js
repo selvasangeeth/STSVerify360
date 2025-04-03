@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../Middleware/auth");
 
-const { createModule,getModules, updateModule, deleteModule } = require("../Controller/Module");
+const { createModule,getModules, updateModule, deleteModule } = require("../Controller/module");
 
 router.post("/createModule",auth,createModule)
 router.get("/getModules/:projectId",getModules);

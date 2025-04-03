@@ -4,7 +4,7 @@ const auth = require("../Middleware/auth");
 
 
 
-const { getLogs } = require("../Controller/LogList");
+const { getLogs } = require("../Controller/logList");
 
 router.get("/api/logs/:projectId",auth,getLogs)
 

@@ -5,7 +5,7 @@ const auth = require("../Middleware/auth");
 
 
 
-const {createProject,updateProject,getProject, deleteProject, getImage, assignUsers} = require("../Controller/Project");
+const {createProject,updateProject,getProject, deleteProject, getImage, assignUsers} = require("../Controller/project");
 
 
 router.post("/createProject",upload.single('projectLogo'),auth,createProject);
