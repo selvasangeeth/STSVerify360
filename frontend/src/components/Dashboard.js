@@ -1,14 +1,12 @@
 import './Dashboard.css';
 import "react-toastify/ReactToastify.css";
 
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
 
-import AddModuleModal from './AddModuleModal';
 
-import LogList from './LogList'; // Import LogList component
+import LogList from './LogList';
 import { toast, ToastContainer } from "react-toastify";
 
 const DEFAULT_QUICK_LINKS = [
@@ -31,7 +29,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const location = useLocation();
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState(location.pathname); // Set initial active tab based on current path
-  // eslint-disable-next-line no-unused-vars
   const [modules, setModules] = useState([]);
   const [projects, setProjects] = useState([]);
   const [quickLinks, setQuickLinks] = useState(DEFAULT_QUICK_LINKS);
@@ -39,8 +36,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   
   const [showAddModuleModal, setShowAddModuleModal] = useState(false);
   
-  // eslint-disable-next-line no-unused-vars
-  const [showLogs, setShowLogs] = useState(false); // State to show logs
+  const [showLogs, setShowLogs] = useState(false);
   const [showAddQuickLinkModal, setShowAddQuickLinkModal] = useState(false);
   const [newQuickLink, setNewQuickLink] = useState({ name: '', url: '' });
   const [showEditQuickLinkModal, setShowEditQuickLinkModal] = useState(false);

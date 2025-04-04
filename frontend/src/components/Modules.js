@@ -6,7 +6,6 @@ import './common.css';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import EditModuleModal from './EditModuleModal'; // Import the EditModuleModal component
 import Pagination from './Pagination/Pagination'; // Import Pagination component
 import QuoteDisplay from './QuoteDisplay';
 
@@ -25,8 +24,6 @@ const Modules = ({ selectedProject }) => {
     casesCount: 0
   });
   const [activeMenu, setActiveMenu] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedModule, setSelectedModule] = useState(null);
   const actionMenuRef = useRef(null);
   const [editingModule, setEditingModule] = useState(null);
 
@@ -143,10 +140,6 @@ const Modules = ({ selectedProject }) => {
       console.error("Error removing module:", error);
       toast.error("Failed to remove module");
     }
-  };
-
-  const handleModuleUpdated = (updatedModule) => {
-    setModules(modules.map(module => module._id === updatedModule._id ? updatedModule : module));
   };
 
   const filteredModules = modules.filter(module =>
@@ -370,15 +363,6 @@ const Modules = ({ selectedProject }) => {
         onRowsPerPageChange={setModulesPerPage}
       />
       <ToastContainer />
-      {showEditModal && (
-        <EditModuleModal
-          module={selectedModule}
-          moduleId={selectedModule._id}
-          projectId={selectedProject.projectId}
-          onClose={() => setShowEditModal(false)}
-          onModuleUpdated={handleModuleUpdated}
-        />
-      )}
     </div>
   );
 };
