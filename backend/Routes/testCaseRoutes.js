@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../Middleware/storeFiles")
 const auth = require("../Middleware/auth");
-
 // Middleware to handle file size error
 // function handleFileSizeError(err, req, res, next) {
 //     if (err.code === 'LIMIT_FILE_SIZE') {
@@ -10,19 +9,20 @@ const auth = require("../Middleware/auth");
 //         msg: 'File size is too large. The maximum size allowed is 10MB.'
 //       });
 //     }
-//     next(err); 
+//     next(err);
 //   }
+const {createTestCase, updateTestCaseStatus,getTestCase, getTestIds, deleteTestCase} = require("../Controller/testCase");
 
-
-const {createTestCase, updateTestCaseStatus,getTestCase, getTestIds} = require("../Controller/testCase");
 
 router.post("/createTestCase",auth,createTestCase);
 router.post("/updatedTestCase",auth,upload.single('reference'),updateTestCaseStatus)
 router.get("/getTestCase/:scenarioId",auth,getTestCase);
 router.get("/getTestIds",auth,getTestIds);
-
-
-
-
-
+router.delete("/api/deleteTestCase/:testCaseId",auth,deleteTestCase);
 module.exports = router;
+
+
+
+
+
+

@@ -114,6 +114,24 @@ const TestCases = () => {
     });
   };
 
+  const handleRemoveClick = async (testCase) => {
+    try {
+      console.log("Safsdf");
+      const response = await axios.delete(`/api/deleteTestCase/${testCase._id}`, {
+        params: {
+          projectId: projectId,
+          moduleId: testCase.moduleId,
+          scenarioId: testCase.scenarioId
+        }
+      });
+      if (response.data.msg === "TestCase deleted successfully") {
+        window.location.reload();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   const handleAddClick = async () => {
     setModalState({
       isOpen: true,
@@ -183,7 +201,7 @@ const TestCases = () => {
         handleEditClick(testCase);
         break;
       case 'remove':
-        // Add remove functionality here if needed
+        handleRemoveClick(testCase);
         console.log('Remove test case:', testCase);
         break;
       default:

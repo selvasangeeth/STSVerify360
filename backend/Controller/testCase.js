@@ -248,7 +248,47 @@ const getTestIds = async (req, res) => {
 };
 
 
+//deleteTestCase
+const deleteTestCase = async (req, res) => {
+  try {
+    const testCaseId = req.params.testCaseId;
+    const { projectId, moduleId,scenarioId} = req.query;
+    const deletedById = req.user.id;
+    const testCase = await testCaseModel.findById(testCaseId);
+    if (!testCase) {
+      return res.json({ msg: "TestCase does not exist" });
+    }
+    const moduleName = await modulee.findById(moduleId).populate('moduleName');
+    const scenarioName = await testScenarioModel.findById(scenarioId).populate('scenarioIdstr');
+    const testCaseName = await testCaseModel.findById(testCaseId).populate('testCaseId');
+    const projectName = await project.findById(projectId).populate('projectName');
+    //delete
+    await testCaseModel.findByIdAndDelete(testCaseId);
+    const UserName = await user.findById(deletedById).populate('Name');
+    const path = `${projectName.projectName}/${moduleName.moduleName}/${scenarioName.scenarioIdstr}/${testCaseName.testCaseId}`;
+    // Log the action
+    try {
+      const deleteTestCaselog = await log.create({
+        action: "Deleted",
+        entityType: "TestCase",
+        entityId: testCaseId,
+        user: UserName.Name,
+        path: path,
+        projectId: projectId,
+        timestamp : Date.now(),
+        details: `TestCase Deleted: ${testCaseName.testCaseId}`
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    return res.status(200).json({ msg: 'TestCase deleted successfully' });
+  } catch (err) {
+    console.error("Error deleting TestCase:", err);
+    return res.status(500).json({ msg: 'Failed to delete TesrCase' });
+  }
+};
 
 
 
-module.exports = { createTestCase, updateTestCaseStatus, getTestCase,getTestIds };
+
+module.exports = { createTestCase, updateTestCaseStatus, getTestCase,getTestIds,deleteTestCase };
