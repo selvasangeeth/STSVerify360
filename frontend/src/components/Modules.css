@@ -1,0 +1,321 @@
+.modules-container {
+  padding: 20px;
+  background-color: #F8F9FA;
+  min-height: 100vh;
+  overflow: auto;
+}
+.modules-header {
+  margin-bottom: 20px;
+}
+.search-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.search-input {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 60%;
+  font-size: 14px;
+}
+.add-module-btn {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+.add-module-btn:hover {
+  background-color: #0056B3;
+}
+.modules-table {
+  background: white;
+  border-radius: 8px;
+  overflow: visible;
+  margin-bottom: 20px;
+  width: 100%;
+  min-height: 200px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #14365d;
+  padding: 15px;
+  color: white;
+  font-weight: 600;
+  white-space: nowrap;
+}
+td {
+  padding: 15px;
+  border-bottom: 1px solid #DEE2E6;
+  background: white;
+  max-width: 300px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  vertical-align: top;
+}
+.content-cell {
+  max-height: none;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  cursor: pointer;
+}
+.content-cell div:first-child {
+  color: #007bff;  /* Blue hyperlink color */
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+.content-cell:hover div:first-child {
+  text-decoration: underline;
+}
+.content-cell .id-text {
+  color: #6C757D;
+  font-size: 12px;
+}
+.module-name {
+  color: #007BFF;
+  cursor: pointer;
+}
+.module-name:hover {
+  text-decoration: underline;
+}
+.module-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.module-row:hover {
+  background-color: #f8f9fa;
+}
+.id-text {
+  color: #6C757D;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.date-text {
+  color: #6C757D;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.action-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6C757D;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+.action-btn:hover {
+  background-color: #F0F0F0;
+}
+.action-button {
+  position: relative;
+  cursor: pointer;
+}
+.action-menu {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+.action-item {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.action-item:hover {
+  background: #F0F0F0;
+}
+.action-item svg {
+  margin-right: 5px;
+}
+/* Modal Styles */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+}
+.modal-content h2 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  color: #333;
+}
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.cancel-btn {
+  background: #ccc;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.submit-btn {
+  background: #007BFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+.input-field {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+}
+/* Style for the editing row */
+tr.editing {
+  background-color: #f8f9fa;
+}
+tr.editing td {
+  padding: 8px;
+}
+/* Make input fields take full width of their cells */
+td .input-field {
+  width: calc(100% - 16px);
+  margin: 0;
+}
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px; /* Adjust the width as needed */
+}
+.save-button, .cancel-button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.save-button {
+  background-color: #007BFF;
+  color: white;
+}
+.cancel-button {
+  background-color: #6C757D;
+  color: white;
+}
+.save-button:hover {
+  background-color: #0056B3;
+}
+.cancel-button:hover {
+  background-color: #5A6268;
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .search-input {
+    width: 100%;
+  }
+  .modules-table {
+    overflow-x: auto;
+  }
+  table {
+    font-size: 14px;
+  }
+  th, td {
+    padding: 10px;
+  }
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+}
+/* Remove the no-modules related styles */
+.no-modules-container,
+.no-modules-content,
+.no-modules-icon,
+.create-module-btn {
+  display: none;
+}
+
+/* Add this to your Modules.css file */
+.cancel-cell {
+  text-align: right;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.text-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 16px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.text-btn.cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.text-btn.cancel:hover {
+  background-color: #5a6268;
+}
