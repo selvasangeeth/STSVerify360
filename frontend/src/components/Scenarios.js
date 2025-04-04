@@ -36,6 +36,10 @@ const Scenarios = () => {
   const [editedValues, setEditedValues] = useState({});
   const actionMenuRef = useRef(null);
 
+  // Add state for action menu
+  const [actionMenuScenario, setActionMenuScenario] = useState(null);
+  const menuRef = useRef();
+
   useEffect(() => {
     console.log('Current moduleId:', moduleId);
   }, [moduleId]);
@@ -51,6 +55,19 @@ const Scenarios = () => {
     const handleClickOutside = (event) => {
       if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
         setSelectedScenario(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setActionMenuScenario(null);
       }
     };
 
@@ -363,11 +380,15 @@ const Scenarios = () => {
                   {editingScenario === scenario._id ? (
                     <input
                       type="text"
-                      value={editedValues.scenarioIdstr}
-                      onChange={(e) => setEditedValues({ ...editedValues, scenarioIdstr: e.target.value })}
+                      value={selectedScenario.scenarioIdstr}
+                      onChange={(e) => setSelectedScenario({
+                        ...selectedScenario,
+                        scenarioIdstr: e.target.value
+                      })}
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                          handleEditScenario(scenario._id);
+                          handleEditScenario(e);
+                          setEditingScenario(null);
                         }
                       }}
                     />
@@ -384,11 +405,15 @@ const Scenarios = () => {
                   {editingScenario === scenario._id ? (
                     <input
                       type="text"
-                      value={editedValues.taskId}
-                      onChange={(e) => setEditedValues({ ...editedValues, taskId: e.target.value })}
+                      value={selectedScenario.taskId}
+                      onChange={(e) => setSelectedScenario({
+                        ...selectedScenario,
+                        taskId: e.target.value
+                      })}
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                          handleEditScenario(scenario._id);
+                          handleEditScenario(e);
+                          setEditingScenario(null);
                         }
                       }}
                     />
@@ -400,11 +425,15 @@ const Scenarios = () => {
                   {editingScenario === scenario._id ? (
                     <input
                       type="text"
-                      value={editedValues.subTaskId}
-                      onChange={(e) => setEditedValues({ ...editedValues, subTaskId: e.target.value })}
+                      value={selectedScenario.subTaskId}
+                      onChange={(e) => setSelectedScenario({
+                        ...selectedScenario,
+                        subTaskId: e.target.value
+                      })}
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                          handleEditScenario(scenario._id);
+                          handleEditScenario(e);
+                          setEditingScenario(null);
                         }
                       }}
                     />
@@ -416,11 +445,15 @@ const Scenarios = () => {
                   {editingScenario === scenario._id ? (
                     <input
                       type="text"
-                      value={editedValues.scenarioDescription}
-                      onChange={(e) => setEditedValues({ ...editedValues, scenarioDescription: e.target.value })}
+                      value={selectedScenario.scenarioDescription}
+                      onChange={(e) => setSelectedScenario({
+                        ...selectedScenario,
+                        scenarioDescription: e.target.value
+                      })}
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                          handleEditScenario(scenario._id);
+                          handleEditScenario(e);
+                          setEditingScenario(null);
                         }
                       }}
                     />
@@ -436,28 +469,43 @@ const Scenarios = () => {
                 <td>{scenario.testCaseCount || 0}</td>
                 <td>
                   {editingScenario === scenario._id ? (
-                    <div className="edit-actions">
-                      <button className="text-btn cancel" onClick={() => setEditingScenario(null)}>
-                        Clear
-                      </button>
-                    </div>
+                    <button 
+                      className="text-btn cancel-edit" 
+                      onClick={() => {
+                        setEditingScenario(null);
+                        setSelectedScenario(null);
+                      }}
+                    >
+                      Clear
+                    </button>
                   ) : (
-                    <div style={{ position: "relative" }}>
+                    <div style={{ position: 'relative' }} ref={menuRef}>
                       <button 
                         className="action-btn" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedScenario(selectedScenario === scenario ? null : scenario);
-                        }}
+                        onClick={() => setActionMenuScenario(actionMenuScenario === scenario._id ? null : scenario._id)}
                       >
                         ⋮
                       </button>
-                      {selectedScenario === scenario && (
-                        <div className="action-menu" ref={actionMenuRef}>
-                          <div className="action-item" onClick={() => startEditing(scenario)}>
+                      {actionMenuScenario === scenario._id && (
+                        <div className="action-menu">
+                          <div 
+                            className="action-item"
+                            onClick={() => {
+                              setSelectedScenario(scenario);
+                              setEditingScenario(scenario._id);
+                              setActionMenuScenario(null);
+                            }}
+                          >
                             <FaEdit /> Edit
                           </div>
-                          <div className="action-item" onClick={() => setShowRemoveModal(true)}>
+                          <div 
+                            className="action-item"
+                            onClick={() => {
+                              setSelectedScenario(scenario);
+                              setShowRemoveModal(true);
+                              setActionMenuScenario(null);
+                            }}
+                          >
                             <FaTrash /> Remove
                           </div>
                         </div>
@@ -481,24 +529,22 @@ const Scenarios = () => {
 
       <ToastContainer />
 
+      {/* Add remove confirmation modal */}
       {showRemoveModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Confirm Remove Scenario</h2>
-            <p>Are you sure you want to remove this scenario named <strong>{selectedScenario.scenarioIdstr}</strong>?</p>
-            <p>This action cannot be undone.</p>
+            <h3>Remove Scenario</h3>
+            <p>Are you sure you want to remove this scenario?</p>
             <div className="modal-actions">
-              <button
-                type="button"
+              <button 
+                className="text-btn cancel"
                 onClick={() => setShowRemoveModal(false)}
-                className="cancel-btn"
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                onClick={handleRemoveScenario}
+              <button 
                 className="remove-btn"
+                onClick={handleRemoveScenario}
               >
                 Remove
               </button>
