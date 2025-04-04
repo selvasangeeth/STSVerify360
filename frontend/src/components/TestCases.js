@@ -4,7 +4,7 @@ import axios from './axios';
 import './TestCases.css';
 import './common.css';
 import TestCaseModal from './TestCaseModal';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaTrash, FaEye } from 'react-icons/fa';
 import Pagination from './Pagination/Pagination'; // Import Pagination component
 
 const TestCases = () => {
@@ -106,13 +106,17 @@ const TestCases = () => {
     });
   };
 
-  const handleEditClick = (testCase) => {
-    setModalState({
-      isOpen: true,
-      mode: 'edit',
-      testCase
-    });
-  };
+  // const handleEditClick = (testCase) => {
+  //   setModalState({
+  //     isOpen: true,
+  //     mode: 'edit',
+  //     testCase
+  //   });
+
+//   // };
+//   <button onClick={() => handleActionMenuItemClick('edit', testCase)}>
+//   <FaEdit className="action-icon" /> Edit
+// </button>
 
   const handleRemoveClick = async (testCase) => {
     try {
@@ -146,7 +150,7 @@ const TestCases = () => {
           scenarioId: scenarioId
         }
       })
-      console.log("hgcjzckhcjscj"+response.data.genSceId);
+     
       setGenId(response.data.genSceId);
       console.log("genId");
       console.log(genId);
@@ -197,9 +201,9 @@ const TestCases = () => {
       case 'view':
         handleViewClick(testCase);
         break;
-      case 'edit':
-        handleEditClick(testCase);
-        break;
+      // case 'edit':
+      //   handleEditClick(testCase);
+      //   break;
       case 'remove':
         handleRemoveClick(testCase);
         console.log('Remove test case:', testCase);
@@ -399,9 +403,6 @@ const TestCases = () => {
                       <div className="action-menu-dropdown" ref={actionMenuRef}>
                         <button onClick={() => handleActionMenuItemClick('view', testCase)}>
                           <FaEye className="action-icon" /> View
-                        </button>
-                        <button onClick={() => handleActionMenuItemClick('edit', testCase)}>
-                          <FaEdit className="action-icon" /> Edit
                         </button>
                         <button onClick={() => handleActionMenuItemClick('remove', testCase)}>
                           <FaTrash className="action-icon" /> Remove

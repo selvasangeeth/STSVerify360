@@ -185,16 +185,13 @@
   }
 
   .edit-btn {
-    background-color: rgb(121, 121, 124);
-    color: #333;
+    background-color: hsl(0, 70%, 60%);
+    color: white;
     border: 1px solid #ddd;
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    width: 50%;
+    width: 30%;
   }
 
-  .edit-btn:hover {
-    background-color: #f5f5f5;
-  }

@@ -101,22 +101,22 @@ const TestCaseModal = ({ testCase, scenarioId, onClose,genId, projectId, moduleI
   };
 
   // Function to render preview of the selected image/video
-  const renderFilePreview = () => {
-    if (!selectedFile) return null;
+  // const renderFilePreview = () => {
+  //   if (!selectedFile) return null;
 
-    if (fileType === 'image') {
-      return <img src={URL.createObjectURL(selectedFile)} alt="preview" style={{ maxWidth: '100%', maxHeight: '200px' }} />;
-    }
+  //   if (fileType === 'image') {
+  //     return <img src={URL.createObjectURL(selectedFile)} alt="preview" style={{ maxWidth: '100%', maxHeight: '200px' }} />;
+  //   }
 
-    if (fileType === 'video') {
-      return (
-        <video controls style={{ maxWidth: '100%', maxHeight: '200px' }}>
-          <source src={URL.createObjectURL(selectedFile)} type={selectedFile.type} />
-          Your browser does not support the video tag.
-        </video>
-      );
-    }
-  };
+  //   if (fileType === 'video') {
+  //     return (
+  //       <video controls style={{ maxWidth: '100%', maxHeight: '200px' }}>
+  //         <source src={URL.createObjectURL(selectedFile)} type={selectedFile.type} />
+  //         Your browser does not support the video tag.
+  //       </video>
+  //     );
+  //   }
+  // };
   
   const handleupdatecase = async (e) => {
     e.preventDefault();
@@ -616,7 +616,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose,genId, projectId, moduleI
                     className="edit-btn"
                     onClick={() => onSave({ ...testCase, mode: 'edit' })}
                   >
-                    Edit Case
+                    Cancel
                   </button>
                 </>
               )}

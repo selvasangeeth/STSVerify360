@@ -168,17 +168,18 @@ const updateTestCaseStatus = async (req, res) => {
     const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioIdstr}/${testCaseName.testCaseId}`;
     console.log("TestLog Creating....")
     const TestCaseUpdateLog = await log.create({
-      action: "Test Status Updated",
+      action: "Updated",
       entityType: "TestCase",
       entityId: updatedTestCase._id,
       user: testerName,
       timestamp: Date.now(),
       path: path,
+      projectId : projectId,
       details: `Status updated to: ${testStatus} and TestedBy: ${testerName}`,
     });
 
     console.log("TestLog Created Success")
-    // console.log("TestLog"+TestCaseUpdateLog);
+    console.log("TestLog"+TestCaseUpdateLog);
 
     return res.json({
       msg: "TestRun updated successfully",
@@ -284,7 +285,7 @@ const deleteTestCase = async (req, res) => {
     return res.status(200).json({ msg: 'TestCase deleted successfully' });
   } catch (err) {
     console.error("Error deleting TestCase:", err);
-    return res.status(500).json({ msg: 'Failed to delete TesrCase' });
+    return res.status(500).json({ msg: 'Failed to delete TestCase' });
   }
 };
 
