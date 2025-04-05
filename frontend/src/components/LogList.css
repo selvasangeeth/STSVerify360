@@ -123,6 +123,12 @@
   border: 1px solid #B0145A;
 }
 
+.label-project {
+  background-color: #9C27B0;
+  color: white;
+  border: 1px solid #7B1FA2;
+}
+
 .action-badge {
   padding: 6px 12px;
   border-radius: 4px;
@@ -156,7 +162,6 @@
 
 /* Remove these old label styles */
 .label-case,
-.label-project,
 .label-run {
   display: none;
 }

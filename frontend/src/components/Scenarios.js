@@ -36,6 +36,12 @@ const Scenarios = () => {
   const [editedValues, setEditedValues] = useState({});
   const actionMenuRef = useRef(null);
 
+  // Add state for action menu
+  const [actionMenuScenario, setActionMenuScenario] = useState(null);
+  const menuRef = useRef();
+
+  const [activeMenu, setActiveMenu] = useState(null);
+
   useEffect(() => {
     console.log('Current moduleId:', moduleId);
   }, [moduleId]);
@@ -51,6 +57,19 @@ const Scenarios = () => {
     const handleClickOutside = (event) => {
       if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
         setSelectedScenario(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setActionMenuScenario(null);
       }
     };
 
@@ -95,22 +114,28 @@ const Scenarios = () => {
       console.log("ModuleId  : " + moduleId);
       console.log(":genidddd"+genId);
       
-
       console.log('Sending scenario data:', scenarioData);
 
       const response = await axios.post('/createScenario', scenarioData);
       console.log('Add scenario response:', response.data);
 
       if (response.data.msg === "Scenario Created Successfully") {
-        setScenarios([...scenarios, response.data.data]);
+        // Add the new scenario to the beginning of the list
+        const newScenarioData = response.data.data;
+        setScenarios(prevScenarios => [newScenarioData, ...prevScenarios]);
         setShowAddInput(false);
         setNewScenario({
           scenarioIdstr: '',
           description: '',
           taskId: '',
           subTaskId: '',
+          projectId: projectId
         });
+        setGenId('');
         toast.success("Scenario added successfully");
+        
+        // Refresh the scenarios list to ensure everything is up to date
+        fetchScenarios();
       } else {
         setError(response.data.message);
       }
@@ -128,19 +153,20 @@ const Scenarios = () => {
       subTaskId: scenario.subTaskId,
       scenarioDescription: scenario.scenarioDescription
     });
-    setSelectedScenario(null); // Close the action menu
+    setSelectedScenario(scenario);
   };
 
-  const cancelEditing = () => {
-    setEditingScenario(null);
-    setEditedValues({});
+  const handleKeyPress = (e, scenarioId) => {
+    if (e.key === 'Enter') {
+      handleEditScenario(scenarioId);
+    }
   };
 
   const handleEditScenario = async (scenarioId) => {
     try {
       setError(null);
       const response = await axios.put(`/updateScenario/${scenarioId}`, {
-        scenarioUpdate: { ...editedValues },
+        scenarioUpdate: editedValues,
         projectId: projectId,
         moduleId: moduleId
       });
@@ -151,6 +177,7 @@ const Scenarios = () => {
         ));
         setEditingScenario(null);
         setEditedValues({});
+        setSelectedScenario(null);
         toast.success("Scenario updated successfully");
       } else {
         setError(response.data.message);
@@ -162,25 +189,39 @@ const Scenarios = () => {
   };
 
   const handleRemoveScenario = async () => {
+    if (!selectedScenario?._id) {
+        toast.error('No scenario selected for removal');
+        return;
+    }
+
     try {
         setError(null);
-        console.log("askjdhkj");
-        console.log(selectedScenario._id);
-        console.log(projectId);
-        console.log(moduleId);
+        console.log("Removing scenario:", selectedScenario._id);
+        console.log("Project ID:", projectId);
+        console.log("Module ID:", moduleId);
 
-        // Pass projectId and moduleId as query params
         const response = await axios.delete(`/sc/deleteScenario/${selectedScenario._id}`, {
             params: {
                 projectId: projectId,
                 moduleId: moduleId
             }
         });
-        console.log(response.data.msg);
-        setScenarios(scenarios.filter(scenario => scenario._id !== selectedScenario._id));
-        setShowRemoveModal(false);
-        toast.success("Scenario removed successfully");
+        
+        if (response.data.msg === "Scenario deleted successfully" || response.status === 200) {
+            setScenarios(prevScenarios => 
+                prevScenarios.filter(scenario => scenario._id !== selectedScenario._id)
+            );
+            setShowRemoveModal(false);
+            setSelectedScenario(null);
+            toast.success("Scenario removed successfully");
+            
+            // Refresh the scenarios list to ensure everything is up to date
+            fetchScenarios();
+        } else {
+            throw new Error(response.data.message || 'Failed to remove scenario');
+        }
     } catch (error) {
+        console.error('Error removing scenario:', error);
         setError('Error removing scenario. Please try again.');
         toast.error('Error removing scenario');
     }
@@ -220,12 +261,15 @@ const Scenarios = () => {
     }
   };
 
-  const filteredScenarios = scenarios.filter(scenario =>
-    scenario.scenarioIdstr.includes(searchTerm) ||
-    scenario.description.includes(searchTerm) ||
-    scenario.taskId.includes(searchTerm) ||
-    scenario.subTaskId.includes(searchTerm)
-  );
+  const filteredScenarios = scenarios.filter(scenario => {
+    const searchTermLower = searchTerm.toLowerCase();
+    return (
+      (scenario.scenarioIdstr || '').toLowerCase().includes(searchTermLower) ||
+      (scenario.description || '').toLowerCase().includes(searchTermLower) ||
+      (scenario.taskId || '').toLowerCase().includes(searchTermLower) ||
+      (scenario.subTaskId || '').toLowerCase().includes(searchTermLower)
+    );
+  });
 
   // Pagination logic
   const indexOfLastScenario = currentPage * scenariosPerPage;
@@ -242,6 +286,11 @@ const Scenarios = () => {
       subTaskId: '',
       projectId: projectId
     });
+  };
+
+  const handleMenuClick = (e, scenarioId) => {
+    e.stopPropagation();
+    setActiveMenu(activeMenu === scenarioId ? null : scenarioId);
   };
 
   if (loading) {
@@ -264,7 +313,7 @@ const Scenarios = () => {
           <input
             type="text"
             className="search-input"
-            placeholder="Search scenarios..."
+            placeholder="Scenario ID  Task ID  Sub Task ID"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -364,17 +413,20 @@ const Scenarios = () => {
                     <input
                       type="text"
                       value={editedValues.scenarioIdstr}
-                      onChange={(e) => setEditedValues({ ...editedValues, scenarioIdstr: e.target.value })}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEditScenario(scenario._id);
-                        }
-                      }}
+                      onChange={(e) => setEditedValues({
+                        ...editedValues,
+                        scenarioIdstr: e.target.value
+                      })}
+                      onKeyPress={(e) => handleKeyPress(e, scenario._id)}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   ) : (
                     <span
                       className="clickable-id"
-                      onClick={() => handleScenarioClick(scenario._id, projectId, moduleId)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleScenarioClick(scenario._id, projectId, moduleId);
+                      }}
                     >
                       {scenario.scenarioIdstr}
                     </span>
@@ -385,12 +437,12 @@ const Scenarios = () => {
                     <input
                       type="text"
                       value={editedValues.taskId}
-                      onChange={(e) => setEditedValues({ ...editedValues, taskId: e.target.value })}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEditScenario(scenario._id);
-                        }
-                      }}
+                      onChange={(e) => setEditedValues({
+                        ...editedValues,
+                        taskId: e.target.value
+                      })}
+                      onKeyPress={(e) => handleKeyPress(e, scenario._id)}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   ) : (
                     scenario.taskId
@@ -401,12 +453,12 @@ const Scenarios = () => {
                     <input
                       type="text"
                       value={editedValues.subTaskId}
-                      onChange={(e) => setEditedValues({ ...editedValues, subTaskId: e.target.value })}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEditScenario(scenario._id);
-                        }
-                      }}
+                      onChange={(e) => setEditedValues({
+                        ...editedValues,
+                        subTaskId: e.target.value
+                      })}
+                      onKeyPress={(e) => handleKeyPress(e, scenario._id)}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   ) : (
                     scenario.subTaskId
@@ -417,12 +469,12 @@ const Scenarios = () => {
                     <input
                       type="text"
                       value={editedValues.scenarioDescription}
-                      onChange={(e) => setEditedValues({ ...editedValues, scenarioDescription: e.target.value })}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEditScenario(scenario._id);
-                        }
-                      }}
+                      onChange={(e) => setEditedValues({
+                        ...editedValues,
+                        scenarioDescription: e.target.value
+                      })}
+                      onKeyPress={(e) => handleKeyPress(e, scenario._id)}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   ) : (
                     <div className="description-text">{scenario.scenarioDescription}</div>
@@ -436,30 +488,47 @@ const Scenarios = () => {
                 <td>{scenario.testCaseCount || 0}</td>
                 <td>
                   {editingScenario === scenario._id ? (
-                    <div className="edit-actions">
-                      <button className="text-btn cancel" onClick={() => setEditingScenario(null)}>
+                    <div className="action-buttons">
+                      <button 
+                        className="text-btn cancel-edit" 
+                        onClick={() => {
+                          setEditingScenario(null);
+                          setEditedValues({});
+                          setSelectedScenario(null);
+                        }}
+                      >
                         Clear
                       </button>
                     </div>
                   ) : (
-                    <div style={{ position: "relative" }}>
+                    <div className="menu-container">
                       <button 
-                        className="action-btn" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedScenario(selectedScenario === scenario ? null : scenario);
-                        }}
+                        className="menu-btn"
+                        onClick={(e) => handleMenuClick(e, scenario._id)}
                       >
                         ⋮
                       </button>
-                      {selectedScenario === scenario && (
-                        <div className="action-menu" ref={actionMenuRef}>
-                          <div className="action-item" onClick={() => startEditing(scenario)}>
+                      {activeMenu === scenario._id && (
+                        <div className="action-buttons popup">
+                          <button 
+                            className="action-btn edit"
+                            onClick={() => {
+                              startEditing(scenario);
+                              setActiveMenu(null);
+                            }}
+                          >
                             <FaEdit /> Edit
-                          </div>
-                          <div className="action-item" onClick={() => setShowRemoveModal(true)}>
+                          </button>
+                          <button 
+                            className="action-btn delete"
+                            onClick={() => {
+                              setSelectedScenario(scenario);
+                              setShowRemoveModal(true);
+                              setActiveMenu(null);
+                            }}
+                          >
                             <FaTrash /> Remove
-                          </div>
+                          </button>
                         </div>
                       )}
                     </div>
@@ -481,24 +550,22 @@ const Scenarios = () => {
 
       <ToastContainer />
 
+      {/* Add remove confirmation modal */}
       {showRemoveModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Confirm Remove Scenario</h2>
-            <p>Are you sure you want to remove this scenario named <strong>{selectedScenario.scenarioIdstr}</strong>?</p>
-            <p>This action cannot be undone.</p>
+            <h3>Remove Scenario</h3>
+            <p>Are you sure you want to remove this scenario?</p>
             <div className="modal-actions">
-              <button
-                type="button"
+              <button 
+                className="text-btn cancel"
                 onClick={() => setShowRemoveModal(false)}
-                className="cancel-btn"
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                onClick={handleRemoveScenario}
+              <button 
                 className="remove-btn"
+                onClick={handleRemoveScenario}
               >
                 Remove
               </button>

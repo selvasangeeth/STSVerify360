@@ -3,14 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from "./axios";
 import './Login.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.css";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [error, setError] = useState(null); // Add error state
-  // const dispatch = useDispatch();
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { isLoading } = useSelector((state) => state.auth);
 
@@ -37,16 +38,31 @@ const Login = () => {
         }
       );
 
-      if (response.data.msg === "LoginSuccess") {
-        console.log("Login successful, navigating...");
-        navigate("/dashboard");  // Navigate to the dashboard
+      if (response.data.msg === "LoginSuccess" && response.data.user) {
+        // Store user data in localStorage
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        
+        // Get the last path from localStorage
+        const lastPath = localStorage.getItem('lastPath');
+        
+        // Show success message
+        toast.success("Login successful!");
+        
+        // Navigate to last path or dashboard after a short delay
+        setTimeout(() => {
+          if (lastPath && lastPath !== '/login') {
+            localStorage.removeItem('lastPath'); // Clear the stored path
+            navigate(lastPath);
+          } else {
+            navigate("/dashboard");
+          }
+        }, 1000);
       } else {
-        console.log(response.data.msg);
-        setError(response.data.msg); // Set error message if login fails
+        toast.error(response.data.msg || 'Login failed. Please try again.');
       }
     } catch (error) {
       console.error('Error during login:', error);
-      setError('Error during login. Please try again.'); // Set error message if an exception occurs
+      toast.error(error.response?.data?.msg || 'Error during login. Please try again.');
     }
   };
 
@@ -90,6 +106,7 @@ const Login = () => {
           </p>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

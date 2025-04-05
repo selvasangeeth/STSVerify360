@@ -1,14 +1,12 @@
 import './Dashboard.css';
 import "react-toastify/ReactToastify.css";
 
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
+import UserProfile from './UserProfile';
 
-import AddModuleModal from './AddModuleModal';
-
-import LogList from './LogList'; // Import LogList component
+import LogList from './LogList';
 import { toast, ToastContainer } from "react-toastify";
 
 const DEFAULT_QUICK_LINKS = [
@@ -31,7 +29,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const location = useLocation();
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState(location.pathname); // Set initial active tab based on current path
-  // eslint-disable-next-line no-unused-vars
   const [modules, setModules] = useState([]);
   const [projects, setProjects] = useState([]);
   const [quickLinks, setQuickLinks] = useState(DEFAULT_QUICK_LINKS);
@@ -39,8 +36,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   
   const [showAddModuleModal, setShowAddModuleModal] = useState(false);
   
-  // eslint-disable-next-line no-unused-vars
-  const [showLogs, setShowLogs] = useState(false); // State to show logs
+  const [showLogs, setShowLogs] = useState(false);
   const [showAddQuickLinkModal, setShowAddQuickLinkModal] = useState(false);
   const [newQuickLink, setNewQuickLink] = useState({ name: '', url: '' });
   const [showEditQuickLinkModal, setShowEditQuickLinkModal] = useState(false);
@@ -215,10 +211,17 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
 
   return (
     <div className="dashboard-container">
+      <header className="dashboard-header">
+        <div className="header-left">
+          {/* Removed the duplicate Quality Arc text */}
+        </div>
+        <div className="header-right">
+          <UserProfile />
+        </div>
+      </header>
       <div className="sidebar">
         {/* Logo Section */}
         <div className="logo-section">
-          {/* <img src={logo} alt="VERIFY 360" className="logo" /> */}
           <h1>Quality Arc</h1>
         </div>
 
@@ -424,14 +427,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
         </div>
       )}
       <ToastContainer/>
-      {/* Add Module Modal */}
-      {showAddModuleModal && (
-        <AddModuleModal
-          projectId={selectedProject.projectId}
-          onClose={() => setShowAddModuleModal(false)}
-          onModuleAdded={handleModuleAdded}
-        />
-      )}
 
       {/* Add Quick Link Modal */}
       {showAddQuickLinkModal && (

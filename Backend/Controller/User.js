@@ -45,33 +45,41 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
 
-  try{
-  const { Email, Password } = req.body;
-  const user = await userDetails.findOne({ Email });
+  try {
+    
+    const { Email, Password } = req.body;
+    const user = await userDetails.findOne({ Email });
 
-  if (!user) {
-    return res.status(200).json({ msg: "User not found. Please Register!" });
+    if (!user) {
+      return res.status(200).json({ msg: "User not found. Please Register!" });
+    }
+
+    const paswd = user.Password;
+    const match = await bcrypt.compare(Password, paswd);
+
+    if (!match) {
+      return res.status(401).json({ msg: "Invalid details" });
+    }
+
+    //jwt auth
+    const token = jwt.sign({ id: user._id, email: user.Email, role: user.Role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+    res.cookie("jwt", token, { httpOnly: true, maxAge: 3600000 });
+
+    // Send user data in response
+    return res.status(200).json({ 
+      msg: "LoginSuccess",
+      user: {
+        Name: user.Name,
+        Email: user.Email,
+        Role: user.Role
+      }
+    });
   }
-
-  const paswd = user.Password;
-  const match = await bcrypt.compare(Password, paswd);
-
-  if (!match) {
-    return res.status(401).json({ msg: "Invalid details" });
+  catch (err) {
+    return res.status(500).json({ msg: "An error occurred while processing your request. Please try again later", error: err });
   }
-
-  //jwt auth
-  const UserName = await userDetails.findById(user._id).populate('Name');
-  const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
-  res.cookie("jwt", token, { httpOnly: true, maxAge: 3600000 });
-
-  return res.status(200).json({ msg: "LoginSuccess", Role: user.Role });
-
 }
-catch (err) {
-  return res.status(500).json({ msg: "An error occurred while processing your request. Please try again later", error: err });
-}
-}
+
 
 
 //update User
