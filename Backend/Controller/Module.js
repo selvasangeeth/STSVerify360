@@ -11,19 +11,23 @@ const userDetails = require("../Model/User.model");
 //CreateModule
 const createModule = async (req, res) => {
   try {
-    const createdById = req.user.id;
-    const { moduleName, subModule, projectId } = req.body;
-    
-    const mod = await modulee.findOne({ moduleName });
+      const createdById = req.user.id;
+      const { moduleName, subModule, projectId } = req.body;
 
-    if (moduleName == ''|| subModule == '' || projectId == '') {
-      return res.status(200).json({ msg: "All Fields are Mandatory" });
-    }
-   
-    if (mod) {
-      return res.status(200).json({ msg: "Module already Exist" });
-    }
-    else {
+      if (moduleName == ''|| subModule == '' || projectId == '') {
+        return res.status(200).json({ msg: "All Fields are Mandatory" });
+      }
+
+      const mod = await modulee.findOne({ 
+        moduleName: moduleName, 
+        projectId: projectId,
+        subModule:subModule
+      });
+    
+      if (mod) {
+        return res.status(200).json({ msg: "SubModule already Exist" });
+      }
+      else {
       const creat = await modulee.create({
         moduleName: moduleName,
         subModule: subModule,
@@ -168,7 +172,12 @@ const deleteModule = async (req, res) => {
     }
 
     const moduleName = await modulee.findById(moduleId).populate('moduleName');
+
     await modulee.findByIdAndDelete(moduleId);
+    await TestCaseModal.deleteMany({ moduleId:moduleId });
+    await ScenarioModel.deleteMany({ module:moduleId});
+
+
     const UserName = await userDetails.findById(deletedById).populate('Name');
     const projectName = await project.findById(projectId).populate('projectName');
     const path = `${projectName.projectName}/${moduleName.moduleName}`;

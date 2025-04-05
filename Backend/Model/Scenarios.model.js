@@ -29,7 +29,11 @@ const scenarioSchema = new mongoose.Schema({
      timestamp:{
         type:Date,
         default:Date.now()
-    }
+    },
+    projectId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Project'
+    },
 
 })
 

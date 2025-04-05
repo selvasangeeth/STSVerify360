@@ -232,7 +232,7 @@ const Testrun = ({ selectedProject }) => {
               <span className="value">{new Date(selectedTest.testCaseCreatedAt).toLocaleString()}</span>
             </div>
             <div className="detail-row">
-              <span className="label">Test Case Description</span>
+              <span className="label">Test Case Descriptisson</span>
               <span className="value">{selectedTest.testDescription}</span>
             </div>
             <div className="detail-row">

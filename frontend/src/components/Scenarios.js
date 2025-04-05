@@ -111,10 +111,7 @@ const Scenarios = () => {
         ...newScenario,
         scenarioIdstr: genId, 
       };
-      console.log("ModuleId  : " + moduleId);
-      console.log(":genidddd"+genId);
-      
-      console.log('Sending scenario data:', scenarioData);
+  
 
       const response = await axios.post('/createScenario', scenarioData);
       console.log('Add scenario response:', response.data);
@@ -132,12 +129,12 @@ const Scenarios = () => {
           projectId: projectId
         });
         setGenId('');
-        toast.success("Scenario added successfully");
-        
-        // Refresh the scenarios list to ensure everything is up to date
+        toast.success("Scenario Created successfully");
         fetchScenarios();
+      
       } else {
-        setError(response.data.message);
+        toast.error(response.data.msg)
+        setError(response.data.msg);
       }
     } catch (error) {
       console.error('Error adding scenario:', error.response?.data || error);
@@ -215,8 +212,10 @@ const Scenarios = () => {
             setSelectedScenario(null);
             toast.success("Scenario removed successfully");
             
-            // Refresh the scenarios list to ensure everything is up to date
-            fetchScenarios();
+            setTimeout(() => {
+              fetchScenarios();
+            }, 2000);
+
         } else {
             throw new Error(response.data.message || 'Failed to remove scenario');
         }
@@ -360,6 +359,7 @@ const Scenarios = () => {
                         handleAddScenario(e);
                       }
                     }}
+                    disabled    
                   />
                 </td>
                 <td>

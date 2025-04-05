@@ -148,6 +148,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     if (selectedProject) {
       setActiveTab(tab);
       navigate(tab);
+      
     }
   };
 

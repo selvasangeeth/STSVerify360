@@ -203,12 +203,12 @@ const getTestCase = async (req, res) => {
 
     const sc = await testScenarioModel.findById(scenarioId);
     if (!sc) {
-      return res.status(404).json({ msg: "Scenario not found" });
+      return res.status(200).json({ msg: "Scenario not found" });
     }
     const testCas = await testCaseModel.find({ scenarioId: scenarioId }).populate('createdBy', 'Name');
 
     if (testCas.length === 0) {
-      return res.status(404).json({ msg: "No TestCase found for this Scenario" });
+      return res.status(200).json({ msg: "No TestCase found for this Scenario" });
     }
 
     res.status(200).json({ msg: "success", data: testCas });
@@ -221,34 +221,52 @@ const getTestCase = async (req, res) => {
 //Generate Id
 
 const getTestIds = async (req, res) => {
-
   try {
-    
-    const {scenarioId} = req.query;  
+    const { scenarioId } = req.query;
 
     if (!scenarioId) {
-      return res.status(400).json({ msg: "scenarioId" });
+      return res.status(400).json({ msg: "scenarioId is required" });
     }
-   
-    const scenarioidgen = await testScenarioModel.findById(scenarioId);
-    if (!scenarioidgen) {
-      return res.status(404).json({ message: "Scebario not found" });
+
+    // Find the scenario to get the scenarioIdstr
+    const scenario = await testScenarioModel.findById(scenarioId);
+    if (!scenario) {
+      return res.status(200).json({ message: "Scenario not found" });
     }
-    const scenarioid = scenarioidgen.scenarioIdstr;
+    const scenarioIdStr = scenario.scenarioIdstr;
 
+    // Find the highest TestCaseId for this scenario
+    const lastTestCase = await testCaseModel.findOne({ scenarioId })
+      .sort({ testCaseId: -1 }) // Sort in descending order to get the highest TestCaseId
+      .limit(1);
 
-    const TestCaseCount = await testCaseModel.countDocuments({scenarioId:scenarioId});
+    let newTestCaseId = "TC001"; // Default to TC001 if no test cases exist
 
-    const result = `${scenarioid}_TC${(TestCaseCount + 1).toString().padStart(3, '0')}`;
+    if (lastTestCase) {
+      // Get the last test case ID (e.g., "TaxBandits_as_TS002_TC005")
+      const lastTestCaseId = lastTestCase.testCaseId;
 
-    // console.log(result);
-    return res.status(200).json({ msg : "success",genSceId: result });
+      // Extract the TC number from the last TestCaseId (e.g., "005" from "TC005")
+      const lastTcNumberMatch = lastTestCaseId.match(/TC(\d{3})$/);
 
+      if (lastTcNumberMatch) {
+        // Increment the last TC number by 1
+        const lastTcNumber = parseInt(lastTcNumberMatch[1], 10);
+        const newTcNumber = (lastTcNumber + 1).toString().padStart(3, '0');
+        newTestCaseId = `${scenarioIdStr}_TC${newTcNumber}`;
+      }
+    } else {
+      // If no test cases exist, create TC001
+      newTestCaseId = `${scenarioIdStr}_TC001`;
+    }
+
+    return res.status(200).json({ msg: "success", genSceId: newTestCaseId });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 //deleteTestCase
