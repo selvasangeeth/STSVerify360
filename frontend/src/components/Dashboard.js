@@ -4,7 +4,7 @@ import "react-toastify/ReactToastify.css";
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
-
+import UserProfile from './UserProfile';
 
 import LogList from './LogList';
 import { toast, ToastContainer } from "react-toastify";
@@ -211,10 +211,17 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
 
   return (
     <div className="dashboard-container">
+      <header className="dashboard-header">
+        <div className="header-left">
+          {/* Removed the duplicate Quality Arc text */}
+        </div>
+        <div className="header-right">
+          <UserProfile />
+        </div>
+      </header>
       <div className="sidebar">
         {/* Logo Section */}
         <div className="logo-section">
-          {/* <img src={logo} alt="VERIFY 360" className="logo" /> */}
           <h1>Quality Arc</h1>
         </div>
 

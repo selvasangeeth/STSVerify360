@@ -34,14 +34,15 @@ const Register = () => {
             });
 
             if (response.data.msg === "User created successfully") {
-                toast(response.data.msg);
-                setTimeout(() => nav("/"), 2000);
+                toast.success("Registration successful! Please login to continue.");
+                // Navigate to login page after 2 seconds
+                setTimeout(() => nav("/login"), 2000);
             } else {
-                toast(response.data.msg);
+                toast.error(response.data.msg);
             }
         } catch (error) {
             console.error('Error during registration:', error);
-            toast('Error during registration. Please try again.');
+            toast.error('Error during registration. Please try again.');
         }
     };
 
@@ -109,7 +110,7 @@ const Register = () => {
             <p>
                 Already have an account?{' '}
                 <span>
-                    <Link to="/" className="link">Login</Link>
+                    <Link to="/login" className="link">Login</Link>
                 </span>
             </p>
             <ToastContainer />

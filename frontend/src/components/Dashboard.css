@@ -2,6 +2,7 @@
   display: flex;
   height: 95vh;
   position: relative;
+  padding-top: 64px; /* Add padding to account for fixed header */
 }
 .sidebar {
   width: 250px;
@@ -613,6 +614,31 @@
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.header-left h1 {
+    margin: 0;
+    font-size: 20px;
+    color: #1a73e8;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 
