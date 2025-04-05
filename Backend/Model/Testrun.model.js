@@ -56,16 +56,16 @@ const testRunSchema = mongoose.Schema({
     },
     bugReferenceId: {
         type: String,
-        required: true
+
 
     },
     bugPriority: {
         type: String,
-        required: true
+
     },
     comments: {
         type: String,
-        required: true
+
     },
     expectedResult: {
         type: String,
@@ -79,12 +79,12 @@ const testRunSchema = mongoose.Schema({
         type: String,
         required: true
     },
-     projectId: {
-           type: mongoose.Schema.Types.ObjectId,
-           ref: 'Project'
-       },
+    projectId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project'
+    },
 
-    testCaseCreatedAt :{
+    testCaseCreatedAt: {
         type: Date,
     }
 });

@@ -50,7 +50,7 @@ const loginUser = async (req, res) => {
   const user = await userDetails.findOne({ Email });
 
   if (!user) {
-    return res.status(404).json({ msg: "User not found. Please Register!" });
+    return res.status(200).json({ msg: "User not found. Please Register!" });
   }
 
   const paswd = user.Password;
@@ -83,7 +83,7 @@ const updateUser = async (req, res) => {
     const Profileimg = req.file.filename;
     const user = await userDetails.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(200).json({ message: 'User not found' });
     }
     if (Name) {
       user.Name = Name;

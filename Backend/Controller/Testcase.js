@@ -8,17 +8,19 @@ const log = require("../Model/Log.model");
 
 //TestCase Creation
 const createTestCase = async (req, res) => {
+
   try {
     const createdById = req.user.id;
     const { testCaseId, caseType, scenarioId, description, projectId, moduleId, expectedResult, testCaseData, steps } = req.body;
     const test = await testCaseModel.findOne({ testCaseId });
     const testCaseDescription = description;
+
     if (test) {
-      return res.json({ msg: "TestCase already Exist" });
+      return res.status(200).json({ msg: "TestCase already Exist" });
     }
     else {
       const creat = await testCaseModel.create({
-        moduleId : moduleId,
+        moduleId: moduleId,
         scenarioId: scenarioId,
         testCaseId: testCaseId,
         caseType: caseType,
@@ -28,70 +30,74 @@ const createTestCase = async (req, res) => {
         expectedResult: expectedResult,
         createdBy: createdById,
       })
-    
+
       const associatedScenario = await testScenarioModel.findById(scenarioId).populate('scenarioIdstr');
       const associatedModule = await modulee.findById(moduleId).populate('moduleName');
       const associatedProject = await project.findById(projectId);
+
       if (!associatedModule) {
-        return res.status(404).json({ msg: "Module not found" });
+        return res.status(200).json({ msg: "Module not found" });
       }
+
       const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioIdstr}/${creat.testCaseId}`;
-      const UserName = await user.findById(createdById).populate('Name'); 
-      try {
-        console.log("log creating");
-       const logDetails =  await log.create({
-          action: "Created",
-          entityType: "TestCase",
-          entityId: creat._id,
-          user: UserName.Name,
-          timestamp: Date.now(),
-          path: path,
-          details: `Created TestCase : ${testCaseId}`,
+      const UserName = await user.findById(createdById).populate('Name');
 
-        })
 
-        // console.log("Log TestCase Created :"+logDetails);
-      }
-      catch (err) {
-        console.log(err);
-      }
-    
-      return res.json({ msg: "TestCase Created Successfully", data: creat });
+      //log
+
+      await log.create({
+        action: "Created",
+        entityType: "TestCase",
+        entityId: creat._id,
+        user: UserName.Name,
+        timestamp: Date.now(),
+        path: path,
+        projectId: projectId,
+        details: `Created TestCase : ${testCaseId}`,
+
+      })
+
+      return res.status(200).json({ msg: "TestCase Created Successfully", data: creat });
+
     }
   }
   catch (err) {
-    console.log("Error :" + err);
+    return res.status(500).json({ msg: "An error occurred while processing your request. Please try again later", error: err });
   }
 }
 
 //TestCase Status Update
 
 const updateTestCaseStatus = async (req, res) => {
+
   try {
     const { testCaseId, testStatus, scenarioId, projectId, description, moduleId, testRegion, comments, bugReferenceId, bugPriority } = req.body;
     const testerId = req.user.id;
-    console.log(" projectId : "+projectId);
+  
     if (!req.file) {
       console.log("no file");
       return res.status(400).json({ msg: "No file uploaded" });
     }
+
     const fileUploaded = req.file;
     const base64String = fileUploaded.buffer.toString('base64');
+
     if (base64String) {
       console.log("Converted to base64")
     }
     else {
       console.log("Not Converted");
     }
+
     const tester = await user.findById(testerId).populate('Name');
 
     const testerName = tester ? tester.Name : "Unknown";
     const testCaseName = await testCaseModel.findById(testCaseId).populate('testCaseId');
+
     if (!testStatus) {
       return res.status(400).json({ msg: "Status is required" });
     }
 
-    console.log("testCase Updating....");
     const updatedTestCase = await testCaseModel.findByIdAndUpdate(
       testCaseId,
       {
@@ -117,8 +123,8 @@ const updateTestCaseStatus = async (req, res) => {
       },
       { new: true }
     );
-    console.log("Success update");
-    // console.log("updated TestCase : " + updatedTestCase)
+  
+   
     if (!updatedTestCase) {
       return res.status(404).json({ msg: "TestCase not found" });
     }
@@ -133,13 +139,11 @@ const updateTestCaseStatus = async (req, res) => {
     const testCaseDetails = await testCaseModel.findById(testCaseId).populate('caseType').populate('testCaseDescription').populate('createdBy').populate('expectedResult').populate('testCaseData').populate('steps').populate('timestamp');
     const testCaseCreatedBy = await user.findById(testCaseDetails.createdBy).populate('Name');
     const testCaseCreatedByName = testCaseCreatedBy.Name;
-    console.log("Name of creatoir"+testCaseCreatedByName)
+
     const associatedModule = await modulee.findById(moduleId);
     const associatedProject = await project.findById(projectId);
 
 
-    console.log("TestRun Creating....");
-    console.log(comments);
 
     const testRunCreate = await testRunModel.create({
       projectId : projectId,
@@ -163,10 +167,10 @@ const updateTestCaseStatus = async (req, res) => {
       testCaseCreatedAt :testCaseDetails.timestamp,
       timestamp : Date.now(),
     })  
-    console.log("TestRun Created")
-    // console.log(testRunCreate);
+    
+  
     const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioIdstr}/${testCaseName.testCaseId}`;
-    console.log("TestLog Creating....")
+
     const TestCaseUpdateLog = await log.create({
       action: "Updated",
       entityType: "TestCase",
@@ -175,11 +179,9 @@ const updateTestCaseStatus = async (req, res) => {
       timestamp: Date.now(),
       path: path,
       projectId : projectId,
-      details: `Status updated to: ${testStatus} and TestedBy: ${testerName}`,
+      details: `Status updated to: ${testStatus}`,
     });
 
-    console.log("TestLog Created Success")
-    console.log("TestLog"+TestCaseUpdateLog);
 
     return res.json({
       msg: "TestRun updated successfully",

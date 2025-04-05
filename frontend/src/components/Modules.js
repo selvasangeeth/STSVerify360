@@ -68,6 +68,7 @@ const Modules = ({ selectedProject }) => {
         projectId: selectedProject.projectId,
         ...newModuleData
       });
+     
       if (response.data.msg === "Module Created Successfully") {
         setModules([...modules, response.data.data]);
         setShowAddRow(false);
@@ -80,7 +81,7 @@ const Modules = ({ selectedProject }) => {
         });
         toast.success("Module added successfully");
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.msg);
       }
     } catch (error) {
       console.error('Error adding module:', error);
@@ -114,6 +115,9 @@ const Modules = ({ selectedProject }) => {
           ));
           setEditingModule(null);
           toast.success("Module Updated Successfully");
+        }
+        else{
+          toast.error(response.data.msg);
         }
       } catch (error) {
         console.error('Error updating module:', error);
