@@ -427,14 +427,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
         </div>
       )}
       <ToastContainer/>
-      {/* Add Module Modal */}
-      {showAddModuleModal && (
-        <AddModuleModal
-          projectId={selectedProject.projectId}
-          onClose={() => setShowAddModuleModal(false)}
-          onModuleAdded={handleModuleAdded}
-        />
-      )}
 
       {/* Add Quick Link Modal */}
       {showAddQuickLinkModal && (
