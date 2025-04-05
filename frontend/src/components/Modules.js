@@ -142,11 +142,13 @@ const Modules = ({ selectedProject }) => {
     }
   };
 
-  const filteredModules = modules.filter(module =>
-    module.moduleName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    module.moduleId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    module.subModuleName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredModules = modules.filter(module => {
+    const searchTermLower = searchTerm.toLowerCase();
+    return (
+      (module.moduleName || '').toLowerCase().includes(searchTermLower) ||
+      (module.subModule || '').toLowerCase().includes(searchTermLower)
+    );
+  });
 
   // Pagination logic
   const indexOfLastModule = currentPage * modulesPerPage;
@@ -208,7 +210,7 @@ const Modules = ({ selectedProject }) => {
           <input
             type="text"
             className="search-input"
-            placeholder="Search modules..."
+            placeholder="Module Name  Submodule Name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
