@@ -1,10 +1,11 @@
 import './Dashboard.css';
 import "react-toastify/ReactToastify.css";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
 import UserProfile from './UserProfile';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 import LogList from './LogList';
 import { toast, ToastContainer } from "react-toastify";
@@ -33,9 +34,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const [projects, setProjects] = useState([]);
   const [quickLinks, setQuickLinks] = useState(DEFAULT_QUICK_LINKS);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  
-  const [showAddModuleModal, setShowAddModuleModal] = useState(false);
-  
   const [showLogs, setShowLogs] = useState(false);
   const [showAddQuickLinkModal, setShowAddQuickLinkModal] = useState(false);
   const [newQuickLink, setNewQuickLink] = useState({ name: '', url: '' });
@@ -51,6 +49,38 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     projectName: '',
     logo: null
   });
+
+  const [showEditProjectModal, setShowEditProjectModal] = useState(false);
+  const [activeProject, setActiveProject] = useState(null);
+  const [projectToEdit, setProjectToEdit] = useState(null);
+  const [projectToRemove, setProjectToRemove] = useState(null);
+  const [editProjectData, setEditProjectData] = useState({
+    projectName: '',
+    logo: null
+  });
+
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+  const [openQuickLinkIndex, setOpenQuickLinkIndex] = useState(null);
+  const dropdownRef = useRef(null);
+  const quickLinksRef = useRef(null);
+
+  // Add click outside handler for both dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+        setOpenMenuIndex(null);
+      }
+      if (quickLinksRef.current && !quickLinksRef.current.contains(event.target)) {
+        setOpenQuickLinkIndex(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const loadFile = (e) => {
     const file = e.target.files[0];
@@ -70,9 +100,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     }
   };
 
-
-
-  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -93,12 +120,11 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
       fetchModules(project.projectId);
     }
   }, []);
-  /* eslint-enable react-hooks/exhaustive-deps */
 
   const fetchModules = async (projectId) => {
     if (!projectId) {
       console.error('Project ID is missing');
-      return; // Don't proceed if projectId is invalid
+      return; 
     }
   
     try {
@@ -210,6 +236,129 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     setShowAddQuickLinkModal(false);
   };
 
+  const handleEditProject = (project) => {
+    setProjectToEdit(project);
+    setEditProjectData({
+      projectName: project.projectName,
+      logo: null
+    });
+    setShowEditProjectModal(true);
+    setActiveProject(null);
+  };
+
+  const handleRemoveProject = (project) => {
+    setProjectToRemove(project);
+    setShowRemoveConfirmModal(true);
+    setActiveProject(null);
+  };
+
+  const handleEditSubmitProject = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("projectId", projectToEdit._id);
+    formData.append("newProjectName", editProjectData.projectName);
+    if (editProjectData.logo) {
+      formData.append("projectLogo", editProjectData.logo);
+    }
+
+    try {
+      const response = await axios.put('/updateProject', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+      
+      if (response.data.msg) {
+        toast(response.data.msg);
+        // Update the projects list
+        const updatedProjects = projects.map(p => 
+          p._id === projectToEdit._id 
+            ? { ...p, projectName: editProjectData.projectName } 
+            : p
+        );
+        setProjects(updatedProjects);
+        setShowEditProjectModal(false);
+        setProjectToEdit(null);
+      }
+    } catch (error) {
+      console.error('Error updating project:', error);
+      toast.error('Failed to update project');
+    }
+  };
+
+  const handleConfirmRemoveProject = async () => {
+    try {
+      const response = await axios.delete(`/deleteProject/${projectToRemove._id}`);
+      if (response.data.msg) {
+        toast(response.data.msg);
+        // Remove the project from the list
+        const updatedProjects = projects.filter(p => p._id !== projectToRemove._id);
+        setProjects(updatedProjects);
+        setShowRemoveConfirmModal(false);
+        setProjectToRemove(null);
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error('Failed to delete project');
+    }
+  };
+
+  const toggleMenu = (index, e) => {
+    e.stopPropagation();
+    setOpenMenuIndex(openMenuIndex === index ? null : index);
+  };
+
+  const toggleQuickLinkMenu = (index, e) => {
+    e.stopPropagation();
+    setOpenQuickLinkIndex(openQuickLinkIndex === index ? null : index);
+  };
+
+  const QuickLinkItem = ({ link, onEdit, onRemove }) => {
+    const [showMenu, setShowMenu] = useState(false);
+    const menuRef = useRef(null);
+    
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+          setShowMenu(false);
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, []);
+    
+    return (
+      <div className="quick-link-item">
+        <span className="quick-link-name">{link}</span>
+        <div className="quick-link-menu" ref={menuRef}>
+          <button className="menu-dots" onClick={() => setShowMenu(!showMenu)}>
+            ⋮
+          </button>
+          {showMenu && (
+            <div className="menu-dropdown">
+              <button onClick={onEdit}>
+                <svg className="edit-icon" viewBox="0 0 576 512">
+                  <path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z" />
+                </svg>
+                Edit
+              </button>
+              <button onClick={onRemove}>
+                <svg className="remove-icon" viewBox="0 0 448 512">
+                  <path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z" />
+                </svg>
+                Remove
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -227,8 +376,17 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
         </div>
 
         {/* Project Dropdown */}
-        <div className="project-dropdown-container">
+        <div className="project-dropdown-container" ref={dropdownRef}>
           <div className="project-header">
+            {selectedProject && selectedProject.projectLogo ? (
+              <img
+                src={`data:image/jpeg;base64,${selectedProject.projectLogo}`}
+                alt={selectedProject.projectName}
+                className="selected-project-logo"
+              />
+            ) : (
+              <div className="project-logo-placeholder"></div>
+            )}
             <span
               className="select-project"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -252,13 +410,12 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
               </button>
               <div className="projects-list">
                 {projects && projects.length > 0 ? (
-                  projects.map((project) => (
+                  projects.map((project, index) => (
                     <div 
                       key={project._id} 
                       className="project-item"
-                      onClick={() => handleProjectSelect(project)} 
                     >
-                      <div className="project-details">
+                      <div className="project-details" onClick={() => handleProjectSelect(project)}>
                         {project.projectLogo && (
                           <img
                             src={`data:image/jpeg;base64,${project.projectLogo}`}
@@ -270,7 +427,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
                             }}
                           />
                         )}
-                        {/* Display the project name */}
                         <span
                           style={{
                             fontSize: '14px',
@@ -281,6 +437,33 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
                         >
                           {project.projectName}
                         </span>
+                      </div>
+                      <div className="project-actions">
+                        <button 
+                          className="menu-dots"
+                          onClick={(e) => toggleMenu(index, e)}
+                        >
+                          ⋮
+                        </button>
+                        {openMenuIndex === index && (
+                          <div 
+                            className="project-menu-dropdown" 
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <button onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditProject(project);
+                            }}>
+                              <FaEdit className="edit-icon" /> Edit
+                            </button>
+                            <button onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveProject(project);
+                            }}>
+                              <FaTrash className="remove-icon" /> Remove
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))
@@ -329,7 +512,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
         </nav>
 
         {/* Quick Links */}
-        <div className="quick-links-section">
+        <div className="quick-links-section" ref={quickLinksRef}>
           <div className="quick-links-header">
             <h3>Quick Links</h3>
             <button 
@@ -339,36 +522,16 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
               +
             </button>
           </div>
-          <ul className="quick-links-list">
+          <div className="quick-links-list">
             {quickLinks.map((link, index) => (
-              <li key={index} className="quick-link-item">
-                <span 
-                  className="quick-link-name"
-                  onClick={() => handleQuickLinkClick(link.url)}
-                >
-                  {link.name}
-                </span>
-                <div className="quick-link-menu">
-                  <button 
-                    className="menu-dots"
-                    onClick={(e) => handleQuickLinkMenuClick(e, index)}
-                  >
-                    ⋮
-                  </button>
-                  {activeQuickLink === index && (
-                    <div className="menu-dropdown">
-                      <button onClick={() => handleEditQuickLink(index)}>
-                        <span>✏️</span> Edit
-                      </button>
-                      <button onClick={() => handleRemoveQuickLink(index)}>
-                        <span>🗑️</span> Remove
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </li>
+              <QuickLinkItem
+                key={index}
+                link={link.name}
+                onEdit={() => handleEditQuickLink(index)}
+                onRemove={() => handleRemoveQuickLink(index)}
+              />
             ))}
-          </ul>
+          </div>
         </div>
       </div>
 
@@ -581,6 +744,99 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
           </button>
         </div>
       </form>
+    </div>
+  </div>
+)}
+
+{showEditProjectModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Edit Project</h2>
+      <form onSubmit={handleEditSubmitProject}>
+        <div className="form-group">
+          <label>Project Name</label>
+          <input
+            type="text"
+            value={editProjectData.projectName}
+            onChange={(e) => setEditProjectData({
+              ...editProjectData,
+              projectName: e.target.value
+            })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Project Logo</label>
+          <div className="file-input">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setEditProjectData({
+                      ...editProjectData,
+                      logo: file
+                    });
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+            />
+            {editProjectData.logo && (
+              <div className="project-item">
+                <img src={URL.createObjectURL(editProjectData.logo)} alt="Project Logo" />
+                <span className="project-name">{editProjectData.projectName || "Project Name"}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="modal-actions">
+          <button 
+            type="button"
+            className="cancel-btn"
+            onClick={() => {
+              setShowEditProjectModal(false);
+              setProjectToEdit(null);
+            }}
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            className="submit-btn"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+{showRemoveConfirmModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Confirm Removal</h2>
+      <p>Are you sure you want to remove this project?</p>
+      <div className="modal-actions">
+        <button 
+          type="button" 
+          onClick={() => setShowRemoveConfirmModal(false)}
+          className="cancel-btn"
+        >
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          onClick={handleConfirmRemoveProject}
+          className="submit-btn"
+        >
+          Remove
+        </button>
+      </div>
     </div>
   </div>
 )}

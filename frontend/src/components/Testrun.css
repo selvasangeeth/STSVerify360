@@ -49,20 +49,21 @@
 
 .filters select {
   margin-left: 10px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 12px 20px;
+  padding: 12px 35px 12px 20px;
   border-radius: 10px;
-  border: none;
-  background-color: #f0f7ff; /* Light blue background */
-  color: #007bff; /* Blue text */
-  font-weight: bold;
-  cursor: pointer;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 12px;
+  color: #333;
   font-size: 14px;
+  cursor: pointer;
   text-align: center;
-  appearance: none; /* Hide default arrow */
-  width: 150px;
+  appearance: none;
+  min-width: 150px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .filters select::after {
@@ -77,13 +78,15 @@
 
 /* Hover Effect */
 .filters select:hover {
-  background-color: #e3efff;
+  background-color: #f8f9fa;
+  border-color: #ddd;
 }
 
 /* Focus Effect */
 .filters select:focus {
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
 }
 
 /* Table Styles */
@@ -231,36 +234,100 @@ td {
 }
 
 /* Datepicker Popup */
+.custom-select {
+  position: relative;
+  display: inline-block;
+}
+
+.time-period-button {
+  position: relative;
+  padding: 12px 35px 12px 20px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 150px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.time-period-button::after {
+  content: "";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.time-period-button:hover {
+  background-color: #f8f9fa;
+  border-color: #ddd;
+}
+
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+  overflow: hidden;
+  min-width: 150px;
+}
+
+.custom-dropdown div {
+  padding: 10px 16px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.custom-dropdown div:hover {
+  background-color: #f0f7ff;
+}
+
 .datepicker-popup {
   position: absolute;
-  top: 60px;
-  right: 20px;
+  top: calc(100% + 4px);
+  right: 0;
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
+  z-index: 1001;
   padding: 16px;
+  width: max-content;
 }
 
-.custom-calendar {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
+/* Calendar Styles */
 .react-datepicker {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial !important;
   border: none !important;
-  box-shadow: none !important;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .react-datepicker__month-container {
-  float: left;
-  margin-right: 16px;
+  float: none;
 }
 
 .react-datepicker__header {
   background-color: white !important;
   border-bottom: 1px solid #e0e0e0 !important;
-  padding-top: 12px !important;
+  padding: 12px !important;
 }
 
 .react-datepicker__current-month {
@@ -273,33 +340,26 @@ td {
 .react-datepicker__day-name {
   color: #666;
   font-size: 12px;
-  width: 32px !important;
   margin: 4px !important;
+  width: 32px !important;
 }
 
 .react-datepicker__day {
+  margin: 4px !important;
   width: 32px !important;
   height: 32px !important;
   line-height: 32px !important;
-  margin: 4px !important;
   border-radius: 50% !important;
   color: #333;
-  font-size: 13px;
 }
 
 .react-datepicker__day:hover {
   background-color: #f0f7ff !important;
 }
 
-.react-datepicker__day--selected,
-.react-datepicker__day--in-range {
+.react-datepicker__day--selected {
   background-color: #007bff !important;
   color: white !important;
-}
-
-.react-datepicker__day--in-selecting-range {
-  background-color: #cce5ff !important;
-  color: #333 !important;
 }
 
 .react-datepicker__day--keyboard-selected {
@@ -308,15 +368,15 @@ td {
 }
 
 .react-datepicker__navigation {
-  top: 12px !important;
+  top: 12px;
 }
 
 .react-datepicker__navigation--previous {
-  left: 12px !important;
+  left: 12px;
 }
 
 .react-datepicker__navigation--next {
-  right: 12px !important;
+  right: 12px;
 }
 
 /* Test Case Details Modal */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaEye } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -31,6 +31,10 @@ const Testrun = ({ selectedProject }) => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [testRunsPerPage, setTestRunsPerPage] = useState(10);
+  const [showCustomDropdown, setShowCustomDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+  const datePickerRef = useRef(null);
+
   useEffect(() => {
     if (selectedProject) {
       console.log("Selected Project ID:", selectedProject.projectId);
@@ -49,9 +53,28 @@ const Testrun = ({ selectedProject }) => {
         });
     }
   }, [selectedProject]);
-  const handleTimePeriodChange = (e) => {
-    const value = e.target.value;
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Handle dropdown close
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowCustomDropdown(false);
+      }
+      // Handle date picker close
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target)) {
+        setShowDatePicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleTimePeriodChange = (value) => {
     setTimePeriod(value);
+    setShowCustomDropdown(false);
     if (value === "Custom") {
       setShowDatePicker(true);
     } else {
@@ -59,10 +82,12 @@ const Testrun = ({ selectedProject }) => {
       setSelectedDate(null);
     }
   };
+
   const handleDateSelect = (date) => {
     setSelectedDate(date);
-    setShowDatePicker(false); // Close the date picker when a date is selected
+    setShowDatePicker(false);
   };
+
   const handleEyeClick = (test) => {
     setSelectedTest(test);
     setShowModal(true);
@@ -136,32 +161,41 @@ const Testrun = ({ selectedProject }) => {
             <option>Sprint</option>
             <option>Staging</option>
             <option>UAT</option>
-            <option>Live</option>
           </select>
           <select value={testStatus} onChange={(e) => setTestStatus(e.target.value)}>
             <option>All Statuses</option>
             <option>Pass</option>
             <option>Fail</option>
           </select>
-          <select value={timePeriod} onChange={handleTimePeriodChange}>
-            <option>This Month</option>
-            <option>Last Month</option>
-            <option>Last 3 Months</option>
-            <option>Custom</option>
-          </select>
+          <div className="custom-select" ref={dropdownRef}>
+            <button 
+              className="time-period-button" 
+              onClick={() => setShowCustomDropdown(!showCustomDropdown)}
+            >
+              {selectedDate ? selectedDate.toLocaleDateString() : timePeriod}
+            </button>
+            {showCustomDropdown && (
+              <div className="custom-dropdown">
+                <div onClick={() => handleTimePeriodChange("This Month")}>This Month</div>
+                <div onClick={() => handleTimePeriodChange("Last Month")}>Last Month</div>
+                <div onClick={() => handleTimePeriodChange("Last 3 Months")}>Last 3 Months</div>
+                <div onClick={() => handleTimePeriodChange("Custom")}>Custom</div>
+              </div>
+            )}
+            {showDatePicker && (
+              <div className="datepicker-popup" ref={datePickerRef}>
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={handleDateSelect}
+                  inline
+                  calendarClassName="custom-calendar"
+                  dateFormat="MMMM d, yyyy"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      {showDatePicker && (
-        <div className="datepicker-popup">
-          <DatePicker
-            selected={selectedDate}
-            onChange={handleDateSelect}
-            inline
-            calendarClassName="custom-calendar"
-            dateFormat="MMMM d, yyyy"
-          />
-        </div>
-      )}
       <table className="test-runs-table">
         <thead>
           <tr>

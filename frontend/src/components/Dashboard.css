@@ -32,7 +32,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 10px;
+  height: 40px;
 }
 .project-icon {
   font-size: 1.2em;
@@ -59,7 +59,7 @@
   border: 1px solid #dee2e6;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  z-index: 1000;
+  z-index: 999;
 }
 .add-project-btn {
   width: 100%;
@@ -74,13 +74,15 @@
 .projects-list {
   max-height: 300px;
   overflow-y: auto;
+  position: relative;
 }
 .project-item {
   padding: 10px 15px;
   display: flex;
   align-items: center;
-  gap: 100px;
+  justify-content: space-between;
   cursor: pointer;
+  position: relative;
 }
 .project-item:hover {
   background-color: #f8f9fa;
@@ -335,16 +337,17 @@
 .menu-container {
   position: relative;
 }
-.menu-dropdown {
+.menu-dropdown,
+.project-menu-dropdown {
   position: absolute;
   right: 0;
   top: 100%;
   background: white;
-  border: 1px solid #e0e0e0;
   border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 1000;
   min-width: 120px;
+  padding: 4px 0;
 }
 .menu-item {
   padding: 8px 16px;
@@ -427,10 +430,10 @@
   text-align: right;
 }
 .select-project {
-  flex-grow: 10; /* Allows text to take available space */
+  flex-grow: 1;
   font-size: 16px;
   white-space: nowrap;
-  padding-left: 8px; /* Adds spacing from the left */
+  padding-left: 8px;
 }
 .quick-links-section {
   padding: 16px;
@@ -456,9 +459,9 @@
   padding: 4px;
 }
 .quick-links-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .quick-link-item {
   display: flex;
@@ -466,8 +469,9 @@
   align-items: center;
   padding: 8px;
   font-size: 14px;
-  color: #0066cc;
+  color: #333;
   cursor: pointer;
+  position: relative;
 }
 .quick-link-name {
   flex-grow: 1;
@@ -477,16 +481,28 @@
 }
 .quick-link-menu {
   position: relative;
+  display: inline-block;
 }
 .menu-dots {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   color: #666;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 0 8px;
+  font-weight: normal;
 }
-.menu-dropdown {
+.project-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.project-actions {
+  position: relative;
+  display: inline-block;
+}
+.project-menu-dropdown {
   position: absolute;
   right: 0;
   top: 100%;
@@ -495,125 +511,81 @@
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   z-index: 1000;
-  min-width: 120px;
+  min-width: 150px;
+  margin-top: 2px;
+  padding: 8px;
 }
-.menu-dropdown button {
+.project-menu-dropdown button {
   width: 100%;
-  padding: 8px 16px;
+  padding: 0.75rem;
   border: none;
-  background: none;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #333;
-  font-size: 14px;
-  text-align: left;
+  gap: 0.5rem;
+  margin-bottom: 4px;
 }
-.menu-dropdown button:hover {
-  background: #f5f5f5;
+.project-menu-dropdown button:last-child {
+  margin-bottom: 0;
 }
-.menu-dropdown button:last-child {
-  color: #dc3545;
+.project-menu-dropdown button:hover {
+  opacity: 0.9;
 }
-.remove-confirm-modal {
-  max-width: 400px;
-  text-align: center;
-  padding: 24px;
-  background: white;
-  border-radius: 8px;
+.edit-icon,
+.remove-icon {
+  font-size: 1rem;
 }
-.warning-icon {
-  font-size: 24px;
-  margin-right: 12px;
-}
-.document-name {
-  font-weight: bold;
-  font-size: 18px;
-  margin: 16px 0;
-  word-break: break-word;
-}
-.warning-text {
-  color: #666;
-  margin: 16px 0;
-  font-size: 14px;
-}
-.modal-actions {
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
-}
-.modal-actions .cancel-btn {
-  padding: 8px 24px;
-  background: hsl(0, 1%, 57%);
-  color: white;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  cursor: pointer;
-  width: 30%;
-  font-size: 14px;
-  transition: background-color 0.2s;
-  
-}
-
-.modal-actions .remove-btn {
-  padding: 8px 24px;
-  background: #ff0000;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  width: 30%;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-.modal-actions .remove-btn:hover {
-  background: #dc3545;
-}
-.modal-actions .submit-btn {
-  padding: 8px 24px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  min-width: 100px;
-  font-size: 14px;
-  transition: background-color 0.2s;
-  width: 30%;
-}
-.modal-actions .submit-btn:hover {
-  background: #0056b3;
+  align-items: center;
+  z-index: 1000;
 }
 .modal-content {
   background: white;
   padding: 24px;
   border-radius: 8px;
-  width: 90%;
+  width: 100%;
   max-width: 400px;
 }
 .modal-content h2 {
+  margin: 0 0 16px;
   color: #333;
-  margin-bottom: 20px;
-  font-size: 20px;
+}
+.modal-actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
 }
-.form-group {
-  margin-bottom: 16px;
-}
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: #333;
-}
-.form-group input {
-  width: 100%;
-  padding: 8px;
+.cancel-btn {
+  padding: 8px 16px;
   border: 1px solid #ddd;
+  background: white;
   border-radius: 4px;
+  cursor: pointer;
+}
+.submit-btn {
+  padding: 8px 16px;
+  border: none;
+  background: #F52109;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.submit-btn:hover {
+  background: #d41c07;
+}
+.cancel-btn:hover {
+  background: #f5f5f5;
 }
 .dashboard-header {
     display: flex;
@@ -639,6 +611,50 @@
     display: flex;
     align-items: center;
     gap: 16px;
+}
+
+.selected-project-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: contain;
+  background-color: white;
+}
+
+.project-logo-placeholder {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+}
+
+/* Menu Dropdown Styles */
+.menu-dropdown button,
+.project-menu-dropdown button {
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  color: #333;
+}
+
+.menu-dropdown button:hover,
+.project-menu-dropdown button:hover {
+  background-color: #f0f0f0;
+}
+
+.edit-icon,
+.remove-icon {
+  font-size: 14px;
+  width: 16px;
+  height: 16px;
+  color: #333;
 }
 
 

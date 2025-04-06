@@ -26,6 +26,8 @@ const Modules = ({ selectedProject }) => {
   const [activeMenu, setActiveMenu] = useState(null);
   const actionMenuRef = useRef(null);
   const [editingModule, setEditingModule] = useState(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [moduleToDelete, setModuleToDelete] = useState(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -125,11 +127,19 @@ const Modules = ({ selectedProject }) => {
     }
   };
 
-  const handleRemove = async (moduleId) => {
+  const handleRemoveClick = (moduleId) => {
+    setModuleToDelete(moduleId);
+    setShowConfirmDialog(true);
+    setActiveMenu(null); // Close the dropdown
+  };
+
+  const handleConfirmRemove = async () => {
+    if (!moduleToDelete) return;
+
     try {
       const response = await axios.delete("/mod/deleteModule", {
         data: {
-          moduleId: moduleId,
+          moduleId: moduleToDelete,
           projectId: selectedProject.projectId
         },
         headers: {
@@ -137,13 +147,21 @@ const Modules = ({ selectedProject }) => {
         }
       });
       if (response.data.msg === "Module deleted successfully") {
-        setModules(modules.filter((module) => module._id !== moduleId));
+        setModules(modules.filter((module) => module._id !== moduleToDelete));
         toast.success("Module removed successfully");
       }
     } catch (error) {
       console.error("Error removing module:", error);
       toast.error("Failed to remove module");
+    } finally {
+      setShowConfirmDialog(false);
+      setModuleToDelete(null);
     }
+  };
+
+  const handleCancelRemove = () => {
+    setShowConfirmDialog(false);
+    setModuleToDelete(null);
   };
 
   const filteredModules = modules.filter(module => {
@@ -346,10 +364,12 @@ const Modules = ({ selectedProject }) => {
                         {activeMenu === module._id && (
                           <div className="action-menu" ref={actionMenuRef}>
                             <div className="action-item" onClick={() => handleEdit(module)}>
-                              <FaEdit /> Edit
+                              <FaEdit />
+                              <span>Edit</span>
                             </div>
-                            <div className="action-item" onClick={() => handleRemove(module._id)}>
-                              <FaTrash /> Remove
+                            <div className="action-item" onClick={() => handleRemoveClick(module._id)}>
+                              <FaTrash />
+                              <span>Remove</span>
                             </div>
                           </div>
                         )}
@@ -369,6 +389,22 @@ const Modules = ({ selectedProject }) => {
         onRowsPerPageChange={setModulesPerPage}
       />
       <ToastContainer />
+      {showConfirmDialog && (
+        <div className="modal-overlay">
+          <div className="confirm-dialog">
+            <h3>Confirm Remove</h3>
+            <p>Are you sure you want to remove this module?</p>
+            <div className="confirm-actions">
+              <button className="cancel-btn" onClick={handleCancelRemove}>
+                Cancel
+              </button>
+              <button className="confirm-btn" onClick={handleConfirmRemove}>
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

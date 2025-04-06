@@ -63,18 +63,24 @@ const createProject = async (req, res) => {
 
 //Update Project
 const updateProject = async (req, res) => {
-
   const updatedBy = req.user.id;
 
   try {
     const { projectId, newProjectName } = req.body;
+    const projectLogo = req.file;
 
     const proj = await ProjectDetails.findById(projectId);
     if (!proj) {
       return res.json({ msg: "Project does not exist" });
     } else {
-      oldProjectName = proj.projectName;
+      const oldProjectName = proj.projectName;
       proj.projectName = newProjectName;
+      
+      if (projectLogo) {
+        const base64String = projectLogo.buffer.toString('base64');
+        proj.projectLogo = base64String;
+      }
+      
       await proj.save();
 
       const UserName = await userDetails.findById(updatedBy).populate('Name'); 
@@ -86,19 +92,24 @@ const updateProject = async (req, res) => {
           entityId: projectId,
           user: UserName.Name,
           path: proj.projectName,
-          projectId : projectId,
-          details: ` ${oldProjectName} updated to ${newProjectName}`
-
-        })
-      }
-      catch (err) {
+          projectId: projectId,
+          details: `${oldProjectName} updated to ${newProjectName}`
+        });
+      } catch (err) {
         console.log(err);
       }
-      return res.json({ msg: "Project updated successfully", data: proj});
+      
+      return res.json({ 
+        msg: "Project updated successfully", 
+        data: {
+          ...proj.toObject(),
+          projectLogo: proj.projectLogo ? Buffer.from(proj.projectLogo, 'base64').toString('base64') : null
+        }
+      });
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.log("Error :" + err);
+    return res.status(500).json({ msg: "Failed to update project" });
   }
 };
 
