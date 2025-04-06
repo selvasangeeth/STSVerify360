@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
 import UserProfile from './UserProfile';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { MdDashboard, MdAssignment, MdTimeline, MdHistory } from 'react-icons/md';
 
 import LogList from './LogList';
 import { toast, ToastContainer } from "react-toastify";
@@ -29,6 +30,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState(location.pathname); // Set initial active tab based on current path
   const [modules, setModules] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -363,13 +365,66 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     <div className="dashboard-container">
       <header className="dashboard-header">
         <div className="header-left">
-          {/* Removed the duplicate Quality Arc text */}
+          
+       
+        <button 
+  className="sidebar-toggle"
+  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+  aria-label="Toggle Sidebar"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="28"
+    height="28"
+    viewBox="0 0 64 64"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="toggle-icon"
+  >
+    <path d="M10 6c-2.2 0-4 1.8-4 4v44c0 2.2 1.8 4 4 4h44c2.2 0 4-1.8 4-4V10c0-2.2-1.8-4-4-4H10z" />
+    
+    {/* Line 1 */}
+    <rect x="18" y="14" width="28" height="8" rx="4" />
+    <circle 
+      cx={isSidebarCollapsed ? "42" : "22"} 
+      cy="18" 
+      r="4" 
+      fill="currentColor" 
+    />
+
+    {/* Line 2 */}
+    <rect x="18" y="28" width="28" height="8" rx="4" />
+    <circle 
+      cx={isSidebarCollapsed ? "22" : "42"} 
+      cy="32" 
+      r="4" 
+      fill="currentColor" 
+    />
+
+    {/* Line 3 */}
+    <rect x="18" y="42" width="28" height="8" rx="4" />
+    <circle 
+      cx={isSidebarCollapsed ? "42" : "22"} 
+      cy="46" 
+      r="4" 
+      fill="currentColor" 
+    />
+  </svg>
+</button>
+
+
+
+
+
         </div>
         <div className="header-right">
           <UserProfile />
         </div>
       </header>
-      <div className="sidebar">
+      <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
         {/* Logo Section */}
         <div className="logo-section">
           <h1>Quality Arc</h1>
@@ -482,7 +537,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
             onClick={() => handleNavClick('/modules')}
             style={{ backgroundColor: activeTab === '/modules' ? '#be5133' : '' }}
           >
-            <span className="nav-icon">📊</span>
+            <MdDashboard className="nav-icon" />
             <span>Modules</span>
           </div>
           <div 
@@ -490,7 +545,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
             onClick={() => handleNavClick('/testrun')}
             style={{ backgroundColor: activeTab === '/testrun' ? '#be5133' : '' }}
           >
-            <span className="nav-icon">📋</span>
+            <MdAssignment className="nav-icon" />
             <span>Test Runs</span>
           </div>
           <div 
@@ -498,15 +553,15 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
             onClick={() => handleNavClick('/metrics')}
             style={{ backgroundColor: activeTab === '/metrics' ? '#be5133' : '' }}
           >
-            <span className="nav-icon">📈</span>
+            <MdTimeline className="nav-icon" />
             <span>Metrics</span>
           </div>
           <div 
             className={`nav-item ${activeTab === '/activity' ? 'active' : ''}`}
-            onClick={()=>handleNavClick('/activity')} // Update to handle click
+            onClick={()=>handleNavClick('/activity')}
             style={{ backgroundColor: activeTab === '/activity' ? '#be5133' : '' }}
           >
-            <span className="nav-icon">📝</span>
+            <MdHistory className="nav-icon" />
             <span>Activity</span>
           </div>
         </nav>

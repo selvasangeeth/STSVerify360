@@ -1,8 +1,9 @@
 .dashboard-container {
   display: flex;
-  height: 95vh;
+  min-height: 100vh;
   position: relative;
   padding-top: 64px; /* Add padding to account for fixed header */
+  transition: all 0.3s ease;
 }
 .sidebar {
   width: 250px;
@@ -10,6 +11,18 @@
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  position: fixed;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+.sidebar.collapsed {
+  width: 64px;
+  padding: 0;
 }
 .logo-section {
   padding: 16px;
@@ -190,6 +203,21 @@
   flex: 1;
   padding: 20px;
   background: #f8f9fa;
+  margin-left: 250px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: calc(100vh - 64px);
+  width: calc(100% - 250px);
+}
+.sidebar.collapsed + .main-content {
+  margin-left: 64px;
+  width: calc(100% - 64px);
+}
+/* Hide elements when sidebar is collapsed */
+.sidebar.collapsed .logo-section,
+.sidebar.collapsed .project-dropdown-container,
+.sidebar.collapsed .nav-menu,
+.sidebar.collapsed .quick-links-section {
+  display: none;
 }
 .content-header {
   margin-bottom: 20px;
@@ -319,20 +347,30 @@
 .nav-item {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Align items to the start */
-  gap: 10px;
-  font-size: 16px;
-  color: black;
+  padding: 12px 16px;
+  color: #333;
   cursor: pointer;
-  width: 100%; /* Full width */
-  padding: 10px;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  margin: 4px 8px;
+}
+.nav-item:hover {
+  background-color: rgba(190, 81, 51, 0.1);
 }
 .nav-item.active {
-  background-color: #F52109;;
+  background-color: #be5133;
+  color: white;
+}
+.nav-item.active .nav-icon {
   color: white;
 }
 .nav-icon {
-  margin-right: 8px;
+  font-size: 20px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .menu-container {
   position: relative;
@@ -658,10 +696,29 @@
 }
 
 
+.sidebar-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  position: relative;
+  z-index: 1001;
+  margin: 12px;
+  padding: 0;
+  color: #000; /* black */
+  transition: background-color 0.3s ease;
+}
 
+.sidebar-toggle:hover {
+  color: #333; /* darker black on hover */
+}
 
-
-
-
+.toggle-icon {
+  transition: all 0.3s ease;
+}
 
 
