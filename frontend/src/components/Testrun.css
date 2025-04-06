@@ -47,46 +47,77 @@
   gap: 15px;
 }
 
-.filters select {
-  margin-left: 10px;
+/* Custom Filter Buttons */
+.filter-button {
+  position: relative;
   padding: 12px 35px 12px 20px;
   border-radius: 10px;
   border: 1px solid #e0e0e0;
   background-color: white;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 12px;
   color: #333;
   font-size: 14px;
   cursor: pointer;
   text-align: center;
-  appearance: none;
   min-width: 150px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.filters select::after {
-  content: "▼";
-  font-size: 12px;
-  color: #007bff;
+.filter-button::after {
+  content: "";
   position: absolute;
-  right: 10px;
+  right: 15px;
   top: 50%;
   transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
-/* Hover Effect */
-.filters select:hover {
+.filter-button:hover {
   background-color: #f8f9fa;
   border-color: #ddd;
 }
 
-/* Focus Effect */
-.filters select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+/* Update Custom Select and Dropdown */
+.custom-select {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  min-width: 150px;
+  overflow: hidden;
+}
+
+.custom-dropdown div {
+  padding: 10px 16px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.custom-dropdown div:hover {
+  background-color: #f0f7ff;
+  color: #007bff;
+}
+
+/* Remove old select styles */
+.filters select {
+  display: none;
 }
 
 /* Table Styles */
@@ -234,11 +265,6 @@ td {
 }
 
 /* Datepicker Popup */
-.custom-select {
-  position: relative;
-  display: inline-block;
-}
-
 .time-period-button {
   position: relative;
   padding: 12px 35px 12px 20px;
@@ -270,33 +296,6 @@ td {
 .time-period-button:hover {
   background-color: #f8f9fa;
   border-color: #ddd;
-}
-
-.custom-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 4px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  z-index: 1000;
-  overflow: hidden;
-  min-width: 150px;
-}
-
-.custom-dropdown div {
-  padding: 10px 16px;
-  cursor: pointer;
-  color: #333;
-  font-size: 14px;
-  transition: background-color 0.2s;
-  white-space: nowrap;
-}
-
-.custom-dropdown div:hover {
-  background-color: #f0f7ff;
 }
 
 .datepicker-popup {

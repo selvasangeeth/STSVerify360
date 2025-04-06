@@ -34,6 +34,10 @@ const Testrun = ({ selectedProject }) => {
   const [showCustomDropdown, setShowCustomDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const datePickerRef = useRef(null);
+  const [showRegionDropdown, setShowRegionDropdown] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const regionDropdownRef = useRef(null);
+  const statusDropdownRef = useRef(null);
 
   useEffect(() => {
     if (selectedProject) {
@@ -63,6 +67,14 @@ const Testrun = ({ selectedProject }) => {
       // Handle date picker close
       if (datePickerRef.current && !datePickerRef.current.contains(event.target)) {
         setShowDatePicker(false);
+      }
+      // Handle region dropdown close
+      if (regionDropdownRef.current && !regionDropdownRef.current.contains(event.target)) {
+        setShowRegionDropdown(false);
+      }
+      // Handle status dropdown close
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+        setShowStatusDropdown(false);
       }
     };
 
@@ -156,17 +168,37 @@ const Testrun = ({ selectedProject }) => {
           />
         </div>
         <div className="filters">
-          <select value={testRegion} onChange={(e) => setTestRegion(e.target.value)}>
-            <option>All Regions</option>
-            <option>Sprint</option>
-            <option>Staging</option>
-            <option>UAT</option>
-          </select>
-          <select value={testStatus} onChange={(e) => setTestStatus(e.target.value)}>
-            <option>All Statuses</option>
-            <option>Pass</option>
-            <option>Fail</option>
-          </select>
+          <div className="custom-select" ref={regionDropdownRef}>
+            <button 
+              className="filter-button"
+              onClick={() => setShowRegionDropdown(!showRegionDropdown)}
+            >
+              {testRegion}
+            </button>
+            {showRegionDropdown && (
+              <div className="custom-dropdown">
+                <div onClick={() => { setTestRegion("All Regions"); setShowRegionDropdown(false); }}>All Regions</div>
+                <div onClick={() => { setTestRegion("Sprint"); setShowRegionDropdown(false); }}>Sprint</div>
+                <div onClick={() => { setTestRegion("Staging"); setShowRegionDropdown(false); }}>Staging</div>
+                <div onClick={() => { setTestRegion("UAT"); setShowRegionDropdown(false); }}>UAT</div>
+              </div>
+            )}
+          </div>
+          <div className="custom-select" ref={statusDropdownRef}>
+            <button 
+              className="filter-button"
+              onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+            >
+              {testStatus}
+            </button>
+            {showStatusDropdown && (
+              <div className="custom-dropdown">
+                <div onClick={() => { setTestStatus("All Statuses"); setShowStatusDropdown(false); }}>All Statuses</div>
+                <div onClick={() => { setTestStatus("Pass"); setShowStatusDropdown(false); }}>Pass</div>
+                <div onClick={() => { setTestStatus("Fail"); setShowStatusDropdown(false); }}>Fail</div>
+              </div>
+            )}
+          </div>
           <div className="custom-select" ref={dropdownRef}>
             <button 
               className="time-period-button" 
