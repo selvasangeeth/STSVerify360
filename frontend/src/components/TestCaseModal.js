@@ -3,7 +3,7 @@
 // import axios from "./axios";
 
 // const TestCaseModal = ({ testCase, scenarioId, onClose,genId, projectId, moduleId, testCasei,onSave, mode = 'view' }) => {
-
+  
 //   const [editedCase, setEditedCase] = useState(testCase || {
 //     testCaseId: '',
 //     caseType: '',
@@ -17,7 +17,7 @@
 //     moduleId: moduleId
 //   });
 
-
+  
 
 //   const [newResult, setNewResult] = useState({
 //     testRegion: '',
@@ -38,7 +38,7 @@
 //         year: 'numeric'
 //       })
 //     }];
-
+    
 //     setEditedCase({
 //       ...editedCase,
 //       results: updatedResults
@@ -87,7 +87,7 @@
 //       if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
 //         setSelectedFile(file);
 //         setFileType(file.type.startsWith('image/') ? 'image' : 'video');
-
+        
 //         // Update reference and referenceType state for the file
 //         setNewResult({
 //           ...newResult,
@@ -117,12 +117,12 @@
 //   //     );
 //   //   }
 //   // };
-
+  
 //   const handleupdatecase = async (e) => {
 //     e.preventDefault();
 
 //     const formData = new FormData();
-
+    
 //     // Append the form data
 //     formData.append('testRegion', newResult.testRegion);
 //     formData.append('testStatus', newResult.testStatus);
@@ -141,7 +141,7 @@
 //     for (let pair of formData.entries()) {
 //       console.log(pair[0], pair[1]);
 //     }
-
+   
 //     try {
 //       console.log(newResult.testRegion)
 //       console.log("testcaseid ....: "+testCasei)
@@ -278,7 +278,7 @@
 //   ×
 // </button>
 // </h2>
-
+         
 //         </div>
 
 //         <div className="modal-body">
@@ -633,9 +633,10 @@
 import React, { useState, useEffect } from 'react';
 import './TestCaseModal.css';
 import axios from "./axios";
+import { toast } from 'react-toastify';
 
-const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, moduleId, testCasei, onSave, mode = 'view' }) => {
-
+const TestCaseModal = ({ testCase, scenarioId, onClose,genId, projectId, moduleId, testCasei,onSave, mode = 'view' }) => {
+  
   const [editedCase, setEditedCase] = useState(testCase || {
     testCaseId: '',
     caseType: '',
@@ -649,7 +650,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
     moduleId: moduleId
   });
 
-
+  
 
   const [newResult, setNewResult] = useState({
     testRegion: '',
@@ -660,8 +661,9 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
     bugPriority: '',
     testCaseId: testCasei,
   });
-
+  
   const [isResultAdded, setIsResultAdded] = useState(false); // 🔹 New state to toggle button visibility
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handleAddResult = () => {
     const updatedResults = [
@@ -675,12 +677,12 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
         })
       }
     ];
-
+  
     setEditedCase({
       ...editedCase,
       results: updatedResults
     });
-
+  
     // Clear form fields
     setNewResult({
       testRegion: '',
@@ -691,11 +693,11 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
       bugPriority: '',
       testCaseId: testCasei,
     });
-
+  
     // 🔹 Hide the button after result is added
     setIsResultAdded(true);
   };
-
+  
   console.log(editedCase);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -729,7 +731,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
       if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
         setSelectedFile(file);
         setFileType(file.type.startsWith('image/') ? 'image' : 'video');
-
+        
         // Update reference and referenceType state for the file
         setNewResult({
           ...newResult,
@@ -760,6 +762,12 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
   //   }
   // };
 
+  const userData = JSON.parse(localStorage.getItem('user')) || {
+    Name: 'User',
+    Email: 'user@example.com',
+    Role: 'User'
+  };
+  
   const handleupdatecase = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (newResult.testStatus === "Fail") {
@@ -769,17 +777,17 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
       }
     }
     const formData = new FormData();
-
+    
     // Append the form data
     formData.append('testRegion', newResult.testRegion);
     formData.append('testStatus', newResult.testStatus);
     formData.append('comments', newResult.comments);
     formData.append('bugReferenceId', newResult.bugReferenceId);
     formData.append('bugPriority', newResult.bugPriority);
-    formData.append('testCaseId', testCasei);
-    formData.append('scenarioId', scenarioId);
-    formData.append('projectId', projectId);
-    formData.append('moduleId', moduleId);
+    formData.append('testCaseId',testCasei);
+    formData.append('scenarioId',scenarioId);
+    formData.append('projectId',projectId);
+    formData.append('moduleId',moduleId);
 
     // Append the file if available
     if (selectedFile) {
@@ -788,30 +796,47 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
     for (let pair of formData.entries()) {
       console.log(pair[0], pair[1]);
     }
-
+   
     try {
       console.log(newResult.testRegion)
-      console.log("testcaseid ....: " + testCasei)
+      console.log("testcaseid ....: "+testCasei)
       const response = await axios.post('/updatedTestCase', formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       });
-      console.log(response.data);
-      if (response.data.msg === "TestRun updated successfully") {
-        window.location.reload();
-      }
+      console.log(response.data); 
+     if(response.data.msg === "TestRun updated successfully"){
+      window.location.reload();
+     }
     } catch (err) {
       console.log('Error:', err);
     }
   };
-  const userData = JSON.parse(localStorage.getItem('user')) || {
-    Name: 'User',
-    Email: 'user@example.com',
-    Role: 'User'
-  };
 
+
+  const handleEditClick = async (updatedCase) => {
+    try {
+      console.log(updatedCase);
+      const response = await axios.put('/updateTestCase', { updatedCase });
+  
+      if (response.data.msg === "Test case updated successfully") {
+        // Show success message
+        toast.success(response.data.msg);
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);  // Delay in milliseconds
+        
+        
+      }
+    } catch (error) {
+      console.error("Error updating test case:", error);
+    }
+  };
+  
+  
   const isViewMode = mode === 'view';
   const isEditMode = mode === 'edit';
   const isAddMode = mode === 'add';
@@ -865,7 +890,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
             </div>
 
             <div className="form-group">
-              <label>Test Case Description</label>
+              <label>Test Case Desaecription</label>
               <textarea
                 placeholder="Enter the Test case description"
                 value={editedCase.description}
@@ -914,7 +939,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
             </div>
 
             <div className="add-case-actions">
-              <button className="cancel-case-submit" onClick={onClose}>Cancel</button>
+            <button className="cancel-case-submit" onClick={onClose}>Cancel</button>
               <button type="submit" className="add-case-submit">
                 <span>+</span> Add Case
               </button>
@@ -931,28 +956,28 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
         <div className="modal-header">
           <h2>
             {isAddMode ? 'Add New Case' : 'Test Case Details'}
-            <button
-              className="close-btn"
-              onClick={onClose}
-              style={{
-                display: 'flex',
-                justifyContent: 'flex end',
-                textAlign: 'right',
-                position: 'absolute',
-                top: '-15px',
-                right: '-10px',
-                background: 'white',
-                border: 'none',
-                fontSize: '28px',
-                cursor: 'pointer',
-                color: 'black'
-              }}
-            >
-              ×
-            </button>
+            
+  <button
+    className="close-btn"
+    onClick={onClose}
+    style={{
+      position: 'absolute',
+      top: '-10px',
+      right: '-350px',
+      background: 'transparent',
+      border: 'none',
+      fontSize: '24px',
+      cursor: 'pointer',
+      color: '#000',
+      lineHeight: '1'
+    }}
+  >
+    ×
+  </button> 
+  
           </h2>
         </div>
-
+  
         <div className="modal-body">
           <form onSubmit={handleSubmit}>
             <div className="test-details-section">
@@ -994,13 +1019,13 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                   </select>
                 </div>
               </div>
-
+  
               <div className="form-group">
                 <label>Test Case Description</label>
                 <textarea
                   placeholder="Enter the Test case description"
-                  value={editedCase.testCaseDescription
-                    || ''}
+                  value={editedCase.
+                    testCaseDescription || ''}
                   onChange={(e) =>
                     setEditedCase({ ...editedCase, description: e.target.value })
                   }
@@ -1017,7 +1042,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                   }}
                 />
               </div>
-
+  
               <div className="form-row">
                 <div className="form-group">
                   <label>Expected Result</label>
@@ -1042,7 +1067,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                   />
                 </div>
               </div>
-
+  
               <div className="form-group">
                 <label>Steps</label>
                 <textarea
@@ -1054,204 +1079,263 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                   disabled={isViewMode}
                 />
               </div>
-
-              {!isAddMode && (
+  
+              {!isAddMode && isResultAdded && (
                 <div className="results-section">
+                  <h3 style={{ textAlign: 'center' }}>RESULT</h3>
                   {(editedCase.results || []).map((result, index) => (
                     <div key={index} className="result-item">
-                      <h3 style={{ textAlign: 'center' }}>RESULT</h3>
                       <div className="result-header">
-                        <div className="tester-info">
+                      <div className="tester-info">
                           <span>TestedBy : {userData.Name}</span>
                           <span className="date">
                             Date & Time: {new Date().toLocaleString()}
                           </span>
                         </div>
                       </div>
-                      <div className="result-form">
-                        <div className="form-row">
-                          <div className="form-group">
-                            <label>Test Region</label>
-                            <select
-                              value={newResult.testRegion}
-                              onChange={(e) =>
-                                setNewResult({ ...newResult, testRegion: e.target.value })
-                              }
-                            >
-                              <option>Choose the Test Region</option>
-                              <option value="Sprint">Sprint</option>
-                              <option value="Staging">Staging</option>
-                              <option value="UAT">UAT</option>
-                              <option value="Live">Live</option>
-                            </select>
-                          </div>
-                          <div className="form-group">
-                            <label>Test Status</label>
-                            <select value={newResult.testStatus} onChange={(e) =>
-                              setNewResult({ ...newResult, testStatus: e.target.value })
-                            }>
-                              <option value="">Choose the Test Status</option>
-                              <option value="Pass">Pass</option>
-                              <option value="Fail">Fail</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="form-group">
-                          <label>Comments</label>
-                          <textarea
-                            placeholder="Enter the Test Comments"
-                            value={newResult.comments}
-                            onChange={(e) =>
-                              setNewResult({ ...newResult, comments: e.target.value })
-                            }
-                          />
-                        </div>
-
-                        <div className="form-group">
-                          <label>Reference (Image/Video)</label>
-                          <input
-                            type="file"
-                            accept="image/*,video/*"
-                            onChange={handleFileChange}
-                          />
-                          {newResult.reference && <p>Selected file: {newResult.reference}</p>}
-                        </div>
-
-                        {selectedFile && (
-                          <div className="file-preview">
-                            <p>Preview: {selectedFile.name}</p>
-                            {selectedFile.type.startsWith('video/') ? (
-                              <video controls>
-                                <source src={URL.createObjectURL(selectedFile)} />
-                                Your browser does not support the video tag.
-                              </video>
-                            ) : (
-                              <img src={URL.createObjectURL(selectedFile)} alt="preview" width="100%" />
-                            )}
-                          </div>
-                        )}
-
-                        {newResult.testStatus === "Fail" ? (
-                          <div className="form-row">
-                            <div className="form-group">
-                              <label>Bug Reference ID</label>
-                              <input
-                                type="text"
-                                placeholder="Enter the Bug Ref ID"
-                                value={newResult.bugReferenceId || ''}
-                                onChange={(e) =>
-                                  setNewResult({ ...newResult, bugReferenceId: e.target.value })
-                                }
-                              />
-                            </div>
-
-                            <div className="form-group">
-                              <label>Bug Priority</label>
-                              <select
-                                value={newResult.bugPriority || ''}
-                                onChange={(e) =>
-                                  setNewResult({ ...newResult, bugPriority: e.target.value })
-                                }
-                              >
-                                <option value="">Choose the Bug Priority</option>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                              </select>
-                            </div>
-                          </div>
-                        ) : (
-                          (() => {
-                            // ✅ Reset bug fields ONLY if needed
-                            if (
-                              newResult.bugReferenceId !== null ||
-                              newResult.bugPriority !== null
-                            ) {
-                              setNewResult({
-                                ...newResult,
-                                bugReferenceId: null,
-                                bugPriority: null,
-                              });
-                            }
-                            return null;
-                          })()
-                        )}
-
-
-                        <button
-                          type="button"
-                          style={{
-                            backgroundColor: "#007bff",
-                            color: "white",
-                            width: "100px",
-                            height: "30px",
-                            border: "none",
-                            borderRadius: "4px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            margin: "0 auto", // Centers the button horizontally
-                            cursor: "pointer"
-                          }}
-                          onClick={(e) => {
-                            if (newResult.testStatus === "Fail") {
-                              if (
-                                !newResult.bugReferenceId?.trim() ||
-                                !newResult.bugPriority?.trim()
-                              ) {
-                                alert("Bug Reference ID and Bug Priority are required for failed status.");
-                                return;
-                              }
-                            }
-                            handleupdatecase(e);
-                          }}
+                    
+                  
+  
+                  <div className="result-form">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Test Region</label>
+                        <select
+                          value={newResult.testRegion}
+                          onChange={(e) =>
+                            setNewResult({ ...newResult, testRegion: e.target.value })
+                          }
                         >
-                          Submit
-                        </button>
-
-
+                          <option>Choose the Test Region</option>
+                          <option value="Sprint">Sprint</option>
+                          <option value="Staging">Staging</option>
+                          <option value="UAT">UAT</option>
+                          <option value="Live">Live</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                      <label>Test Status</label>
+                      <select value={newResult.testStatus} onChange={(e) =>
+                      setNewResult({ ...newResult, testStatus: e.target.value })
+                        }>
+                      <option value="">Choose the Test Status</option>
+                      <option value="Pass">Pass</option>
+                      <option value="Fail">Fail</option>
+                      </select>
                       </div>
                     </div>
-                  ))}
-                </div>
+  
+                    <div className="form-group">
+                      <label>Comments</label>
+                      <textarea
+                        placeholder="Enter the Test Comments"
+                        value={newResult.comments}
+                        onChange={(e) =>
+                          setNewResult({ ...newResult, comments: e.target.value })
+                        }
+                      />
+                    </div>
+  
+                    <div className="form-group">
+                      <label>Reference (Image/Video)</label>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        onChange={handleFileChange}
+                      />
+                      {newResult.reference && <p>Selected file: {newResult.reference}</p>}
+                    </div>
+  
+                    {selectedFile && (
+                      <div className="file-preview">
+                        <p>Preview: {selectedFile.name}</p>
+                        {selectedFile.type.startsWith('video/') ? (
+                          <video controls>
+                            <source src={URL.createObjectURL(selectedFile)} />
+                            Your browser does not support the video tag.
+                          </video>
+                        ) : (
+                          <img src={URL.createObjectURL(selectedFile)} alt="preview" width="100%" />
+                        )}
+                      </div>
+                    )}
+  
+  {newResult.testStatus === "Fail" ? (
+  <div className="form-row">
+    <div className="form-group">
+      <label>Bug Reference ID</label>
+      <input
+        type="text"
+        placeholder="Enter the Bug Ref ID"
+        value={newResult.bugReferenceId || ''}
+        onChange={(e) =>
+          setNewResult({ ...newResult, bugReferenceId: e.target.value })
+        }
+      />
+    </div>
 
+    <div className="form-group">
+      <label>Bug Priority</label>
+      <select
+        value={newResult.bugPriority || ''}
+        onChange={(e) =>
+          setNewResult({ ...newResult, bugPriority: e.target.value })
+        }
+      >
+        <option value="">Choose the Bug Priority</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+  </div>
+) : (
+  (() => {
+    // ✅ Reset bug fields ONLY if needed
+    if (
+      newResult.bugReferenceId !== null ||
+      newResult.bugPriority !== null
+    ) {
+      setNewResult({
+        ...newResult,
+        bugReferenceId: null,
+        bugPriority: null,
+      });
+    }
+    return null;
+  })()
+)}
+
+
+<button
+  type="button"
+  style={{
+    backgroundColor: "#007bff",
+    color: "white",
+    width: "100px",
+    height: "30px",
+    border: "none",
+    borderRadius: "4px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto", // Centers the button horizontally
+    cursor: "pointer"
+  }}
+  onClick={(e) => {
+    if (newResult.testStatus === "Fail") {
+      if (
+        !newResult.bugReferenceId?.trim() ||
+        !newResult.bugPriority?.trim()
+      ) {
+        alert("Bug Reference ID and Bug Priority are required for failed status.");
+        return;
+      }
+    }
+    handleupdatecase(e);
+  }}
+>
+  Submit
+</button>
+
+
+                    </div>
+              </div>
+              ))}
+                  </div>
+                
               )}
             </div>
             <div className="modal-actions">
               {isViewMode && (
                 <>
                   {!isResultAdded && (
-                    <button
-                      type="button"
-                      style={{
-                        height: "35px",
-                        background: "#277dd8",
-                        border: "1px solid #ddd",
-                        width: "115px",
-                        borderRadius: "20px",
-                        color: "white",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textAlign: "center",
-                        cursor: "pointer"
-                      }}
-                      onClick={handleAddResult}
-                    >
-                      Add Result
-                    </button>
-                  )}
+  <button 
+    type="button" 
+    style={{ 
+      height: "35px", 
+      background: "#277dd8", 
+      border: "1px solid #ddd", 
+      width: "115px", 
+      borderRadius: "20px",
+      color: "white",
+      display: "flex", 
+      alignItems: "center", 
+      justifyContent: "center",
+      textAlign: "center",
+      cursor: "pointer"
+    }} 
+    onClick={handleAddResult}
+  >
+    Add Result
+  </button>
+  
+)}
+
 
                   <button
                     type="button"
-                    className="edit-btn"
+                    style={{ 
+                      height: "35px", 
+                      background: "grey", 
+                      border: "1px solid #ddd", 
+                      width: "115px", 
+                      borderRadius: "20px",
+                      color: "white",
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "center",
+                      textAlign: "center",
+                      cursor: "pointer"
+                    }} 
                     onClick={() => onSave({ ...testCase, mode: 'edit' })}
                   >
                     Cancel
                   </button>
                 </>
               )}
+              <div className="modal-actions">
+  
+
+  {isEditMode && (
+    <>
+      <button
+        type="button"
+        className="save-btn"
+        style={{
+          backgroundColor: "#28a745",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          padding: "10px 20px",
+          cursor: "pointer",
+          marginRight: "10px"
+        }}
+        onClick={() => handleEditClick(editedCase)}
+      >
+        Save
+      </button>
+
+      <button
+        type="button"
+        className="cancel-btn"
+        onClick={onClose}
+        style={{
+          backgroundColor: "#dc3545",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          padding: "10px 20px",
+          cursor: "pointer"
+        }}
+      >
+        Cancel
+      </button>
+    </>
+  )}
+</div>
+
+
             </div>
           </form>
         </div>
@@ -1261,4 +1345,3 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
 };
 
 export default TestCaseModal;
-

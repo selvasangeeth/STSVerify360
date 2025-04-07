@@ -697,8 +697,8 @@ return (
 
     {/* Add Project Modal */}
     {showAddProjectModal && (
-      <div className="modal-overlay">
-        <div className="modal-content">
+      <div className="add-project-modal-overlay">
+        <div className="add-project-modal-content">
           <h2>Add New Project</h2>
           <form onSubmit={handleAddProject}>
             <div className="form-group">
@@ -749,8 +749,8 @@ return (
 
     {/* Add Quick Link Modal */}
     {showAddQuickLinkModal && (
-      <div className="modal-overlay">
-        <div className="modal-content">
+      <div className="quick-link-modal-overlay">
+        <div className="quick-link-modal-content">
           <h2>Add New Document</h2>
           <form onSubmit={handleAddQuickLink}>
             <div className="form-group">
@@ -904,8 +904,8 @@ return (
     )}
 
     {showEditProjectModal && (
-      <div className="modal-overlay">
-        <div className="modal-content">
+      <div className="edit-project-modal-overlay">
+        <div className="edit-project-modal-content">
           <h2>Edit Project</h2>
           <form onSubmit={() => handleEditSubmitProject(projectToEdit)}>
             <div className="form-group">
@@ -972,8 +972,8 @@ return (
     )}
 
     {showRemoveConfirmModal && (
-      <div className="modal-overlay">
-        <div className="modal-content">
+      <div className="remove-project-modal-overlay">
+        <div className="remove-project-modal-content">
           <h2>Confirm Removal</h2>
           <p>Are you sure you want to remove this project?</p>
           <div className="modal-actions">

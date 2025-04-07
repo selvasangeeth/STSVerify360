@@ -302,6 +302,32 @@ const deleteTestCase = async (req, res) => {
 };
 
 
+const updateTestCase = async (req, res) => {
+  try {
+  
+    const { updatedCase } = req.body;
+ 
+    const tCase = await testCaseModel.findById(updatedCase._id);
+
+    if (!tCase) {
+      return res.status(200).json({ msg: "Test case not found" });
+    }
+
+    tCase.caseType = updatedCase.caseType;
+    tCase.testCaseDescription = updatedCase.testCaseDescription;
+    tCase.expectedResult = updatedCase.expectedResult;
+    tCase.testCaseData = updatedCase.testCaseData;
+    tCase.steps = updatedCase.steps;
+
+    await tCase.save();
+
+    return res.status(200).json({ msg: "Test case updated successfully" });
+
+  } catch (err) {
+    console.error("Error updating test case:", err);
+    return res.status(500).json({ msg: "Error updating test case" });
+  }
+};
 
 
-module.exports = { createTestCase, updateTestCaseStatus, getTestCase,getTestIds,deleteTestCase };
+module.exports = { createTestCase, updateTestCaseStatus, getTestCase,getTestIds,deleteTestCase,updateTestCase };

@@ -44,80 +44,57 @@
 /* Filters */
 .filters {
   display: flex;
-  gap: 15px;
+  gap: 16px;
+  padding: 10px 0;
+  flex-wrap: wrap;
 }
 
-/* Custom Filter Buttons */
-.filter-button {
-  position: relative;
-  padding: 12px 35px 12px 20px;
-  border-radius: 10px;
-  border: 1px solid #e0e0e0;
-  background-color: white;
-  color: #333;
-  font-size: 14px;
-  cursor: pointer;
-  text-align: center;
-  min-width: 150px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.filter-button::after {
-  content: "";
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 12px;
-  height: 12px;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
-.filter-button:hover {
-  background-color: #f8f9fa;
-  border-color: #ddd;
-}
-
-/* Update Custom Select and Dropdown */
 .custom-select {
   position: relative;
   display: inline-block;
 }
 
+.filter-button,
+.time-period-button {
+  background-color: #007bff; /* Blue button */
+  color: white;
+  font-weight: 600;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 140px;
+  text-align: left;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background-color 0.2s ease;
+}
+
+.filter-button:hover,
+.time-period-button:hover {
+  background-color: #0056b3;
+}
+
 .custom-dropdown {
   position: absolute;
-  top: 100%;
+  top: 110%;
   left: 0;
-  margin-top: 4px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  z-index: 1000;
-  min-width: 150px;
-  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 9999;
+  width: 160px;
 }
 
 .custom-dropdown div {
   padding: 10px 16px;
   cursor: pointer;
-  color: #333;
   font-size: 14px;
-  transition: background-color 0.2s;
-  white-space: nowrap;
+  transition: background-color 0.2s ease;
 }
 
 .custom-dropdown div:hover {
-  background-color: #f0f7ff;
-  color: #007bff;
-}
-
-/* Remove old select styles */
-.filters select {
-  display: none;
+  background-color:  #63acf9; /* This is the hover color */
 }
 
 /* Table Styles */
@@ -144,7 +121,7 @@ th {
   padding: 15px;
   text-align: left;
   font-weight: 600;
-  color: white;
+  color: #fdfeff;
   border-bottom: 2px solid #dee2e6;
 }
 
@@ -242,7 +219,9 @@ td {
   padding: 20px;
   border-radius: 8px;
   width: 100%;
-  max-width: 500px;
+  max-width: 900px;
+  min-width:200px;
+  
 }
 
 .modal-content h2 {
@@ -251,7 +230,7 @@ td {
   color: #333;
 }
 
-.modal-close {
+/*.modal-close {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -259,140 +238,142 @@ td {
   border: none;
   font-size: 20px;
   cursor: pointer;
-  font-size: 30px; /* Increase the size */
-  color: red; /* Red color for the close button */
-  line-height: 1; /* Ensure the button is not cut off */
-}
+  font-size: 30px;
+  color: red; 
+  line-height: 1; 
+  padding-right:2px;*/
+  /* Ensure the button is not cut off 
+}*/
 
 /* Datepicker Popup */
-.time-period-button {
-  position: relative;
-  padding: 12px 35px 12px 20px;
-  border-radius: 10px;
-  border: 1px solid #e0e0e0;
-  background-color: white;
-  color: #333;
-  font-size: 14px;
-  cursor: pointer;
-  text-align: center;
-  min-width: 150px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.time-period-button::after {
-  content: "";
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 12px;
-  height: 12px;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
-.time-period-button:hover {
-  background-color: #f8f9fa;
-  border-color: #ddd;
-}
-
 .datepicker-popup {
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
+  position: fixed;
+  top: 10%;
+  right: 2%;
   background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1001;
-  padding: 16px;
-  width: max-content;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  z-index: 1000;
 }
 
-/* Calendar Styles */
-.react-datepicker {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial !important;
-  border: none !important;
-  border-radius: 8px;
-  overflow: hidden;
+.datepicker-popup .react-datepicker {
+  font-size: 16px;
+  width: 100%;
 }
 
-.react-datepicker__month-container {
-  float: none;
+.datepicker-popup .react-datepicker__day-name,
+.datepicker-popup .react-datepicker__day,
+.datepicker-popup .react-datepicker__time-name {
+  width: 2.5rem;
+  line-height: 2.5rem;
+  text-align: center;
 }
 
-.react-datepicker__header {
-  background-color: white !important;
-  border-bottom: 1px solid #e0e0e0 !important;
-  padding: 12px !important;
+.datepicker-popup .react-datepicker__header {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #d1d5db;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 8px 0;
 }
 
-.react-datepicker__current-month {
-  color: #333;
-  font-weight: 600;
-  font-size: 14px;
+.datepicker-popup .react-datepicker__day--selected {
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+}
+
+.datepicker-popup .react-datepicker__day--today {
+  background-color: #e0f2fe;
+  border-radius: 50%;
+}
+
+.datepicker-popup .react-datepicker__current-month {
+  font-weight: bold;
   margin-bottom: 8px;
+  text-align: center;
 }
 
-.react-datepicker__day-name {
-  color: #666;
-  font-size: 12px;
-  margin: 4px !important;
-  width: 32px !important;
+.datepicker-popup .react-datepicker__time-container {
+  border-left: 1px solid #d1d5db;
 }
 
-.react-datepicker__day {
-  margin: 4px !important;
-  width: 32px !important;
-  height: 32px !important;
-  line-height: 32px !important;
-  border-radius: 50% !important;
-  color: #333;
+.datepicker-popup .react-datepicker__time-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.react-datepicker__day:hover {
-  background-color: #f0f7ff !important;
+.datepicker-popup .react-datepicker__time-list-item--selected {
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 8px;
 }
 
-.react-datepicker__day--selected {
-  background-color: #007bff !important;
-  color: white !important;
+.datepicker-popup .react-datepicker__navigation {
+  top: 10px;
 }
 
-.react-datepicker__day--keyboard-selected {
-  background-color: #007bff !important;
-  color: white !important;
+.datepicker-popup .react-datepicker__month-container {
+  padding: 8px;
 }
 
-.react-datepicker__navigation {
-  top: 12px;
+.datepicker-popup .react-datepicker__day {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  line-height: 3rem;
+  margin: 4px;
+  border-radius: 50%;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  font-size: 14px;
+  color: #000;
+  font-weight: 500;
+  visibility: visible;
 }
 
-.react-datepicker__navigation--previous {
-  left: 12px;
+.datepicker-popup .react-datepicker__day:hover {
+  background-color: #dbeafe;
 }
 
-.react-datepicker__navigation--next {
-  right: 12px;
+.datepicker-popup .react-datepicker__day--disabled {
+  color: #ccc;
+}
+
+.datepicker-popup .react-datepicker__day--outside-month {
+  color: #bbb;
+}
+
+.datepicker-popup .react-datepicker__week {
+  display: flex;
+  justify-content: space-around;
 }
 
 /* Test Case Details Modal */
 .test-case-details {
-  padding: 20px 30px;
+  padding: 10px;
   background-color: #fff;
-  border-radius: 8px;
+  border-radius:8px;
   width: 100%;
   max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  
 }
 
 .test-case-details h2 {
   color: #333;
   font-size: 16px;
-  margin-bottom: 20px;
+  margin-top: -60px;
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
+  position:relative;
+  text-Align:center;
 }
 
 .test-case-details .detail-row {
@@ -406,7 +387,7 @@ td {
   color: #666;
   font-size: 14px;
   font-weight: 500;
-  text-align: left;
+  text-align:left;
 }
 
 .test-case-details .value {
@@ -424,7 +405,10 @@ td {
   margin-bottom: 20px;
   font-weight: 500;
 }
-
+.test-case-column {
+  width: 40%; 
+  margin-top: -10px;
+}
 /* Status badges */
 .test-status {
   display: inline-block;
@@ -446,15 +430,13 @@ td {
 
 /* Close button */
 .modal-close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
+  text-align: right;
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 24px;
   color: #666;
   cursor: pointer;
-}
+ }
 
 /* Reference images container */
 .reference-images {

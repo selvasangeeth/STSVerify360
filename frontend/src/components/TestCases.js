@@ -4,7 +4,7 @@ import axios from './axios';
 import './TestCases.css';
 import './common.css';
 import TestCaseModal from './TestCaseModal';
-import { FaTrash, FaEye } from 'react-icons/fa';
+import { FaEdit, FaEye, FaTrash } from 'react-icons/fa';
 import Pagination from './Pagination/Pagination'; // Import Pagination component
 
 const TestCases = () => {
@@ -76,25 +76,25 @@ const TestCases = () => {
 
   const fetchTestCases = async () => {
     try {
-        setLoading(true);
-        setError(null);
-        const response = await axios.get(`/getTestCase/${scenarioId}`);
-        console.log(response.data.data); // Debugging
-        console.log("Fetched test cases:", response.data.data); // Debugging
-        if (response.data.msg === "success") {
-            const testCasesData = Array.isArray(response.data.data) ? response.data.data : [];
-            // Ensure description exists
-            const updatedTestCases = testCasesData.map(tc => ({
-                ...tc,
-                description: tc.description || 'No Description'
-            }));
-            setTestCases(updatedTestCases);
-        }
+      setLoading(true);
+      setError(null);
+      const response = await axios.get(`/getTestCase/${scenarioId}`);
+      console.log(response.data.data); // Debugging
+      console.log("Fetched test cases:", response.data.data); // Debugging
+      if (response.data.msg === "success") {
+        const testCasesData = Array.isArray(response.data.data) ? response.data.data : [];
+        // Ensure description exists
+        const updatedTestCases = testCasesData.map(tc => ({
+          ...tc,
+          description: tc.description || 'No Description'
+        }));
+        setTestCases(updatedTestCases);
+      }
     } catch (error) {
-        console.error('Error fetching test cases:', error);
-        setError('Error fetching test cases. Please try again.');
+      console.error('Error fetching test cases:', error);
+      setError('Error fetching test cases. Please try again.');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -106,21 +106,20 @@ const TestCases = () => {
     });
   };
 
-  // const handleEditClick = (testCase) => {
-  //   setModalState({
-  //     isOpen: true,
-  //     mode: 'edit',
-  //     testCase
-  //   });
+  const handleEditClick = (testCase) => {
+    console.log(testCase)
+    setModalState({
+      isOpen: true,
+      mode: 'edit',
+      testCase
+    });
 
-//   // };
-//   <button onClick={() => handleActionMenuItemClick('edit', testCase)}>
-//   <FaEdit className="action-icon" /> Edit
-// </button>
+  };
+
 
   const handleRemoveClick = async (testCase) => {
     try {
-      console.log("Safsdf");
+    
       const response = await axios.delete(`/api/deleteTestCase/${testCase._id}`, {
         params: {
           projectId: projectId,
@@ -136,6 +135,23 @@ const TestCases = () => {
     }
   }
 
+  {/*} const handleEditClick = async (updatedTestCase) => {
+    try {
+      const response = await axios.put(`/api/updateTestCase/${updatedTestCase._id}`, {
+        ...updatedTestCase,
+        projectId: projectId,
+        moduleId: updatedTestCase.moduleId,
+        scenarioId: updatedTestCase.scenarioId
+      });
+  
+      if (response.data.msg === "TestCase updated successfully") {
+        window.location.reload(); // Or update local state if you're optimizing
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };   */}
+
   const handleAddClick = async () => {
     setModalState({
       isOpen: true,
@@ -150,7 +166,7 @@ const TestCases = () => {
           scenarioId: scenarioId
         }
       })
-     
+
       setGenId(response.data.genSceId);
       console.log("genId");
       console.log(genId);
@@ -196,8 +212,8 @@ const TestCases = () => {
 
   const handleActionMenuItemClick = (action, testCase) => {
     setActiveActionMenu(null); // Close the menu
-    
-    switch(action) {
+
+    switch (action) {
       case 'view':
         handleViewClick(testCase);
         break;
@@ -208,8 +224,13 @@ const TestCases = () => {
         handleRemoveClick(testCase);
         console.log('Remove test case:', testCase);
         break;
+      case 'edit':
+        handleEditClick(testCase);
+        console.log('Edit test case:', testCase); // optional debug log
+        break;
       default:
         break;
+
     }
   };
 
@@ -273,7 +294,7 @@ const TestCases = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button className="add-case-btn" onClick={() => {handleAddClick();}}>
+        <button className="add-case-btn" onClick={() => { handleAddClick(); }}>
           + Add Case
         </button>
       </div>
@@ -393,23 +414,30 @@ const TestCases = () => {
                 </td>
                 <td>
                   <div className="action-buttons">
-                    <button 
-                      className="three-dot-menu" 
+                    <button
+                      className="three-dot-menu"
                       onClick={(e) => handleActionMenuClick(e, testCase._id)}
                     >
                       ⋮
                     </button>
+
                     {activeActionMenu === testCase._id && (
                       <div className="action-menu-dropdown" ref={actionMenuRef}>
                         <button onClick={() => handleActionMenuItemClick('view', testCase)}>
                           <FaEye className="action-icon" /> View
                         </button>
+
+                        <button onClick={() => handleActionMenuItemClick('edit', testCase)}>
+                          <FaEdit className="action-icon" /> Edit
+                        </button> {/* ✅ corrected icon */}
+
                         <button onClick={() => handleActionMenuItemClick('remove', testCase)}>
                           <FaTrash className="action-icon" /> Remove
                         </button>
                       </div>
                     )}
                   </div>
+
                 </td>
               </tr>
             ))}
@@ -429,12 +457,12 @@ const TestCases = () => {
         <TestCaseModal
           testCase={modalState.testCase}
           mode={modalState.mode}
-          
+
           scenarioId={scenarioId}
           moduleId={moduleId}
           projectId={projectId}
           genId={genId}
-          testCasei={modalState.testCase ? modalState.testCase._id : null} 
+          testCasei={modalState.testCase ? modalState.testCase._id : null}
           onClose={handleModalClose}
           onSave={handleModalSave}
         />

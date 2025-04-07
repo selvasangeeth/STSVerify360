@@ -419,6 +419,7 @@ const Scenarios = () => {
                       })}
                       onKeyPress={(e) => handleKeyPress(e, scenario._id)}
                       onClick={(e) => e.stopPropagation()}
+                      disabled
                     />
                   ) : (
                     <span
@@ -443,6 +444,7 @@ const Scenarios = () => {
                       })}
                       onKeyPress={(e) => handleKeyPress(e, scenario._id)}
                       onClick={(e) => e.stopPropagation()}
+                      
                     />
                   ) : (
                     scenario.taskId

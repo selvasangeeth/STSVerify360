@@ -11,7 +11,7 @@ const auth = require("../Middleware/auth");
 //     }
 //     next(err);
 //   }
-const {createTestCase, updateTestCaseStatus,getTestCase, getTestIds, deleteTestCase} = require("../Controller/Testcase");
+const {createTestCase, updateTestCaseStatus,getTestCase, getTestIds, deleteTestCase, updateTestCase} = require("../Controller/Testcase");
 
 
 router.post("/createTestCase",auth,createTestCase);
@@ -19,6 +19,9 @@ router.post("/updatedTestCase",auth,upload.single('reference'),updateTestCaseSta
 router.get("/getTestCase/:scenarioId",auth,getTestCase);
 router.get("/getTestIds",auth,getTestIds);
 router.delete("/api/deleteTestCase/:testCaseId",auth,deleteTestCase);
+router.put("/updateTestCase",auth,updateTestCase)
+
+
 module.exports = router;
 
 
