@@ -4,10 +4,10 @@ const auth = require("../Middleware/auth");
 
 const { createHyperLink, deleteHyperLink, getHyperLink, updateHyperLink } = require("../Controller/HyperLink");
 
-router.post("/createHyperLink",auth,createHyperLink)
-router.delete("/deleteHyperLink/:id",auth,deleteHyperLink);
-router.get("/getHyperLink",auth,getHyperLink);
-router.put("/updateHyperLink/:id",auth,updateHyperLink)
+router.post("/api/createHyperLink",auth,createHyperLink)
+router.delete("/api/deleteHyperLink/:id",auth,deleteHyperLink);
+router.get("/api/getHyperLink",auth,getHyperLink);
+router.put("/api/updateQuickLink",auth,updateHyperLink)
 
 
 module.exports = router;

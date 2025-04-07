@@ -165,7 +165,7 @@ const updateTestCaseStatus = async (req, res) => {
 
     const TestCaseUpdateLog = await log.create({
       action: "Updated",
-      entityType: "TestCase",
+      entityType: "TestRun",
       entityId: updatedTestCase._id,
       user: testerName,
       timestamp: Date.now(),

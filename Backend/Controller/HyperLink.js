@@ -5,49 +5,37 @@ const log = require("../Model/Log.model");
 
 // Create HyperLink
 const createHyperLink = async (req, res) => {
-    const { title, url } = req.body;
+  try {
+    const { name, url } = req.body;
     const userId = req.user.id;
-
-    try {
-        if (!title || !url) {
-            return res.status(400).json({ msg: 'Title and URL are required' });
-        }
-
-        const hyplnk = await HyperLinkModel.findOne({ title });
-        if (hyplnk) {
-            return res.json({ msg: "Name already exists" });
-        }
-        else {
-            const creat =  await HyperLinkModel.create({
-                title,
-                url,
-                AddedById: userId,
-            });
-
-            try {
-                await log.create({
-                    action: "Created",
-                    entityType: "HyperLink",
-                    entityId: creat._id,
-                    user: userId,
-                    timestamp: Date.now(),
-                    path: "/HyperLink",
-                    details: `Created HyperLink : ${title}`,
-
-                })
-                console.log("HyperLink Log addded Successfully");
-            }
-            catch (err) {
-                console.log(err);
-
-            }
-
-            res.status(201).json({ msg: 'Hyperlink created successfully', data: creat });
-        }
-    } catch (err) {
-        console.error('Error creating hyperlink:', err);
-        res.status(500).json({ msg: 'Failed to create hyperlink' });
+    if (!name || !url) {
+      return res.status(200).json({ msg: 'Name and URL are required' });
     }
+
+    const hyplnk = await HyperLinkModel.findOne({ name });
+
+    if (url) {
+      const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+      if (!urlRegex.test(url)) {
+        return res.status(200).json({ msg: 'Please provide a valid URL' });
+      }
+    }
+
+    if (hyplnk) {
+      return res.status(200).json({ msg: "Name already exists" });
+    }
+    else {
+      const creat = await HyperLinkModel.create({
+        name: name,
+        url: url,
+        AddedById: userId,
+      });
+
+      res.status(201).json({ msg: 'Hyperlink created successfully', data: creat });
+    }
+  } catch (err) {
+    res.status(500).json({ msg: 'Failed to create hyperlink' });
+  }
 };
 
 
@@ -55,40 +43,25 @@ const createHyperLink = async (req, res) => {
 
 
 const deleteHyperLink = async (req, res) => {
-    const { id } = req.params;  
-    const userId = req.user.id;  
 
-    try {
-       
-        const hyperLinkToDelete = await HyperLinkModel.findById(id);
-        if (!hyperLinkToDelete) {
-            return res.status(404).json({ msg: 'Hyperlink not found' });
-        }
+  try {
+    
+    const { id } = req.params;
 
-       
-        await HyperLinkModel.findByIdAndDelete(id);
+    const hyperLinkToDelete = await HyperLinkModel.findById(id);
 
-        try {
-            await log.create({
-                action: "Deleted",
-                entityType: "HyperLink",
-                entityId: id,
-                user: userId,
-                timestamp: Date.now(),
-                path: "/HyperLink",
-                details: `Deleted HyperLink: ${hyperLinkToDelete.title}`,
-            });
-            console.log("HyperLink Log added for deletion");
-        } catch (err) {
-            console.log("Error logging HyperLink deletion:", err);
-        }
-
-      
-        res.status(200).json({ msg: 'Hyperlink deleted successfully' });
-    } catch (err) {
-        console.error('Error deleting hyperlink:', err);
-        res.status(500).json({ msg: 'Failed to delete hyperlink' });
+    if (!hyperLinkToDelete) {
+      return res.status(200).json({ msg: 'Hyperlink not found' });
     }
+
+    await HyperLinkModel.findByIdAndDelete(id);
+
+    res.status(200).json({ msg: 'Hyperlink deleted successfully' });
+
+  } catch (err) {
+    console.error('Error deleting hyperlink:', err);
+    res.status(500).json({ msg: 'Failed to delete hyperlink' });
+  }
 };
 
 //getHyperLink
@@ -96,13 +69,16 @@ const deleteHyperLink = async (req, res) => {
 const getHyperLink = async (req, res) => {
   try {
 
+
     const hyperlinks = await HyperLinkModel.find();
 
     if (!hyperlinks || hyperlinks.length === 0) {
-      return res.status(404).json({ msg: 'No hyperlinks found' });
+      return res.status(200).json({ msg: 'No hyperlinks found' });
     }
 
+
     res.status(200).json({ msg: 'All Hyperlinks fetched successfully', data: hyperlinks });
+
 
   } catch (err) {
     console.error('Error fetching hyperlinks:', err);
@@ -113,58 +89,44 @@ const getHyperLink = async (req, res) => {
 //updateHyperLink
 
 const updateHyperLink = async (req, res) => {
-    const { id } = req.params;  
-    const { title, url } = req.body;  
-    const userId = req.user.id;  
-  
-    try {
-     
-      if (!title && !url) {
-        return res.status(400).json({ msg: 'At least one field (title or url) is required to update' });
-      }
-  
-      const hyperlink = await HyperLinkModel.findById(id);
-      if (!hyperlink) {
-        return res.status(404).json({ msg: 'Hyperlink not found' });
-      }
-  
-      if (title) {
-        hyperlink.title = title;
-      }
-      if (url) {
 
-        const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
-        if (!urlRegex.test(url)) {
-          return res.status(400).json({ msg: 'Please provide a valid URL' });
-        }
-        hyperlink.url = url;
-      }
-  
-      const updatedHyperlink = await hyperlink.save();
+  try {
 
-      try {
-        await log.create({
-            action: "Updated",
-            entityType: "HyperLink",
-            entityId: id,
-            user: userId,
-            timestamp: Date.now(),
-            path: "/HyperLink",
-            details: `Updated HyperLink: ${hyperlink.title}`,
-        });
-        console.log("HyperLink Log added for deletion");
-    } catch (err) {
-        console.log("Error logging HyperLink deletion:", err);
+    const { editFormData } = req.body;
+    const url = editFormData.url;
+    const name = editFormData.name;
+
+    if (!name && !url) {
+      return res.status(200).json({ msg: 'At least one field (name or url) is required to update' });
     }
-  
-      res.status(200).json({
-        msg: 'Hyperlink updated successfully',
-        data: updatedHyperlink,
-      });
-    } catch (err) {
-      console.error('Error updating hyperlink:', err);
-      res.status(500).json({ msg: 'Failed to update hyperlink' });
+
+    const hyperlink = await HyperLinkModel.findById(editFormData.id);
+
+    if (!hyperlink) {
+      return res.status(200).json({ msg: 'Hyperlink not found' });
     }
+
+    if (name) {
+      hyperlink.name = name;
+    }
+    if (url) {
+      const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+      if (!urlRegex.test(url)) {
+        return res.status(200).json({ msg: 'Please provide a valid URL' });
+      }
+      hyperlink.url = url;
+    }
+
+    const updatedHyperlink = await hyperlink.save();
+
+    res.status(200).json({
+      msg: 'Hyperlink updated successfully',
+      data: updatedHyperlink,
+    });
+  } catch (err) {
+    console.error('Error updating hyperlink:', err);
+    res.status(500).json({ msg: 'Failed to update hyperlink' });
+  }
 };
 
-module.exports = { createHyperLink,deleteHyperLink,getHyperLink,updateHyperLink };
+module.exports = { createHyperLink, deleteHyperLink, getHyperLink, updateHyperLink };
