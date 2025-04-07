@@ -1,0 +1,472 @@
+.testcases-container {
+  background-color: #F8F9FA;
+  min-height: 100vh;
+  padding-bottom: 20px;
+}
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #F8F9FA;
+  border-bottom: 1px solid #E9ECEF;
+}
+.breadcrumb-section span {
+  color: #6C757D;
+  font-size: 14px;
+}
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.profile-info {
+  text-align: right;
+}
+.profile-info .name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+.profile-info .role {
+  font-size: 12px;
+  color: #6C757D;
+}
+.search-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  border-bottom: 1px solid #E9ECEF;
+  margin-top: 1px;
+}
+.search-bar {
+  flex: 1;
+  max-width: 400px;
+}
+.search-bar input {
+  width: 100%;
+  padding: 8px 15px;
+  border: 1px solid #CED4DA;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.add-case-btn {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  cursor: pointer;
+  width: fit-content;
+}
+.testcases-table {
+  margin: 20px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.testcases-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.testcases-table th {
+  background: #14365D;
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: normal;
+}
+.testcases-table td {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+.test-case-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.test-case-id {
+  color: #333;
+  font-weight: 500;
+}
+.test-case-desc {
+  color: #666;
+  font-size: 13px;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.user-info .name {
+  color: #333;
+  font-size: 14px;
+}
+.user-info .date {
+  color: #666;
+  font-size: 12px;
+}
+.case-type-badge,
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.case-type-badge.positive {
+  background-color: #E8F5E9;
+  color: #388E3C;
+}
+.case-type-badge.negative {
+  background-color: #FFEBEE;
+  color: #D32F2F;
+}
+.status-badge.pass {
+  background-color: #E8F5E9;
+  color: #388E3C;
+}
+.status-badge.fail {
+  background-color: #FFEBEE;
+  color: #D32F2F;
+}
+.status-badge.untested {
+  background-color: #F5F5F5;
+  color: #666;
+}
+/* Container for the action buttons */
+.action-buttons {
+  position: relative;
+}
+/* Three Dots (⋮) - Clickable but Not a Button */
+.three-dot-menu {
+  background: none;
+  border: none;
+  font-size: 18px; /* Slightly smaller */
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  display: inline-block;
+  user-select: none; /* Prevent accidental text selection */
+}
+.three-dot-menu:hover {
+  color: #333;
+}
+/* Dropdown Menu (Positioned Left of Dots) */
+.action-menu-dropdown {
+  position: absolute;
+  right: 100%; /* Moves dropdown to the left of dots */
+  top: 0; /* Aligns with the dots */
+  background: white;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 120px; /* Adjusted for better spacing */
+  padding: 4px 0; /* Reduce padding */
+  overflow: visible; /* Ensure all options are fully visible */
+}
+/* Menu Items */
+.action-menu-dropdown button {
+  width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #333;
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+}
+/* Prevent last item (Remove) from getting cut off */
+.action-menu-dropdown button:last-child {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  margin-bottom: 4px;
+}
+/* Hover Effect */
+.action-menu-dropdown button:hover {
+  background: #F5F5F5;
+}
+/* Icons inside menu */
+.action-icon {
+  font-size: 12px;
+  margin-right: 6px;
+}
+/* Remove button styling */
+.action-menu-dropdown .remove {
+  color: red;
+}
+.action-menu-dropdown .remove:hover {
+  background: #FFE6E6;
+}
+/* Style for Edit button and its icon */
+.action-menu-dropdown button:nth-child(2) .action-icon {
+  color: #007BFF;
+}
+/* Style for View button and its icon */
+.action-menu-dropdown button:first-child .action-icon {
+  color: #28A745;
+}
+/* Style for Remove button and its icon (Red) */
+.action-menu-dropdown button:last-child .action-icon {
+  color: red;
+}
+/* Ensure Remove button text is also red */
+.action-menu-dropdown button:last-child {
+  color: red;
+}
+/* Remove button hover effect */
+.action-menu-dropdown button:last-child:hover {
+  background: #FFE6E6;
+}
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Changed from center to flex-start */
+  z-index: 1000;
+  padding: 20px; /* Add padding to ensure space at top and bottom */
+  overflow-y: auto; /* Enable scrolling on the overlay */
+}
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh; /* Set maximum height */
+  overflow-y: auto; /* Enable scrolling within the modal */
+  margin: 20px auto; /* Add margin to ensure space at top and bottom */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+/* Add smooth scrollbar for better appearance */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-content::-webkit-scrollbar-track {
+  background: #F1F1F1;
+  border-radius: 4px;
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+/* General modal styles */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600; /* Slightly bolder for better visibility */
+  font-size: 16px; /* Consistent font size */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%; /* Make it fully responsive */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px; /* Match label font size */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  color: #333;
+  background-color: #fff;
+  box-sizing: border-box; /* Prevents unexpected width issues */
+}
+.form-group textarea {
+  min-height: 120px; /* Slightly larger for better usability */
+  resize: vertical;
+  max-height: 250px; /* Increased height limit */
+}
+/* Modal actions */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+/* Buttons */
+.cancel-btn,
+.submit-btn {
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-size: 16px; /* Increased for better visibility */
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+}
+.cancel-btn {
+  background-color: #6C757D;
+  color: white;
+}
+.submit-btn {
+  background-color: #007BFF;
+  color: white;
+}
+.cancel-btn:hover,
+.submit-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+/* Modal header */
+.modal-content h2 {
+  margin: 0 0 20px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+.date-info div:first-child::before {
+  content: "Created: ";
+  color: #888;
+}
+.date-info div:last-child::before {
+  content: "Updated: ";
+  color: #888;
+}
+.user-info div:first-child::before {
+  content: "Created by: ";
+  color: #888;
+}
+.user-info div:last-child::before {
+  content: "Updated by: ";
+  color: #888;
+}
+/* Adjust column widths */
+.testcases-table th:nth-child(1) { width: 15%; } /* Test Case */
+.testcases-table th:nth-child(2) { width: 10%; } /* Case Type */
+.testcases-table th:nth-child(3) { width: 15%; } /* Expected Result */
+.testcases-table th:nth-child(4) { width: 15%; } /* Test Case Data */
+.testcases-table th:nth-child(5) { width: 10%; } /* Status */
+.testcases-table th:nth-child(6) { width: 15%; } /* Created/Updated By */
+.testcases-table th:nth-child(7) { width: 15%; } /* Steps */
+.testcases-table th:nth-child(8) { width: 5%; } /* Action */
+/* Make table cells wrap text properly */
+.testcases-table td {
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 200px;
+}
+/* Status badge styles */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+.status-badge.pass {
+  background-color: #E8F5E9;
+  color: #388E3C;
+}
+.status-badge.fail {
+  background-color: #FFEBEE;
+  color: #D32F2F;
+}
+.status-badge.untested {
+  background-color: #F5F5F5;
+  color: #666;
+}
+/* Remove the date-info styles since we're not using them anymore */
+.date-info,
+.date-info div:first-child::before,
+.date-info div:last-child::before {
+  display: none;
+}
+.input-field {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #F8F9FA;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #007BFF;
+  background-color: white;
+}
+/* Adjust the new row styling */
+tbody tr:first-child {
+  background-color: #F8F9FA;
+}
+tbody tr:first-child td {
+  padding: 8px;
+}
+/* Make input fields take full width of their cells */
+td .input-field {
+  width: calc(100% - 16px);
+  margin: 0;
+}
+/* Style the select dropdown to match other inputs */
+select.input-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+  cursor: pointer;
+}
+select.input-field:hover {
+  border-color: #ADB5BD;
+}
+select.input-field:focus {
+  border-color: #007BFF;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+/* Style the options */
+select.input-field option {
+  padding: 8px;
+  background-color: white;
+}
+/* Add these styles for the module name hyperlink */
+.test-case-info .test-case-id {
+  color: #007bff; /* Blue color for hyperlinks */
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.test-case-info .test-case-id:hover {
+  text-decoration: underline;
+}

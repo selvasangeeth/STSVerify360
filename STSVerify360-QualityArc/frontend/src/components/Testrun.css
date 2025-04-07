@@ -1,0 +1,472 @@
+.test-runs-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+/* Search and Filters in Same Row */
+.search-filters-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: #aaa;
+}
+
+.search-bar input {
+  padding: 10px 10px 10px 30px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 300px;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 15px;
+}
+
+/* Custom Filter Buttons */
+.filter-button {
+  position: relative;
+  padding: 12px 35px 12px 20px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 150px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.filter-button::after {
+  content: "";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.filter-button:hover {
+  background-color: #f8f9fa;
+  border-color: #ddd;
+}
+
+/* Update Custom Select and Dropdown */
+.custom-select {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  min-width: 150px;
+  overflow: hidden;
+}
+
+.custom-dropdown div {
+  padding: 10px 16px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.custom-dropdown div:hover {
+  background-color: #f0f7ff;
+  color: #007bff;
+}
+
+/* Remove old select styles */
+.filters select {
+  display: none;
+}
+
+/* Table Styles */
+.test-runs-table {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #f8f9fa;
+}
+
+th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  border-bottom: 2px solid #dee2e6;
+}
+
+td {
+  padding: 15px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Header Background Blue & Text White */
+.test-runs-table th {
+  background-color: #003366;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Row Styling */
+.test-runs-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Small Arrow Instead of View Button */
+.action-arrow {
+  font-size: 18px;
+  color: #003366;
+  cursor: pointer;
+}
+
+.action-arrow:hover {
+  color: #0056b3;
+}
+
+/* Eye Icon for Action */
+.action-eye {
+  cursor: pointer;
+  color: #007bff;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-eye:hover {
+  color: #0056b3;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background-color: #e0e0e0;
+  color: #333;
+  font-size: 12px;
+}
+
+.pass {
+  color: green;
+}
+
+.fail {
+  color: red;
+}
+
+.unexecuted {
+  color: orange;
+}
+
+.test-status.pass {
+  color: green;
+}
+
+.test-status.fail {
+  color: red;
+}
+
+/* Modal Styles */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.modal-content h2 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  font-size: 30px; /* Increase the size */
+  color: red; /* Red color for the close button */
+  line-height: 1; /* Ensure the button is not cut off */
+}
+
+/* Datepicker Popup */
+.time-period-button {
+  position: relative;
+  padding: 12px 35px 12px 20px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 150px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.time-period-button::after {
+  content: "";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.time-period-button:hover {
+  background-color: #f8f9fa;
+  border-color: #ddd;
+}
+
+.datepicker-popup {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  padding: 16px;
+  width: max-content;
+}
+
+/* Calendar Styles */
+.react-datepicker {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial !important;
+  border: none !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.react-datepicker__month-container {
+  float: none;
+}
+
+.react-datepicker__header {
+  background-color: white !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  padding: 12px !important;
+}
+
+.react-datepicker__current-month {
+  color: #333;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.react-datepicker__day-name {
+  color: #666;
+  font-size: 12px;
+  margin: 4px !important;
+  width: 32px !important;
+}
+
+.react-datepicker__day {
+  margin: 4px !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  border-radius: 50% !important;
+  color: #333;
+}
+
+.react-datepicker__day:hover {
+  background-color: #f0f7ff !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+.react-datepicker__navigation {
+  top: 12px;
+}
+
+.react-datepicker__navigation--previous {
+  left: 12px;
+}
+
+.react-datepicker__navigation--next {
+  right: 12px;
+}
+
+/* Test Case Details Modal */
+.test-case-details {
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.test-case-details h2 {
+  color: #333;
+  font-size: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.test-case-details .detail-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  margin-bottom: 15px;
+  align-items: baseline;
+}
+
+.test-case-details .label {
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.test-case-details .value {
+  color: #333;
+  font-size: 14px;
+}
+
+.test-case-details .result-section {
+  margin-top: 30px;
+}
+
+.test-case-details .result-section h3 {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+/* Status badges */
+.test-status {
+  display: inline-block;
+  padding: 4px 15px;
+  border-radius: 15px;
+  font-size: 13px;
+}
+
+.test-status.pass,
+.status-badge.live {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.test-status.fail {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+}
+
+/* Reference images container */
+.reference-images {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.reference-images img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
