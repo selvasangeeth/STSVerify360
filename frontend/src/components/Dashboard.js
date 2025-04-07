@@ -102,7 +102,6 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     }
   };
 
-  useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get('/getproject');
@@ -112,6 +111,8 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
         console.error('Error fetching projects:', error);
       }
     };
+
+    useEffect(() => {
 
     fetchProjects();
 
@@ -254,14 +255,23 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     setActiveProject(null);
   };
 
-  const handleEditSubmitProject = async (e) => {
-    e.preventDefault();
+ const handleQuickLinkAdd =()=>{
+  try{
+
+    console.log("AddHyperLink")
+  }
+  catch(err){
+    console.log(err);
+  }
+ }
+
+
+  const handleEditSubmitProject = async (project) => {
     const formData = new FormData();
-    formData.append("projectId", projectToEdit._id);
+    formData.append("projectId", project.projectId);
     formData.append("newProjectName", editProjectData.projectName);
-    if (editProjectData.logo) {
-      formData.append("projectLogo", editProjectData.logo);
-    }
+    formData.append("projectLogo", editProjectData.logo);
+    
 
     try {
       const response = await axios.put('/updateProject', formData, {
@@ -289,22 +299,24 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     }
   };
 
-  const handleConfirmRemoveProject = async () => {
+  const handleConfirmRemoveProject = async (project) => {
     try {
-      const response = await axios.delete(`/deleteProject/${projectToRemove._id}`);
+      const response = await axios.delete(`/deleteProject/${project.projectId}`);
       if (response.data.msg) {
         toast(response.data.msg);
-        // Remove the project from the list
         const updatedProjects = projects.filter(p => p._id !== projectToRemove._id);
         setProjects(updatedProjects);
         setShowRemoveConfirmModal(false);
         setProjectToRemove(null);
+        fetchProjects();
       }
+      
     } catch (error) {
       console.error('Error deleting project:', error);
       toast.error('Failed to delete project');
     }
   };
+  
 
   const toggleMenu = (index, e) => {
     e.stopPropagation();
@@ -681,7 +693,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="submit-btn">
+                <button type="submit" className="submit-btn" onClick={handleQuickLinkAdd}>
                   Add Document
                 </button>
               </div>
@@ -807,7 +819,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   <div className="modal-overlay">
     <div className="modal-content">
       <h2>Edit Project</h2>
-      <form onSubmit={handleEditSubmitProject}>
+      <form onSubmit={()=>handleEditSubmitProject(projectToEdit)}>
         <div className="form-group">
           <label>Project Name</label>
           <input
@@ -886,7 +898,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
         </button>
         <button 
           type="button" 
-          onClick={handleConfirmRemoveProject}
+          onClick={()=>handleConfirmRemoveProject(projectToRemove)}
           className="submit-btn"
         >
           Remove

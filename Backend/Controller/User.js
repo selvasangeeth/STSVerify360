@@ -30,7 +30,7 @@ const registerUser = async (req, res) => {
         Password: hashedPassword,
         Role: Role
       });
-      
+
       return res.status(201).json({ msg: "User created successfully", data: createUser });
 
     }
@@ -46,7 +46,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
 
   try {
-    
+
     const { Email, Password } = req.body;
     const user = await userDetails.findOne({ Email });
 
@@ -66,7 +66,7 @@ const loginUser = async (req, res) => {
     res.cookie("jwt", token, { httpOnly: true, maxAge: 3600000 });
 
     // Send user data in response
-    return res.status(200).json({ 
+    return res.status(200).json({
       msg: "LoginSuccess",
       user: {
         Name: user.Name,
@@ -110,4 +110,23 @@ const updateUser = async (req, res) => {
   }
 }
 
-module.exports = { registerUser, loginUser, updateUser };
+//logout
+
+const logout = (req, res) => {
+  // Clear the JWT cookie by setting it with an expired date
+  try {
+    res.cookie("jwt", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      path: '/'
+    });
+    res.status(200).send({ msg: "Logged out successfully" });
+  }
+  catch (err) {
+    res.status(500).json({ msg: 'Internal Server Error' });
+
+  }
+};
+
+
+module.exports = { registerUser, loginUser, updateUser, logout };

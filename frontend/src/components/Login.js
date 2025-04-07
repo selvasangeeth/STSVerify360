@@ -40,6 +40,7 @@ const Login = () => {
 
       if (response.data.msg === "LoginSuccess" && response.data.user) {
         // Store user data in localStorage
+       
         localStorage.setItem('user', JSON.stringify(response.data.user));
         
         // Get the last path from localStorage

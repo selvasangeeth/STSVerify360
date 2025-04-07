@@ -114,12 +114,6 @@ const updateModule = async (req, res) => {
     const subModule = newSubModuleName;
     const mod = await modulee.findById(moduleId);
 
-    const checkMod = await modulee.findOne({ moduleName });
-    
-    if(checkMod){
-      return res.status(200).json({msg:"Module Name Already Exists!!"});
-    }
-
     if (!mod) {
       return res.status(200).json({ msg: "Module does not exist" });
     } else {
@@ -161,7 +155,7 @@ const updateModule = async (req, res) => {
 const deleteModule = async (req, res) => {
 
   try {
-
+    
     const { moduleId, projectId } = req.body;
     const deletedById = req.user.id;
    

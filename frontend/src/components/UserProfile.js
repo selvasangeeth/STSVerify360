@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserProfile.css';
+import axios from "./axios"
 
 const UserProfile = () => {
     const [showDropdown, setShowDropdown] = useState(false);
@@ -26,10 +27,16 @@ const UserProfile = () => {
         };
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        navigate('/login');
+    const handleLogout = async () => {
+        try {
+            await axios.post("/api/logout");
+            localStorage.removeItem('user');
+            localStorage.removeItem('selectedProject');
+            navigate('/login');
+        }
+        catch (err) {
+            console.log(err);
+        }
     };
 
     return (

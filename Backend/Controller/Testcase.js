@@ -75,19 +75,11 @@ const updateTestCaseStatus = async (req, res) => {
     const testerId = req.user.id;
   
     if (!req.file) {
-      console.log("no file");
-      return res.status(400).json({ msg: "No file uploaded" });
+      return res.status(200).json({ msg: "No file uploaded" });
     }
 
     const fileUploaded = req.file;
     const base64String = fileUploaded.buffer.toString('base64');
-
-    if (base64String) {
-      console.log("Converted to base64")
-    }
-    else {
-      console.log("Not Converted");
-    }
 
     const tester = await user.findById(testerId).populate('Name');
 
