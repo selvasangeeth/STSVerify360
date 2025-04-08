@@ -9,12 +9,12 @@ const createProject = async (req, res) => {
   try {
     const createdById = req.user.id;
     const { projectName } = req.body;
-    const projectLogo = req.file;
+    const projectLogo = req.files?.projectLogo?.[0];
     const base64String = projectLogo.buffer.toString('base64');
 
     const proj = await ProjectDetails.findOne({ projectName });
 
-    if (!req.file) {
+    if (!req.files?.projectLogo?.[0]) {
       return res.status(400).json({ msg: "Please upload a project logo" });
     }
 
@@ -67,7 +67,7 @@ const updateProject = async (req, res) => {
 
   try {
     const { projectId, newProjectName } = req.body;
-    const projectLogo = req.file;
+    const projectLogo = req.files?.projectLogo?.[0];
 
     const proj = await ProjectDetails.findById(projectId);
     if (!proj) {

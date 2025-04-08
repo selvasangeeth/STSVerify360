@@ -9,7 +9,7 @@ const { registerUser,loginUser, updateUser, logout } = require("../Controller/Us
 
 router.post("/register", registerUser);
 router.post("/login",loginUser);
-router.put("/updateUser",upload.single('Profileimg'),auth,updateUser);
+router.put("/updateUser",upload,auth,updateUser);
 router.post("/api/logout",logout)
     
    

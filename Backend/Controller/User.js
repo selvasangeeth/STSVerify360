@@ -88,7 +88,7 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.user.id;
     const { Name, Email } = req.body;
-    const Profileimg = req.file.filename;
+    const Profileimg = req.files?.Profileimg?.[0]
     const user = await userDetails.findById(userId);
     if (!user) {
       return res.status(200).json({ message: 'User not found' });

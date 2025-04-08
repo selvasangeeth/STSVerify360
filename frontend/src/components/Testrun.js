@@ -305,7 +305,7 @@ const Testrun = ({ selectedProject }) => {
                 <div className="detail-row">
                   <span className="label">Reference</span>
                   <span className="value">
-                    {selectedTest.reference.startsWith('/9j/') ? (
+                    {selectedTest.reference.startsWith('/9j/') ? (  
                       <img
                         src={`data:image/jpeg;base64,${selectedTest.reference}`}
                         alt="Test reference"
