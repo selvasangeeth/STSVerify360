@@ -70,7 +70,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <img src="/logo1.png" alt="Logo" className="login-logo" /> {/* Update logo path */}
+        <img src="/faviconi.ico" alt="Logo" className="login-logo" /> {/* Update logo path */}
         <h2 style={{textAlign:'center'}}>Login to QualityArc</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>

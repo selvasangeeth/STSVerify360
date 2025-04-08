@@ -79,8 +79,7 @@ const TestCases = () => {
       setLoading(true);
       setError(null);
       const response = await axios.get(`/getTestCase/${scenarioId}`);
-      console.log(response.data.data); // Debugging
-      console.log("Fetched test cases:", response.data.data); // Debugging
+     
       if (response.data.msg === "success") {
         const testCasesData = Array.isArray(response.data.data) ? response.data.data : [];
         // Ensure description exists

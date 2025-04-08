@@ -42,9 +42,7 @@ const Scenarios = () => {
 
   const [activeMenu, setActiveMenu] = useState(null);
 
-  useEffect(() => {
-    console.log('Current moduleId:', moduleId);
-  }, [moduleId]);
+
 
   useEffect(() => {
     if (moduleId) {
@@ -83,11 +81,9 @@ const Scenarios = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Fetching scenarios for moduleId:', moduleId);
 
       const response = await axios.get(`/getScenario/${moduleId}`);
-      console.log(response.data);
-      console.log('Scenarios response:', response.data);
+
 
       if (response.data.msg === "Success Scenario Fetch") {
         setScenarios(response.data.data);
@@ -228,8 +224,7 @@ const Scenarios = () => {
 
   const handleScenarioClick = (scenarioId, projectId, moduleId) => {
     try {
-      console.log(scenarioId);
-      console.log("sdewfewf : " + moduleId);
+    
       navigate(`/modules/scenarios/testcases/${scenarioId}/${projectId}/${moduleId}`);
     } catch (error) {
       console.error('Error navigating to test cases:', error);
