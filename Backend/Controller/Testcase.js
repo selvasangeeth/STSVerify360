@@ -87,7 +87,7 @@ const updateTestCaseStatus = async (req, res) => {
     const testCaseName = await testCaseModel.findById(testCaseId).populate('testCaseId');
 
     if (!testStatus) {
-      return res.status(400).json({ msg: "Status is required" });
+      return res.status(200).json({ msg: "Status is required" });
     }
 
     const updatedTestCase = await testCaseModel.findByIdAndUpdate(
@@ -118,7 +118,7 @@ const updateTestCaseStatus = async (req, res) => {
   
    
     if (!updatedTestCase) {
-      return res.status(404).json({ msg: "TestCase not found" });
+      return res.status(200).json({ msg: "TestCase not found" });
     }
 
     // TestRun Create

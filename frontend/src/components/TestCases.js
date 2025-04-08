@@ -265,7 +265,7 @@ const TestCases = () => {
 
   const filteredTestCases = Array.isArray(testCases) ? testCases.filter(testCase =>
     testCase.testCaseId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    testCase.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    testCase.testCaseDescription?.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
 
   // Pagination logic
@@ -289,13 +289,13 @@ const TestCases = () => {
         <div className="search-bar">
           <input
             type="text"
-            placeholder="Search By Test Case ID"
+            placeholder="Test Case ID | Description"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <button className="add-case-btn" onClick={() => { handleAddClick(); }}>
-          + Add Case
+          Add Case
         </button>
       </div>
 

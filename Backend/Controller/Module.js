@@ -18,14 +18,14 @@ const createModule = async (req, res) => {
         return res.status(200).json({ msg: "All Fields are Mandatory" });
       }
 
-      const mod = await modulee.findOne({ 
-        moduleName: moduleName, 
-        projectId: projectId,
-        subModule:subModule
-      });
-    
-      if (mod) {
-        return res.status(200).json({ msg: "SubModule already Exist" });
+        const mod = await modulee.findOne({ 
+          moduleName: { $regex: new RegExp(`^${moduleName}$`, 'i') }, 
+          subModule: { $regex: new RegExp(`^${subModule}$`, 'i') },
+          projectId: projectId,
+        });
+      
+        if (mod) {
+          return res.status(200).json({ msg: "SubModule already Exist" });
       }
       else {
       const creat = await modulee.create({

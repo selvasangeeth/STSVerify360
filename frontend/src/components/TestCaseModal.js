@@ -640,7 +640,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
   const [editedCase, setEditedCase] = useState(testCase || {
     testCaseId: '',
     caseType: '',
-    description: '',
+    testCaseDescription: '',
     expectedResult: '',
     testCaseData: '',
     steps: '',
@@ -888,7 +888,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
             </div>
 
             <div className="form-group">
-              <label>Test Case Desaecription</label>
+              <label>Test Case Description</label>
               <textarea
                 placeholder="Enter the Test case description"
                 value={editedCase.description}
@@ -939,7 +939,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
             <div className="add-case-actions">
               <button className="cancel-case-submit" onClick={onClose}>Cancel</button>
               <button type="submit" className="add-case-submit">
-                <span>+</span> Add Case
+                 Add Case
               </button>
             </div>
           </form>
@@ -989,7 +989,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                     onChange={(e) =>
                       setEditedCase({ ...editedCase, testCaseId: e.target.value })
                     }
-                    disabled={isViewMode}
+                    disabled
                     style={{
                       width: '85%',
                       padding: '12px',
@@ -1022,10 +1022,9 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                 <label>Test Case Description</label>
                 <textarea
                   placeholder="Enter the Test case description"
-                  value={editedCase.
-                    testCaseDescription || ''}
+                  value={editedCase.testCaseDescription || ''}
                   onChange={(e) =>
-                    setEditedCase({ ...editedCase, description: e.target.value })
+                    setEditedCase({ ...editedCase, testCaseDescription: e.target.value })
                   }
                   disabled={isViewMode}
                   style={{
@@ -1034,7 +1033,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                     border: '1px solid #e0e0e0',
                     borderRadius: '3px',
                     fontSize: '14px',
-                    height: '10px',
+                    height: '100px',
                     backgroundColor: isViewMode ? '#f5f5f5' : 'white',
                     cursor: isViewMode ? 'not-allowed' : 'text'
                   }}
