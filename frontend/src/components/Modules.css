@@ -179,7 +179,6 @@ td {
 .action-item .fa-edit,
 .action-item .fa-trash {
   margin-right: 8px;
-  font-size: 14px;
 }
 /* Modal Styles */
 .modal-overlay {
@@ -406,4 +405,20 @@ td .input-field {
 
 .confirm-btn:hover {
   background-color: #c82333;
+}
+
+.modules-table th {
+  text-align: center;
+  padding: 10px;
+}
+
+.modules-table td {
+  text-align: center;
+  padding: 10px;
+  vertical-align: middle;
+}
+
+/* Ensure consistent row height */
+.modules-table .module-row {
+  height: 50px;
 }

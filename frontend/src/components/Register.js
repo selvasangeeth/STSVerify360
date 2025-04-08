@@ -48,7 +48,7 @@ const Register = () => {
 
     return (
         <div className="register-container">
-            <h2>Get Started with SPAN</h2>
+            <h2>Get Started with Testing at SPAN</h2>
 
             <form onSubmit={handleSubmit}>
                 <label>Name</label>

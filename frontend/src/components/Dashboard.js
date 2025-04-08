@@ -47,6 +47,7 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingLink, setEditingLink] = useState(null);
   const [editFormData, setEditFormData] = useState({ name: '', url: '', id: '' });
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
 
   const [newProject, setNewProject] = useState({
     projectName: '',
@@ -430,11 +431,13 @@ const QuickLinkItem = ({ link, onEdit, onRemove }) => {
       >
         {link.name}
       </a>
+      
       <div className="quick-link-menu" ref={menuRef}>
         <button className="menu-dots" onClick={() => setShowMenu(!showMenu)}>
           ⋮
         </button>
         {showMenu && (
+          
           <div className="menu-dropdown">
             <button onClick={onEdit}>
               <svg className="edit-icon" viewBox="0 0 576 512">
@@ -459,70 +462,27 @@ return (
   <div className="dashboard-container">
     <header className="dashboard-header">
       <div className="header-left">
-
-
-        <button
-          className="sidebar-toggle"
-          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          aria-label="Toggle Sidebar"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 64 64"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="toggle-icon"
-          >
-            <path d="M10 6c-2.2 0-4 1.8-4 4v44c0 2.2 1.8 4 4 4h44c2.2 0 4-1.8 4-4V10c0-2.2-1.8-4-4-4H10z" />
-
-            {/* Line 1 */}
-            <rect x="18" y="14" width="28" height="8" rx="4" />
-            <circle
-              cx={isSidebarCollapsed ? "42" : "22"}
-              cy="18"
-              r="4"
-              fill="currentColor"
-            />
-
-            {/* Line 2 */}
-            <rect x="18" y="28" width="28" height="8" rx="4" />
-            <circle
-              cx={isSidebarCollapsed ? "22" : "42"}
-              cy="32"
-              r="4"
-              fill="currentColor"
-            />
-
-            {/* Line 3 */}
-            <rect x="18" y="42" width="28" height="8" rx="4" />
-            <circle
-              cx={isSidebarCollapsed ? "42" : "22"}
-              cy="46"
-              r="4"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-
-
-
-
-
       </div>
       <div className="header-right">
         <UserProfile />
       </div>
     </header>
     <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-      {/* Logo Section */}
-      <div className="logo-section">
-        <h1>Quality Arc</h1>
-      </div>
+        {/* Logo Section */}
+        <div
+          className="logo-section"
+          style={{ display: 'flex', alignItems: 'center', marginTop: '10px', cursor: 'pointer' }}
+          onClick={() => {
+            setIsSidebarCollapsed(!isSidebarCollapsed); // Toggle sidebar
+          }}
+        >
+          <img
+            src="/logo1.png"
+            alt="Logo"
+            style={{ width: '40px', height: '40px', marginRight: '10px' }}
+          />
+          <h2 style={{ margin: 0 }}>Quality Arc</h2>
+        </div>
 
       {/* Project Dropdown */}
       <div className="project-dropdown-container" ref={dropdownRef}>
@@ -588,31 +548,43 @@ return (
                       </span>
                     </div>
                     <div className="project-actions">
-                      <button
-                        className="menu-dots"
-                        onClick={(e) => toggleMenu(index, e)}
-                      >
+                    <button
+  className="menu-dots"
+  onClick={(e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMenuPosition({
+      x: rect.right + 10, // Pushes dropdown to the right of sidebar
+      y: rect.top,
+    });
+    toggleMenu(index, e); // Keep your existing toggle logic
+  }}
+>
                         ⋮
                       </button>
                       {openMenuIndex === index && (
-                        <div
-                          className="project-menu-dropdown"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <button onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditProject(project);
-                          }}>
-                            <FaEdit className="edit-icon" /> Edit
-                          </button>
-                          <button onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveProject(project);
-                          }}>
-                            <FaTrash className="remove-icon" /> Remove
-                          </button>
-                        </div>
-                      )}
+  <div
+    className="project-menu-dropdown"
+    style={{
+      position: 'fixed',
+      top: `${menuPosition.y}px`,
+      left: `${menuPosition.x}px`,
+    }}
+    onClick={(e) => e.stopPropagation()}
+  >
+    <button onClick={(e) => {
+      e.stopPropagation();
+      handleEditProject(project);
+    }}>
+      <FaEdit className="edit-icon" /> Edit
+    </button>
+    <button onClick={(e) => {
+      e.stopPropagation();
+      handleRemoveProject(project);
+    }}>
+      <FaTrash className="remove-icon" /> Remove
+    </button>
+  </div>
+)}
                     </div>
                   </div>
                 ))
@@ -663,7 +635,8 @@ return (
       {/* Quick Links */}
       <div className="quick-links-section" ref={quickLinksRef}>
         <div className="quick-links-header">
-          <h3>Quick Links</h3>
+        <h3>Quick Links</h3>
+
           <button
             className="add-quick-link"
             onClick={() => setShowAddQuickLinkModal(true)}
@@ -790,8 +763,8 @@ return (
       </div>
     )}
     {showEditQuickLinkModal && (
-      <div className="modal-overlay">
-        <div className="modal-content">
+      <div className="edit-link-modal-overlay">
+        <div className="edit-link-modal-content">
           <h2>Edit Document</h2>
           <form onSubmit={handleEditQuickLink}>
             <div className="form-group">
@@ -830,14 +803,14 @@ return (
     )}
 
     {showRemoveConfirmModalQuickLink && (
-      <div className="modal-overlay">
-        <div className="modal-content">
+      <div className="remove-confirm-modal-overlay">
+        <div className="remove-confirm-modal-content">
           <h2>Confirm Removal</h2>
           <p>Are you sure you want to remove this quick link?</p>
           <div className="modal-actions">
             <button
               type="button"
-              onClick={() => setShowRemoveConfirmModal(false)}
+              onClick={() => setShowRemoveConfirmModalQuickLink(false)}
               className="cancel-btn"
             >
               Cancel
@@ -855,8 +828,8 @@ return (
     )}
 
     {showEditModal && (
-      <div className="modal-overlay">
-        <div className="modal-content">
+      <div className="edit-link-modal-overlay">
+        <div className="edit-link-modal-content">
           <h2>Edit Quick Link</h2>
           <form onSubmit={handleEditSubmit}>
             <div className="form-group">

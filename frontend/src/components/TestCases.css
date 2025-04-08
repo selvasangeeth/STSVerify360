@@ -83,13 +83,15 @@
 .testcases-table th {
   background: #14365D;
   color: white;
-  padding: 12px 16px;
-  text-align: left;
+  padding: 10px;
+  text-align: center;
   font-weight: normal;
 }
 .testcases-table td {
-  padding: 16px;
+  padding: 10px;
   border-bottom: 1px solid #eee;
+  text-align: center;
+  vertical-align: middle;
 }
 .test-case-info {
   display: flex;
@@ -165,17 +167,18 @@
 /* Dropdown Menu (Positioned Left of Dots) */
 .action-menu-dropdown {
   position: absolute;
-  right: 100%; /* Moves dropdown to the left of dots */
-  top: 0; /* Aligns with the dots */
+  right: 100%; /* Moves dropdown to the left of the three-dot button */
+  top: -90%; /* Moves dropdown below the button */
   background: white;
   border: 1px solid #E0E0E0;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  min-width: 120px; /* Adjusted for better spacing */
-  padding: 4px 0; /* Reduce padding */
+  z-index: 9999; /* Ensure dropdown is above other content */
+  min-width: 120px;
+  padding: 4px 0;
   overflow: visible; /* Ensure all options are fully visible */
 }
+
 /* Menu Items */
 .action-menu-dropdown button {
   width: 100%;
@@ -190,16 +193,22 @@
   text-align: left;
   white-space: nowrap;
 }
+
 /* Prevent last item (Remove) from getting cut off */
 .action-menu-dropdown button:last-child {
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   margin-bottom: 4px;
 }
+
 /* Hover Effect */
 .action-menu-dropdown button:hover {
   background: #F5F5F5;
 }
+
+
+
+
 /* Icons inside menu */
 .action-icon {
   font-size: 12px;
@@ -469,4 +478,8 @@ select.input-field option {
 
 .test-case-info .test-case-id:hover {
   text-decoration: underline;
+}
+/* Ensure consistent row height */
+.testcases-table .test-case-row {
+  height: 50px;
 }

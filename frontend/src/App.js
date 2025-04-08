@@ -15,6 +15,7 @@
   import LogList from './components/LogList';
   import Testrun from "./components/Testrun";
   import Metrics from './components/Metrics';
+  import Breadcrumbs from './components/Breadcrumbs';
 
   function App() {
     const [selectedProject, setSelectedProject] = useState(null);
@@ -30,18 +31,50 @@
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject} />} />
-            <Route path="/modules" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Modules selectedProject={selectedProject} /></Dashboard>} />
-            <Route path="/modules/scenarios/:moduleId/:projectId" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Scenarios /></Dashboard>} />
-            <Route path="/modules/scenarios/testcases/:scenarioId/:projectId/:moduleId" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><TestCases /></Dashboard>} />
+            <Route
+            path="/dashboard"element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs />
+              </Dashboard>
+            }
+          />
+          {/* Modules */}
+          <Route
+            path="/modules"
+            element={
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs />
+                <Modules selectedProject={selectedProject} />
+              </Dashboard>
+            }
+          />
+          {/* Scenarios */}
+          <Route
+            path="/modules/scenarios/:moduleId/:projectId"
+            element={
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs />
+                <Scenarios />
+              </Dashboard>
+            }
+          />
+          {/* Test Cases */}
+          <Route
+            path="/modules/scenarios/testcases/:scenarioId/:projectId/:moduleId"
+            element={
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs />
+                <TestCases />
+              </Dashboard>
+            }
+          />
             <Route path="/add-admin" element={
               <ProtectedRoute allowedRoles={['superadmin']}>
                 <AddAdmin />
               </ProtectedRoute>
             } />
-            <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><LogList selectedProject={selectedProject} /></Dashboard>} />
-            <Route path="/testrun" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Testrun selectedProject={selectedProject} /></Dashboard>} />
-            <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Metrics selectedProject={selectedProject} /></Dashboard>} />
+            <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Breadcrumbs/><LogList selectedProject={selectedProject} /></Dashboard>} />
+            <Route path="/testrun" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Breadcrumbs/><Testrun selectedProject={selectedProject} /></Dashboard>} />
+            <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Breadcrumbs/><Metrics selectedProject={selectedProject} /></Dashboard>} />
           </Routes>
         </Router>
       </Provider>

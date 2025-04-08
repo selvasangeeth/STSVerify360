@@ -70,7 +70,8 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2>Login to QA Management Tool</h2>
+        <img src="/logo1.png" alt="Logo" className="login-logo" /> {/* Update logo path */}
+        <h2 style={{textAlign:'center'}}>Login to QualityArc</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -83,6 +84,7 @@ const Login = () => {
               onChange={handleChange}
               required
               placeholder="Enter your email"
+              style={{ fontSize: '16px' }}
             />
           </div>
           <div className="form-group">
@@ -95,6 +97,7 @@ const Login = () => {
               onChange={handleChange}
               required
               placeholder="Enter your password"
+              style={{ fontSize: '16px' }}
             />
           </div>
           <button type="submit" disabled={isLoading}>
