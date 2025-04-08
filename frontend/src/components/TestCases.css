@@ -469,16 +469,12 @@ select.input-field option {
   padding: 8px;
   background-color: white;
 }
-/* Add these styles for the module name hyperlink */
+
 .test-case-info .test-case-id {
-  color: #007bff; /* Blue color for hyperlinks */
-  text-decoration: none;
-  cursor: pointer;
+  color: #007bff; 
 }
 
-.test-case-info .test-case-id:hover {
-  text-decoration: underline;
-}
+
 /* Ensure consistent row height */
 .testcases-table .test-case-row {
   height: 50px;
