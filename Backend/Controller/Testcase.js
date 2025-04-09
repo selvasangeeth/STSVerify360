@@ -73,13 +73,13 @@ const updateTestCaseStatus = async (req, res) => {
   try {
     const { testCaseId, testStatus, scenarioId, projectId, description, moduleId, testRegion, comments, bugReferenceId, bugPriority } = req.body;
     const testerId = req.user.id;
-  
-    if (!req.files?.reference?.[0]) {
-      return res.status(200).json({ msg: "No file uploaded" });
+    let fileUploaded = null; // use let here
+
+    if (req.files?.reference?.[0]) {
+      fileUploaded = req.files.reference[0];
     }
 
-    const fileUploaded = req.files?.reference?.[0];
-    const base64String = fileUploaded.buffer.toString('base64');
+    const base64String = fileUploaded ? fileUploaded.buffer.toString('base64') : null;
 
     const tester = await user.findById(testerId).populate('Name');
 
@@ -115,8 +115,8 @@ const updateTestCaseStatus = async (req, res) => {
       },
       { new: true }
     );
-  
-   
+
+
     if (!updatedTestCase) {
       return res.status(200).json({ msg: "TestCase not found" });
     }
@@ -138,7 +138,7 @@ const updateTestCaseStatus = async (req, res) => {
 
 
     const testRunCreate = await testRunModel.create({
-      projectId : projectId,
+      projectId: projectId,
       testCaseName: testCaseName.testCaseId,
       testScenario: associatedScenario.scenarioIdstr,
       taskId: associatedScenario.taskId,
@@ -147,20 +147,20 @@ const updateTestCaseStatus = async (req, res) => {
       testStatus: testStatus,
       testedBy: testerName,
       reference: base64String,
-      testDescription :testCaseDetails.testCaseDescription,
-      caseType : testCaseDetails.caseType,
-      testCaseCreatedBy : testCaseCreatedBy.Name,
+      testDescription: testCaseDetails.testCaseDescription,
+      caseType: testCaseDetails.caseType,
+      testCaseCreatedBy: testCaseCreatedBy.Name,
       bugPriority: bugPriority,
       bugReferenceId: bugReferenceId,
-      comments : comments,
-      expectedResult :testCaseDetails.expectedResult,
+      comments: comments,
+      expectedResult: testCaseDetails.expectedResult,
       testCaseData: testCaseDetails.testCaseData,
-      steps : testCaseDetails.steps,
-      testCaseCreatedAt :testCaseDetails.timestamp,
-      timestamp : Date.now(),
-    })  
-    
-  
+      steps: testCaseDetails.steps,
+      testCaseCreatedAt: testCaseDetails.timestamp,
+      timestamp: Date.now(),
+    })
+
+
     const path = `${associatedProject.projectName}/${associatedModule.moduleName}/${associatedScenario.scenarioIdstr}/${testCaseName.testCaseId}`;
 
     const TestCaseUpdateLog = await log.create({
@@ -170,7 +170,7 @@ const updateTestCaseStatus = async (req, res) => {
       user: testerName,
       timestamp: Date.now(),
       path: path,
-      projectId : projectId,
+      projectId: projectId,
       details: `Status updated to: ${testStatus}`,
     });
 
@@ -265,7 +265,7 @@ const getTestIds = async (req, res) => {
 const deleteTestCase = async (req, res) => {
   try {
     const testCaseId = req.params.testCaseId;
-    const { projectId, moduleId,scenarioId} = req.query;
+    const { projectId, moduleId, scenarioId } = req.query;
     const deletedById = req.user.id;
     const testCase = await testCaseModel.findById(testCaseId);
     if (!testCase) {
@@ -288,7 +288,7 @@ const deleteTestCase = async (req, res) => {
         user: UserName.Name,
         path: path,
         projectId: projectId,
-        timestamp : Date.now(),
+        timestamp: Date.now(),
         details: `TestCase Deleted: ${testCaseName.testCaseId}`
       });
     } catch (err) {
@@ -304,9 +304,9 @@ const deleteTestCase = async (req, res) => {
 
 const updateTestCase = async (req, res) => {
   try {
-  
+
     const { updatedCase } = req.body;
- 
+
     const tCase = await testCaseModel.findById(updatedCase._id);
 
     if (!tCase) {
@@ -330,4 +330,4 @@ const updateTestCase = async (req, res) => {
 };
 
 
-module.exports = { createTestCase, updateTestCaseStatus, getTestCase,getTestIds,deleteTestCase,updateTestCase };
+module.exports = { createTestCase, updateTestCaseStatus, getTestCase, getTestIds, deleteTestCase, updateTestCase };

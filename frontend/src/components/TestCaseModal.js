@@ -66,7 +66,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
     setIsResultAdded(true);
   };
 
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(editedCase);
@@ -166,7 +166,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
     }
 
     try {
-     
+
       const response = await axios.post('/updatedTestCase', formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -306,7 +306,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
             <div className="add-case-actions">
               <button className="cancel-case-submit" onClick={onClose}>Cancel</button>
               <button type="submit" className="add-case-submit">
-                 Add Case
+                Add Case
               </button>
             </div>
           </form>
@@ -521,6 +521,27 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                             ) : (
                               <img src={URL.createObjectURL(selectedFile)} alt="preview" width="100%" />
                             )}
+                            <button
+                              type="button"
+                              className="clear-file-btn"
+                              onClick={() => {
+                                setSelectedFile(null);
+                                setNewResult({ ...newResult, reference: '' });
+                                document.querySelector('input[type="file"]').value = ''; // Clear the file input field
+                              }}
+                              style={{
+                                backgroundColor: '#f44336',
+                                borderRadius: '4px',
+                                border: 'none',
+                                color: 'white',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                marginTop: '10px',
+                                width: '100px',
+                              }}
+                            >
+                              Clear File
+                            </button>
                           </div>
                         )}
 

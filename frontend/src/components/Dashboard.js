@@ -363,12 +363,15 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
     try {
       const response = await axios.delete(`/deleteProject/${project.projectId}`);
       if (response.data.msg) {
-        toast(response.data.msg);
         const updatedProjects = projects.filter(p => p._id !== projectToRemove._id);
         setProjects(updatedProjects);
         setShowRemoveConfirmModal(false);
         setProjectToRemove(null);
         fetchProjects();
+        toast.success(response.data.msg);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
 
     } catch (error) {
