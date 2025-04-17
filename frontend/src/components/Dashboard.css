@@ -1,0 +1,1139 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  padding-top: 64px; /* Add padding to account for fixed header */
+  transition: all 0.3s ease;
+}
+.sidebar {
+  width: 250px;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  position: fixed;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+.sidebar.collapsed {
+  width: 64px;
+  padding: 0;
+}
+.logo-section {
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.logo {
+  height: 32px;
+}
+/* Project Dropdown Styles */
+.project-dropdown-container {
+  margin: 20px 0;
+  position: relative;
+}
+.project-header {
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+}
+.project-icon {
+  font-size: 1.2em;
+}
+.project-name {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+.project-menu {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.project-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 999;
+}
+.add-project-btn {
+  width: 100%;
+  padding: 10px;
+  background-color:#f8f9fa;
+  border: none;
+  border-bottom: 1px solid #dee2e6;
+  cursor: pointer;
+  text-align: left;
+  font-weight: 500;
+}
+.projects-list {
+  max-height: 300px;
+  overflow-y: auto;
+  position: relative;
+}
+.project-item {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+}
+.project-item:hover {
+  background-color: #f8f9fa;
+}
+.project-item img {
+  width: 40px; /* Image size */
+  height: 40px;
+  border-radius: 50%; /* Circular image */
+}
+/* Quick Links Styles */
+.quick-links {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+  width: 100%;
+}
+/* Ensure "Quick Links" and "+" are on the same line with correct alignment */
+.quick-links-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  width: 100%;
+}
+.add-link {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  margin-right: auto; /* Moves the + button to the right */
+  display: flex;
+  align-items: center;
+}
+/* Ensures list takes full width */
+.quick-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+/* Ensures text is in one line and 3 dots are at the right corner */
+.quick-link-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  font-size: 14px;
+  color: #1976d2;
+  width: 100%;
+  cursor: pointer;
+  white-space: nowrap; /* Prevents text from wrapping */
+}
+.quick-link-item span {
+  flex-grow: 1; /* Pushes the more-options button to the right */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds "..." if text is too long */
+}
+/* Fixes the alignment of 3 dots to the right */
+.more-options {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: auto; /* Moves it fully to the right */
+}
+/* Module icon specific styling */
+.module-icon {
+  color: white;
+}
+/* Add Project Modal styles can be added here */
+.project-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+.project-item {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.project-item:hover {
+  background: #f5f5f5;
+}
+.add-project-btn {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: #F52109;;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+}
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background: #f8f9fa;
+  margin-left: 250px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: calc(100vh - 64px);
+  width: calc(100% - 250px);
+}
+.sidebar.collapsed + .main-content {
+  margin-left: 64px;
+  width: calc(100% - 64px);
+}
+/* Hide elements when sidebar is collapsed */
+.sidebar.collapsed .logo-section,
+.sidebar.collapsed .project-dropdown-container,
+.sidebar.collapsed .nav-menu,
+.sidebar.collapsed .quick-links-section {
+  display: none;
+}
+.content-header {
+  margin-bottom: 20px;
+}
+.breadcrumb {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 16px;
+}
+.search-bar {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.search-bar input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.add-module-btn {
+  padding: 8px 16px;
+  background: #e65c00;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.modules-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.modules-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.modules-table th {
+  background: #14365d;
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+.modules-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+.module-id,
+.submodule-id,
+.test-date {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+.project-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+.dropdown-section {
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+.dropdown-section:last-child {
+  border-bottom: none;
+}
+.section-title {
+  padding: 8px 16px;
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.dropdown-item {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #333;
+}
+.dropdown-item:hover {
+  background: #f5f5f5;
+}
+.dropdown-item.active {
+  background: #e65c00;
+  color: white;
+}
+.add-project {
+  color: #e65c00;
+}
+.add-icon {
+  margin-right: 8px;
+  font-weight: bold;
+}
+.dropdown-arrow {
+  margin-left: auto;
+  transition: transform 0.3s;
+}
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+.nav-menu {
+  background-color: white; /* Background color */
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full height */
+   /* Spacing between items */
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  margin: 4px 8px;
+}
+.nav-item:hover {
+  background-color:#f76941(244, 79, 34, 0.1);
+}
+.nav-item.active {
+  background-color: #fa653c;
+  color: white;
+}
+.nav-item.active .nav-icon {
+  color: rgb(255, 255, 255);
+}
+.nav-icon {
+  font-size: 20px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.menu-container {
+  position: relative;
+}
+.menu-dropdown,
+.project-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 120px;
+  padding: 4px 0;
+}
+.menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+  font-size: 14px;
+}
+.menu-item:hover {
+  background: #f5f5f5;
+}
+.menu-item.delete {
+  color: #dc3545;
+}
+.menu-item:first-child {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.menu-item:last-child {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.dashboard-container {
+  position: relative;
+}
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.add-module-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.add-module-btn:hover {
+  background-color: #0056b3;
+}
+.module-name-cell {
+  cursor: pointer;
+  color: #0066cc;
+}
+.module-name-cell:hover {
+  text-decoration: underline;
+}
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #333;
+}
+.modules-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.modules-table th {
+  background-color: #1a365d;
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+.modules-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+.dropdown-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding-right: 8px;
+  color: black;
+  text-align: right;
+}
+.select-project {
+  flex-grow: 1;
+  font-size: 16px;
+  white-space: nowrap;
+  padding-left: 8px;
+}
+.quick-links-section {
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+.quick-links-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.quick-links-header h3 {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  white-space: nowrap; /* Prevents text from wrapping */
+  overflow: hidden; /* Hides overflow */
+  text-overflow: ellipsis; /* Adds '...' if the text is too long */
+
+}
+.add-quick-link {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: auto; /* Pushes the button to the right */
+  width: 24px; /* Optional: Set fixed width */
+  height: 24px; /* Optional: Set fixed height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.quick-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.quick-link-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+.quick-link-name {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.quick-link-menu {
+  position: relative;
+}
+.quick-link-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.quick-link-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.quick-link-modal-content h2 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.quick-link-modal-content .form-group {
+  margin-bottom: 16px;
+}
+
+.quick-link-modal-content input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.menu-dots {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 1px 17px;
+}
+
+.menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 120px;
+}
+.menu-dropdown button {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+  font-size: 14px;
+  text-align: left;
+}
+.menu-dropdown button:hover {
+  background: #F5F5F5;
+}
+.menu-dropdown button:last-child {
+  color: #DC3545;
+}
+.project-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.project-actions {
+  position: relative;
+  display: inline-block;
+}
+.project-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 150px;
+  margin-top: 2px;
+  padding: 8px;
+}
+.project-menu-dropdown button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 4px;
+}
+.project-menu-dropdown button:last-child {
+  margin-bottom: 0;
+}
+.project-menu-dropdown button:hover {
+  opacity: 0.9;
+}
+.edit-icon,
+.remove-icon {
+  font-size: 1rem;
+}
+.quick-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+.modal-content h2 {
+  margin: 0 0 16px;
+  color: #333;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.cancel-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.submit-btn {
+  padding: 8px 16px;
+  border: none;
+  background: #F52109;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.submit-btn:hover {
+  background: #d41c07;
+}
+.cancel-btn:hover {
+  background: #f5f5f5;
+}
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+.header-left h1 {
+    margin: 0;
+    font-size: 20px;
+    color: #1a73e8;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.selected-project-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: contain;
+  background-color: white;
+}
+
+.project-logo-placeholder {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+}
+
+/* Menu Dropdown Styles */
+.project-menu-dropdown {
+  position: fixed;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  padding: 8px 0;
+  width: 1%;
+}
+
+.project-menu-dropdown button {
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.menu-dropdown button:hover,
+.project-menu-dropdown button:hover {
+  background-color: #f0f0f0;
+}
+
+.edit-icon,
+.remove-icon {
+  font-size: 14px;
+  width: 16px;
+  height: 16px;
+  color: #333;
+}
+
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  position: relative;
+  z-index: 1001;
+  margin: 12px;
+  padding: 0;
+  color: #000; /* black */
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  color: #333; /* darker black on hover */
+}
+
+.toggle-icon {
+  transition: all 0.3s ease;
+}
+
+.edit-project-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.edit-project-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.edit-project-modal-content h2 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.edit-project-modal-content .form-group {
+  margin-bottom: 16px;
+}
+
+.edit-project-modal-content input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.remove-confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.remove-confirm-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  width: 350px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.remove-confirm-modal-content h2 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #d32f2f;
+}
+
+.remove-confirm-modal-content p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.remove-confirm-modal-content .modal-actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.remove-confirm-modal-content .cancel-btn,
+.remove-confirm-modal-content .submit-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.remove-confirm-modal-content .cancel-btn {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.remove-confirm-modal-content .submit-btn {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.remove-project-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.remove-project-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  width: 350px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.remove-project-modal-content h2 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #d32f2f;
+}
+
+.remove-project-modal-content p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.remove-project-modal-content .modal-actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.remove-project-modal-content .cancel-btn,
+.remove-project-modal-content .submit-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.remove-project-modal-content .cancel-btn {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.remove-project-modal-content .submit-btn {
+  background-color: #d32f2f;
+  color: white;
+}
+.edit-link-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.edit-link-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.edit-link-modal-content h2 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.edit-link-modal-content .form-group {
+  margin-bottom: 16px;
+}
+
+.edit-link-modal-content label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.edit-link-modal-content input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.edit-link-modal-content .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.edit-link-modal-content .cancel-btn,
+.edit-link-modal-content .submit-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-link-modal-content .cancel-btn {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.edit-link-modal-content .submit-btn {
+  background-color: #1976d2;
+  color: white;
+}
+
+.add-project-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.add-project-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  width: 420px;
+  max-width: 95%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.add-project-modal-content h2 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.add-project-modal-content .form-group {
+  margin-bottom: 16px;
+}
+
+.add-project-modal-content label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.add-project-modal-content input[type="text"],
+.add-project-modal-content input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-project-modal-content .file-input {
+  margin-top: 8px;
+}
+
+.add-project-modal-content .project-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-project-modal-content .project-item img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.add-project-modal-content .project-name {
+  font-size: 14px;
+  color: #555;
+}
+
+.add-project-modal-content .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.add-project-modal-content .cancel-btn,
+.add-project-modal-content .submit-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-project-modal-content .cancel-btn {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.add-project-modal-content .submit-btn {
+  background-color: #1976d2;
+  color: white;
+}
