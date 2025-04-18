@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from './axios';
 import UserProfile from './UserProfile';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaUsers } from 'react-icons/fa';
 import { MdDashboard, MdAssignment, MdTimeline, MdHistory } from 'react-icons/md';
 
 import LogList from './LogList';
@@ -618,6 +618,14 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
           >
             <MdHistory className="nav-icon" />
             <span>Activity</span>
+          </div>
+          <div
+            className={`nav-item ${activeTab === '/users' ? 'active' : ''}`}
+            onClick={() => handleNavClick('/users')}
+            style={{ backgroundColor: activeTab === '/users' ? '#be5133' : '' }}
+          >
+            <FaUsers className="nav-icon" />
+            <span>Users</span>
           </div>
         </nav>
 
