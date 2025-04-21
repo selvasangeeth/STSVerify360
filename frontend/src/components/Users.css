@@ -301,8 +301,7 @@ tr:nth-child(even) {
   background-color: white;
   padding: 24px;
   border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
+  width: 990px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -325,16 +324,18 @@ tr:nth-child(even) {
   font-weight: 500;
 }
 
+
 .form-group input,
 .form-group select {
-  width: 100%;
-  padding: 12px;
+  width: 96%;
+  padding: 5px 8px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  background-color: #fff;
+  font-size: 13px;       /* was 11px */
+  height: 36px;          /* was 30px */
+  background-color: #f8f9fa;
 }
+
 
 .form-group input::placeholder {
   color: #999;
@@ -539,4 +540,21 @@ tr:nth-child(even) {
 .time {
   color: #666;
   font-size: 13px;
-} 
+}
+
+.remove-project-btn {
+  margin-left: 8px;
+  background-color: transparent; /* Ensure no background color */
+  border: none; /* Remove border */
+  color: #ff0000; /* Bright red color for visibility */
+  cursor: pointer; /* Pointer cursor for better UX */
+  font-size: 16px; /* Slightly larger font size for better visibility */
+  font-weight: bold; /* Make the 'X' bold */
+  line-height: 1; /* Ensure proper alignment */
+}
+
+.remove-project-btn:hover {
+  color: #b30000; /* Darker red on hover for better feedback */
+  transform: scale(1.1); /* Slightly enlarge on hover */
+  transition: all 0.2s ease; /* Smooth transition */
+}

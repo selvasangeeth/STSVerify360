@@ -53,11 +53,11 @@ const Users = ({ selectedProject }) => {
   const [userToEdit, setUserToEdit] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
-  const [activeTab, setActiveTab] = useState('testers');
+  const [activeTab, setActiveTab] = useState('user');
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [showPasswords, setShowPasswords] = useState({});
-
+  const [details, setDetails] = useState([]);
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
@@ -73,16 +73,16 @@ const Users = ({ selectedProject }) => {
       const cachedUsers = getFromLocalStorage(`users_${selectedProject.projectId}`);
       const cachedAdmins = getFromLocalStorage(`admins_${selectedProject.projectId}`);
       const cachedSuperAdmins = getFromLocalStorage(`superadmins`);
-      
+
       // Set default roles if they're missing
       if (cachedUsers) {
         const usersWithRoles = cachedUsers.map(user => ({
           ...user,
-          role: user.role || 'tester'
+          role: user.role || 'user'
         }));
         setUsers(usersWithRoles);
       }
-      
+
       if (cachedAdmins) {
         const adminsWithRoles = cachedAdmins.map(admin => ({
           ...admin,
@@ -90,15 +90,15 @@ const Users = ({ selectedProject }) => {
         }));
         setAdmins(adminsWithRoles);
       }
-      
+
       if (cachedSuperAdmins) {
         const superAdminsWithRoles = cachedSuperAdmins.map(admin => ({
           ...admin,
-          role: admin.role || 'superadmin'
+          role: admin.role || 'superAdmin'
         }));
         setSuperAdmins(superAdminsWithRoles);
       }
-      
+
       fetchUsers();
       fetchAdmins();
       fetchSuperAdmins();
@@ -106,25 +106,13 @@ const Users = ({ selectedProject }) => {
   }, [selectedProject]);
 
   useEffect(() => {
-    if (showAddModal && (activeTab === 'admins' || activeTab === 'superadmin')) {
-      // Try to get from localStorage first
-      const cachedProjects = getFromLocalStorage('available_projects');
-      if (cachedProjects) {
-        setAvailableProjects(cachedProjects);
-      }
-      // Then fetch fresh data
+    if (showAddModal && (activeTab === 'admins' || activeTab === 'superAdmin' || activeTab === 'user')) {
       fetchProjects();
     }
   }, [showAddModal, activeTab]);
 
   useEffect(() => {
-    if (activeTab === 'admins' || activeTab === 'superadmin') {
-      // Try to get from localStorage first
-      const cachedProjects = getFromLocalStorage('available_projects');
-      if (cachedProjects) {
-        setAvailableProjects(cachedProjects);
-      }
-      // Then fetch fresh data
+    if (activeTab === 'admins' || activeTab === 'superAdmin') {
       fetchProjects();
     }
   }, [activeTab, selectedProject]);
@@ -134,15 +122,15 @@ const Users = ({ selectedProject }) => {
       setLoading(true);
       const response = await axios.get(`/getUsers/${selectedProject.projectId}`);
       if (response.data.msg === "Users Fetched Success") {
-        // Filter for testers and ensure they have a role
-        const testersWithRoles = response.data.data
-          .filter(user => user.role === 'tester' || !user.role)
+        // Filter for users and ensure they have a role
+        const usersWithRoles = response.data.data
+          .filter(user => user.role === 'user' || !user.role)
           .map(user => ({
             ...user,
-            role: 'tester' // Ensure all users have the tester role
+            role: 'user' // Ensure all users have the user role
           }));
-        setUsers(testersWithRoles);
-        saveToLocalStorage(`users_${selectedProject.projectId}`, testersWithRoles);
+        setUsers(usersWithRoles);
+        saveToLocalStorage(`users_${selectedProject.projectId}`, usersWithRoles);
       }
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -181,7 +169,7 @@ const Users = ({ selectedProject }) => {
         // Ensure each super admin has a role property
         const superAdminsWithRoles = response.data.data.map(admin => ({
           ...admin,
-          role: admin.role || 'superadmin' // Default to 'superadmin' if role is missing
+          role: admin.role || 'superAdmin' // Default to 'superAdmin' if role is missing
         }));
         setSuperAdmins(superAdminsWithRoles);
         saveToLocalStorage('superadmins', superAdminsWithRoles);
@@ -196,14 +184,15 @@ const Users = ({ selectedProject }) => {
 
   const fetchProjects = async () => {
     try {
+
       const response = await axios.get('/getProjectforRole', {
         params: {
-          role: activeTab === 'admins' ? 'admin' : 'superadmin'
+          role: activeTab === 'admins' ? 'admin' : 'superAdmin'
         }
       });
+      console.log(response.data.projects);
       if (response.data.projects) {
         setAvailableProjects(response.data.projects);
-        saveToLocalStorage('available_projects', response.data.projects);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -217,24 +206,24 @@ const Users = ({ selectedProject }) => {
       try {
         let endpoint;
         switch (activeTab) {
-          case 'testers':
+          case 'user':
             endpoint = '/searchUsers';
             break;
           case 'admins':
             endpoint = '/searchAdmins';
             break;
-          case 'superadmin':
+          case 'superAdmin':
             endpoint = '/searchSuperAdmins';
             break;
           default:
             endpoint = '/searchUsers';
         }
-        
+
         const response = await axios.get(`${endpoint}?query=${searchValue}`);
         if (response.data && response.data.data) {
           let filteredResults;
-          if (activeTab === 'testers') {
-            filteredResults = response.data.data.filter(user => user.role === 'tester');
+          if (activeTab === 'user') {
+            filteredResults = response.data.data.filter(user => user.role === 'user');
           } else {
             filteredResults = response.data.data;
           }
@@ -251,25 +240,26 @@ const Users = ({ selectedProject }) => {
 
   const handleApiError = (error, message) => {
     console.error(message, error);
-    
+
     // If there's a response error message, use it
     const errorMessage = error.response?.data?.msg || message;
     toast.error(errorMessage);
-    
+
     // Return false to indicate error
     return false;
   };
 
   const handleAddUser = async (e) => {
     e.preventDefault();
+
     try {
       // Validation
       if (!newUser.name || !newUser.email || !newUser.password || !newUser.position) {
         toast.error('Please fill in all required fields');
         return;
       }
-      
-      if ((activeTab === 'admins' || activeTab === 'superadmin') && (!newUser.projectIds || newUser.projectIds.length === 0)) {
+
+      if (!newUser.projectIds || newUser.projectIds.length === 0) {
         toast.error('Please select at least one project');
         return;
       }
@@ -277,154 +267,70 @@ const Users = ({ selectedProject }) => {
       // Current timestamp
       const timestamp = new Date().toISOString();
 
-      // For admin registration
-      if (activeTab === 'admins' || activeTab === 'superadmin') {
-        const userData = {
-          Name: newUser.name,
-          Email: newUser.email,
-          Password: newUser.password,
-          Role: activeTab === 'admins' ? 'admin' : 'superadmin',
-          position: newUser.position,
-          projectIds: newUser.projectIds,
-          status: 'active',
-          timestamp: timestamp
-        };
-
-        try {
-          const response = await axios.post('/register', userData);
-          
-          if (response.data.msg === "User created successfully") {
-            // Create admin object for the list
-            const newAdminData = {
-              _id: response.data.data._id || Date.now().toString(), // Fallback ID if none provided
-              name: newUser.name,
-              email: newUser.email,
-              position: newUser.position,
-              role: activeTab === 'admins' ? 'admin' : 'superadmin',
-              projectIds: newUser.projectIds,
-              createdAt: timestamp,
-              password: newUser.password
-            };
-
-            // Update the appropriate list based on role
-            if (activeTab === 'admins') {
-              const updatedAdmins = [...admins, newAdminData];
-              setAdmins(updatedAdmins);
-              saveToLocalStorage(`admins_${selectedProject?.projectId || 'all'}`, updatedAdmins);
-            } else {
-              const updatedSuperAdmins = [...superAdmins, newAdminData];
-              setSuperAdmins(updatedSuperAdmins);
-              saveToLocalStorage('superadmins', updatedSuperAdmins);
-            }
-
-            toast.success(`${activeTab === 'admins' ? 'Admin' : 'Super Admin'} registered successfully`);
-            
-            // Clear form and close modal
-            setShowAddModal(false);
-            setNewUser({
-              name: '',
-              email: '',
-              position: '',
-              password: '',
-              projectIds: []
-            });
-          } else {
-            toast.error(response.data.msg || 'Registration failed');
-          }
-        } catch (error) {
-          // Even if API fails, add to local storage so it persists across refreshes
-          const newAdminData = {
-            _id: Date.now().toString(), // Generate a temporary ID
-            name: newUser.name,
-            email: newUser.email,
-            position: newUser.position,
-            role: activeTab === 'admins' ? 'admin' : 'superadmin',
-            projectIds: newUser.projectIds,
-            createdAt: timestamp,
-            password: newUser.password,
-            isPending: true // Mark as pending to resync later
-          };
-
-          if (activeTab === 'admins') {
-            const updatedAdmins = [...admins, newAdminData];
-            setAdmins(updatedAdmins);
-            saveToLocalStorage(`admins_${selectedProject?.projectId || 'all'}`, updatedAdmins);
-          } else {
-            const updatedSuperAdmins = [...superAdmins, newAdminData];
-            setSuperAdmins(updatedSuperAdmins);
-            saveToLocalStorage('superadmins', updatedSuperAdmins);
-          }
-
-          toast.warning('Admin saved locally. Will sync when connection is restored.');
-          setShowAddModal(false);
-          setNewUser({
-            name: '',
-            email: '',
-            position: '',
-            password: '',
-            projectIds: []
-          });
-        }
-        return;
-      }
-
-      // For regular tester creation
+      // Prepare user data
       const userData = {
-        ...newUser,
-        role: 'tester',
+        Name: newUser.name,
+        Email: newUser.email,
+        Password: newUser.password,
+        Role: activeTab === 'admins' ? 'admin' : activeTab === 'superAdmin' ? 'superAdmin' : 'user',
+        position: newUser.position,
+        projectIds: newUser.projectIds,
         status: 'active',
-        timestamp: timestamp
+        timestamp: timestamp,
       };
 
       try {
-        const response = await axios.post('/createUser', userData);
-        
-        if (response.data.msg === "User Created Successfully") {
-          const updatedUsers = [...users, response.data.data];
-          setUsers(updatedUsers);
-          saveToLocalStorage(`users_${selectedProject?.projectId || 'all'}`, updatedUsers);
-          
+
+        const response = await axios.post('/register', userData);
+
+        if (response.data.msg === "User created successfully") {
+          const newUserData = {
+            _id: response.data.data._id || Date.now().toString(),
+            name: newUser.name,
+            email: newUser.email,
+            position: newUser.position,
+            role: userData.Role,
+            projectIds: newUser.projectIds,
+            createdAt: timestamp,
+            password: newUser.password,
+          };
+
+          // Update the appropriate list based on role
+          if (activeTab === 'admins') {
+            const updatedAdmins = [...admins, newUserData];
+            setAdmins(updatedAdmins);
+            saveToLocalStorage(`admins_${selectedProject?.projectId || 'all'}`, updatedAdmins);
+          } else if (activeTab === 'superAdmin') {
+            const updatedSuperAdmins = [...superAdmins, newUserData];
+            setSuperAdmins(updatedSuperAdmins);
+            saveToLocalStorage('superadmins', updatedSuperAdmins);
+          } else {
+            const updatedUsers = [...users, newUserData];
+            setUsers(updatedUsers);
+            saveToLocalStorage(`users_${selectedProject?.projectId || 'all'}`, updatedUsers);
+          }
+
+          toast.success(`${activeTab === 'admins' ? 'Admin' : activeTab === 'superAdmin' ? 'Super Admin' : 'User'} registered successfully`);
+
+          // Clear form and close modal
           setShowAddModal(false);
           setNewUser({
             name: '',
             email: '',
             position: '',
             password: '',
-            projectIds: []
+            projectIds: [],
           });
-          toast.success('Tester added successfully');
         } else {
-          toast.error(response.data.msg || 'Failed to add tester');
+          toast.error(response.data.msg || 'Registration failed');
         }
       } catch (error) {
-        // Store locally even if API fails
-        const newTesterData = {
-          _id: Date.now().toString(),
-          name: newUser.name,
-          email: newUser.email,
-          position: newUser.position,
-          role: 'tester',
-          createdAt: timestamp,
-          isPending: true
-        };
-        
-        const updatedUsers = [...users, newTesterData];
-        setUsers(updatedUsers);
-        saveToLocalStorage(`users_${selectedProject?.projectId || 'all'}`, updatedUsers);
-        
-        toast.warning('Tester saved locally. Will sync when connection is restored.');
-        setShowAddModal(false);
-        setNewUser({
-          name: '',
-          email: '',
-          position: '',
-          password: '',
-          projectIds: []
-        });
+        console.error('Error creating user:', error);
+        toast.error('Failed to create user');
       }
     } catch (error) {
-      console.error(`Error adding ${activeTab}:`, error);
-      toast.error(error.response?.data?.msg || `Error adding ${activeTab}`);
+      console.error('Error adding user:', error);
+      toast.error('Failed to add user');
     }
   };
 
@@ -443,9 +349,9 @@ const Users = ({ selectedProject }) => {
           projectId: selectedProject?.projectId
         }
       });
-      
+
       if (response.data.msg.includes('deleted successfully')) {
-        if (activeTab === 'testers') {
+        if (activeTab === 'user') {
           const updatedUsers = users.filter(user => user._id !== userToDelete._id);
           setUsers(updatedUsers);
           saveToLocalStorage(`users_${selectedProject.projectId}`, updatedUsers);
@@ -458,7 +364,7 @@ const Users = ({ selectedProject }) => {
           setSuperAdmins(updatedSuperAdmins);
           saveToLocalStorage('superadmins', updatedSuperAdmins);
         }
-        toast.success(`${activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} removed successfully`);
+        toast.success(`${activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} removed successfully`);
       } else {
         toast.error('Failed to remove user');
       }
@@ -471,12 +377,38 @@ const Users = ({ selectedProject }) => {
     }
   };
 
+  const fetchRoleDetails = async (role) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`/getUserRoleDetails?role=${role}`);
+      console.log(response.data);
+
+      if (response.data) {
+        setDetails(response.data); // Set details if it's a valid array
+      } else {
+        setDetails([]); // Fallback to an empty array if details is missing or invalid
+      }
+      console.log(details);
+    } catch (error) {
+      console.error(`Error fetching ${role} details:`, error);
+      setError(`Failed to fetch ${role} details`);
+      setDetails([]); // Fallback to an empty array in case of an error
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setCurrentPage(1);
     setSearchTerm('');
     setShowSearchResults(false);
-    
+
+    // Fetch role details based on the active tab
+    if (tab === 'admins') fetchRoleDetails('admin');
+    else if (tab === 'superAdmin') fetchRoleDetails('superAdmin');
+    else fetchRoleDetails('user');
+
     // Reset form when changing tabs
     setNewUser({
       name: '',
@@ -485,12 +417,12 @@ const Users = ({ selectedProject }) => {
       password: '',
       projectIds: []
     });
-    
+
     // Close any open modals
     setShowAddModal(false);
     setShowEditModal(false);
     setShowConfirmModal(false);
-    
+
     // Clear any selected users
     setUserToEdit(null);
     setUserToDelete(null);
@@ -505,11 +437,11 @@ const Users = ({ selectedProject }) => {
 
   const getCurrentItems = () => {
     switch (activeTab) {
-      case 'testers':
+      case 'user':
         return users;
       case 'admins':
         return admins;
-      case 'superadmin':
+      case 'superAdmin':
         return superAdmins;
       default:
         return users;
@@ -527,13 +459,13 @@ const Users = ({ selectedProject }) => {
 
   const handleEditClick = (user) => {
     setUserToEdit({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      position: user.position,
-      password: user.password || '',
-      projectIds: user.projectIds || [],
-      role: user.role
+      _id: user._id || user.user?._id || '', // Ensure _id is correctly populated
+      name: user.user?.Name || '', // Ensure the name is correctly populated
+      email: user.user?.Email || '', // Ensure the email is correctly populated
+      position: user.user?.position || '', // Ensure the position is correctly populated
+      password: user.password || '', // Ensure the password is correctly populated
+      projectIds: user.assignedProjects?.map(project => project.projectId) || [], // Ensure the projects are correctly populated
+      role: user.role || '', // Populate the role dynamically
     });
     setShowEditModal(true);
   };
@@ -541,32 +473,37 @@ const Users = ({ selectedProject }) => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { _id, name, email, password, position, projectIds } = userToEdit;
-      
+      const { _id, name, email, password, position, projectIds, role } = userToEdit;
+
+      if (!_id) {
+        toast.error('User ID is missing. Unable to update user.');
+        return;
+      }
+
       const userData = {
-        userId: _id,
+        userId: _id, // Ensure _id is sent to the backend
         name,
         email,
         position,
         password: password || undefined, // Only send password if it's changed
         projectIds,
-        role: activeTab === 'testers' ? 'tester' : activeTab === 'admins' ? 'admin' : 'superadmin'
+        role, // Send the selected role to the backend
       };
 
       const response = await axios.put('/updateRole', userData);
 
       if (response.data.msg === 'User updated successfully') {
-        if (activeTab === 'testers') {
+        if (activeTab === 'user') {
           const updatedUsers = users.map(user => user._id === _id ? response.data.data : user);
           setUsers(updatedUsers);
           saveToLocalStorage(`users_${selectedProject.projectId}`, updatedUsers);
         } else if (activeTab === 'admins') {
-          const updatedAdmins = admins.map(admin => admin._id === _id ? { 
+          const updatedAdmins = admins.map(admin => admin._id === _id ? {
             ...response.data.data,
             name: name,
             email: email,
             position: position,
-            password: password || admin.password
+            password: password || admin.password,
           } : admin);
           setAdmins(updatedAdmins);
           saveToLocalStorage(`admins_${selectedProject.projectId}`, updatedAdmins);
@@ -576,14 +513,14 @@ const Users = ({ selectedProject }) => {
             name: name,
             email: email,
             position: position,
-            password: password || admin.password
+            password: password || admin.password,
           } : admin);
           setSuperAdmins(updatedSuperAdmins);
           saveToLocalStorage('superadmins', updatedSuperAdmins);
         }
-        
+
         setShowEditModal(false);
-        toast.success(`${activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} updated successfully`);
+        toast.success(`${activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} updated successfully`);
       } else {
         toast.error(response.data.msg || 'Failed to update user');
       }
@@ -601,20 +538,20 @@ const Users = ({ selectedProject }) => {
   // Add a helper function to format date and time
   const formatDate = (dateString) => {
     if (!dateString) return { date: 'Invalid Date', time: 'Invalid Time' };
-    
+
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
         return { date: 'Invalid Date', time: 'Invalid Time' };
       }
-      
+
       // Format date as DD/MM/YYYY
       const formattedDate = date.toLocaleDateString('en-GB', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
       });
-      
+
       // Format time as HH:MM:SS
       const formattedTime = date.toLocaleTimeString('en-US', {
         hour: '2-digit',
@@ -622,11 +559,25 @@ const Users = ({ selectedProject }) => {
         second: '2-digit',
         hour12: true
       });
-      
+
       return { date: formattedDate, time: formattedTime };
     } catch (error) {
       console.error('Error formatting date:', error);
       return { date: 'Invalid Date', time: 'Invalid Time' };
+    }
+  };
+
+  const removeProject = (projectId, isEdit = false) => {
+    if (isEdit) {
+      setUserToEdit({
+        ...userToEdit,
+        projectIds: userToEdit.projectIds.filter(id => id !== projectId),
+      });
+    } else {
+      setNewUser({
+        ...newUser,
+        projectIds: newUser.projectIds.filter(id => id !== projectId),
+      });
     }
   };
 
@@ -636,10 +587,10 @@ const Users = ({ selectedProject }) => {
     <div className="users-container">
       <div className="users-tabs">
         <button
-          className={`tab-button ${activeTab === 'testers' ? 'active' : ''}`}
-          onClick={() => handleTabChange('testers')}
+          className={`tab-button ${activeTab === 'user' ? 'active' : ''}`}
+          onClick={() => handleTabChange('user')}
         >
-          Testers
+          Users
         </button>
         <button
           className={`tab-button ${activeTab === 'admins' ? 'active' : ''}`}
@@ -648,13 +599,13 @@ const Users = ({ selectedProject }) => {
           Admins
         </button>
         <button
-          className={`tab-button ${activeTab === 'superadmin' ? 'active' : ''}`}
-          onClick={() => handleTabChange('superadmin')}
+          className={`tab-button ${activeTab === 'superAdmin' ? 'active' : ''}`}
+          onClick={() => handleTabChange('superAdmin')}
         >
-          Super Admin
+          Super Admins
         </button>
       </div>
-      
+
       <div style={{ marginBottom: '30px' }}></div>
 
       <div className="actions-container">
@@ -662,7 +613,7 @@ const Users = ({ selectedProject }) => {
           <input
             type="text"
             className="search-input"
-            placeholder={`Search By ${activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} ID / Name / Email`}
+            placeholder={`Search By ${activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} ID / Name / Email`}
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
           />
@@ -672,7 +623,7 @@ const Users = ({ selectedProject }) => {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
             </svg>
-            Add {activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}
+            Add {activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}
           </button>
         </div>
       </div>
@@ -682,61 +633,30 @@ const Users = ({ selectedProject }) => {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Added Date & Time</th>
               <th>Position</th>
-              {(activeTab === 'admins' || activeTab === 'superadmin') && <th>Password</th>}
               <th>Assigned Projects</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {currentPageItems.map((item) => (
+            {details.map((item) => (
               <tr key={item._id} className={item.status === 'inactive' ? 'inactive-row' : ''}>
                 <td>
-                  <div className="user-info">
-                    <div className="user-name">{item.name}</div>
-                    <div className="user-email">{item.email}</div>
+                  <div className="user-infoi">
+                    <div className="user-name">{item.user?.Name || 'N/A'}</div> {/* Display Name */}
+                    <div className="user-email">{item.user?.Email || 'N/A'}</div> {/* Display Email */}
                   </div>
                 </td>
-                <td>
-                  <div className="date-info">
-                    {item.createdAt ? (
-                      <>
-                        <div className="date">{formatDate(item.createdAt).date}</div>
-                        <div className="time">{formatDate(item.createdAt).time}</div>
-                      </>
-                    ) : (
-                      <span>Invalid Date</span>
-                    )}
-                  </div>
-                </td>
-                <td>{item.position}</td>
-                {(activeTab === 'admins' || activeTab === 'superadmin') && (
-                  <td>
-                    <div className="password-field">
-                      <span>{showPasswords[item._id] ? item.password : '••••••••••••'}</span>
-                      <button 
-                        className="toggle-password"
-                        onClick={() => togglePasswordVisibility(item._id)}
-                        type="button"
-                      >
-                        {showPasswords[item._id] ? <FaEyeSlash /> : <FaEye />}
-                      </button>
-                    </div>
-                  </td>
-                )}
+                <td>{item.user?.position || 'N/A'}</td> {/* Display Position */}
                 <td>
                   <div className="assigned-projects">
-                    {item.projectIds && item.projectIds.length > 0 ? (
+                    {item.assignedProjects && item.assignedProjects.length > 0 ? (
                       <div className="project-list">
-                        {item.projectIds.map((projectId, index) => {
-                          const projectName = getProjectName(projectId);
-                          return (
-                            <div key={index} className="project-badge">
-                              {projectName}
-                            </div>
-                          );
-                        })}
+                        {item.assignedProjects.map((project, index) => (
+                          <div key={index} className="project-badge">
+                            {project.projectName || 'Unknown Project'}
+                          </div>
+                        ))}
                       </div>
                     ) : (
                       <span className="no-projects">No projects assigned</span>
@@ -745,14 +665,14 @@ const Users = ({ selectedProject }) => {
                 </td>
                 <td className="action-column">
                   <div className="action-buttons">
-                    <button 
+                    <button
                       className="action-btn edit"
                       onClick={() => handleEditClick(item)}
                       title="Edit"
                     >
                       <FaEdit size={14} />
                     </button>
-                    <button 
+                    <button
                       className="action-btn delete"
                       onClick={() => handleRemoveClick(item)}
                       title="Delete"
@@ -771,13 +691,13 @@ const Users = ({ selectedProject }) => {
       {showAddModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Add New {activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}</h2>
+            <h2>Add New {activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}</h2>
             <form onSubmit={handleAddUser}>
               <div className="form-group">
-                <label>{activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} Name</label>
+                <label>{activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} Name</label>
                 <input
                   type="text"
-                  placeholder={`Enter the ${activeTab === 'testers' ? 'tester' : activeTab === 'admins' ? 'admin' : 'super admin'} name`}
+                  placeholder={`Enter the ${activeTab === 'user' ? 'user' : activeTab === 'admins' ? 'admin' : 'super admin'} name`}
                   value={newUser.name}
                   onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
                   required
@@ -785,10 +705,10 @@ const Users = ({ selectedProject }) => {
               </div>
 
               <div className="form-group">
-                <label>{activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} Email</label>
+                <label>{activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} Email</label>
                 <input
                   type="email"
-                  placeholder={`Enter the ${activeTab === 'testers' ? 'tester' : activeTab === 'admins' ? 'admin' : 'super admin'} email`}
+                  placeholder={`Enter the ${activeTab === 'user' ? 'user' : activeTab === 'admins' ? 'admin' : 'super admin'} email`}
                   value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                   required
@@ -804,13 +724,14 @@ const Users = ({ selectedProject }) => {
                   className="form-select"
                 >
                   <option value="">Select Position</option>
-                  <option value="QA MANAGER">QA Manager</option>
-                  <option value="QA LEAD">QA Lead</option>
-                  <option value="QA ASSISTANT MANAGER">QA Assistant Manager</option>
+                  <option value="QA MANAGER">QA MANAGER</option>
+                  <option value="QA LEAD">QA LEAD</option>
+                  <option value="QA ASSISTANT MANAGER">QA ASSISTANT MANAGER</option>
+                  <option value="Junior QA">Junior QA</option>
                 </select>
               </div>
 
-              {(activeTab === 'admins' || activeTab === 'superadmin') && (
+              {(activeTab === 'admins' || activeTab === 'superAdmin' || activeTab === 'user') && (
                 <div className="form-group">
                   <label>Password</label>
                   <div className="password-field">
@@ -832,9 +753,26 @@ const Users = ({ selectedProject }) => {
                 </div>
               )}
 
-              {(activeTab === 'admins' || activeTab === 'superadmin') && (
+              {(activeTab === 'admins' || activeTab === 'superAdmin' || activeTab === 'user') && (
                 <div className="form-group">
                   <label>Assign Projects</label>
+                  <div className="assigned-projects-box">
+                    {newUser.projectIds.map((projectId) => {
+                      const projectName = getProjectName(projectId);
+                      return (
+                        <div key={projectId} className="project-badge">
+                          {projectName}
+                          <button
+                            type="button"
+                            className="remove-project-btn" // Use external CSS class
+                            onClick={() => removeProject(projectId)}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
                   <div className="project-select-container">
                     <select
                       multiple
@@ -847,8 +785,8 @@ const Users = ({ selectedProject }) => {
                       style={styles.projectSelect}
                     >
                       {availableProjects.map(project => (
-                        <option 
-                          key={project.projectId} 
+                        <option
+                          key={project.projectId}
                           value={project.projectId}
                           style={styles.projectOption}
                         >
@@ -866,20 +804,20 @@ const Users = ({ selectedProject }) => {
                   Cancel
                 </button>
                 <button type="submit" className="submit-btn">
-                  Add {activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}
+                  Add {activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}
                 </button>
               </div>
             </form>
           </div>
         </div>
-      )}
+        )}
 
       {/* Confirm Remove Modal */}
       {showConfirmModal && (
         <div className="modal-overlay">
           <div className="confirm-modal">
-            <h3>Remove {activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}</h3>
-            <p>Are you sure you want to remove this {activeTab === 'testers' ? 'tester' : activeTab === 'admins' ? 'admin' : 'super admin'}?</p>
+            <h3>Remove {activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}</h3>
+            <p>Are you sure you want to remove this {activeTab === 'user' ? 'user' : activeTab === 'admins' ? 'admin' : 'super admin'}?</p>
             <div className="confirm-actions">
               <button className="cancel-btn" onClick={() => setShowConfirmModal(false)}>
                 Cancel
@@ -896,26 +834,26 @@ const Users = ({ selectedProject }) => {
       {showEditModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Edit {activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}</h2>
+            <h2>Edit {activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}</h2>
             <form onSubmit={handleEditSubmit}>
               <div className="form-group">
-                <label>{activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} Name</label>
+                <label>{activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} Name</label>
                 <input
                   type="text"
-                  placeholder={`Enter the ${activeTab === 'testers' ? 'tester' : activeTab === 'admins' ? 'admin' : 'super admin'} name`}
-                  value={userToEdit?.name || ''}
-                  onChange={(e) => setUserToEdit({...userToEdit, name: e.target.value})}
+                  placeholder={`Enter the ${activeTab === 'user' ? 'user' : activeTab === 'admins' ? 'admin' : 'super admin'} name`}
+                  value={userToEdit?.name || ''} // Pre-fill the name
+                  onChange={(e) => setUserToEdit({ ...userToEdit, name: e.target.value })}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label>{activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} Email</label>
+                <label>{activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} Email</label>
                 <input
                   type="email"
-                  placeholder={`Enter the ${activeTab === 'testers' ? 'tester' : activeTab === 'admins' ? 'admin' : 'super admin'} email`}
-                  value={userToEdit?.email || ''}
-                  onChange={(e) => setUserToEdit({...userToEdit, email: e.target.value})}
+                  placeholder={`Enter the ${activeTab === 'user' ? 'user' : activeTab === 'admins' ? 'admin' : 'super admin'} email`}
+                  value={userToEdit?.email || ''} // Pre-fill the email
+                  onChange={(e) => setUserToEdit({ ...userToEdit, email: e.target.value })}
                   required
                 />
               </div>
@@ -923,55 +861,106 @@ const Users = ({ selectedProject }) => {
               <div className="form-group">
                 <label>Position</label>
                 <select
-                  value={userToEdit?.position || ''}
-                  onChange={(e) => setUserToEdit({...userToEdit, position: e.target.value})}
+                  value={userToEdit?.position || ''} // Pre-fill the position
+                  onChange={(e) => setUserToEdit({ ...userToEdit, position: e.target.value })}
                   required
                   className="form-select"
                 >
                   <option value="">Select Position</option>
-                  <option value="QA MANAGER">QA Manager</option>
-                  <option value="QA LEAD">QA Lead</option>
-                  <option value="QA ASSISTANT MANAGER">QA Assistant Manager</option>
+                  <option value="QA MANAGER">QA MANAGER</option>
+                  <option value="QA LEAD">QA LEAD</option>
+                  <option value="QA ASSISTANT MANAGER">QA ASSISTANT MANAGER</option>
+                  <option value="Junior QA">Junior QA</option>
                 </select>
               </div>
 
-              {(activeTab === 'admins' || activeTab === 'superadmin') && (
-                <div className="form-group">
-                  <label>Password</label>
-                  <div className="password-field">
-                    <input
-                      type={showPasswords['edit'] ? "text" : "password"}
-                      placeholder="Enter new password (leave empty to keep current)"
-                      value={userToEdit?.password || ''}
-                      onChange={(e) => setUserToEdit({...userToEdit, password: e.target.value})}
-                    />
-                    <button
-                      type="button"
-                      className="toggle-password"
-                      onClick={() => togglePasswordVisibility('edit')}
-                    >
-                      {showPasswords['edit'] ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
+              <div className="form-group">
+                <label>Role</label>
+                <select
+                  value={userToEdit?.role || ''} // Dynamically set the role
+                  onChange={(e) => setUserToEdit({ ...userToEdit, role: e.target.value })}
+                  required
+                  className="form-select"
+                >
+                  <option value="">Select Role</option>
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                  <option value="superAdmin">Super Admin</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Password</label>
+                <div className="password-field">
+                  <input
+                    type={showPasswords['edit'] ? "text" : "password"}
+                    placeholder="Enter new password (leave empty to keep current)"
+                    value={userToEdit?.password || ''} // Pre-fill the password
+                    onChange={(e) => setUserToEdit({ ...userToEdit, password: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => togglePasswordVisibility('edit')}
+                  >
+                    {showPasswords['edit'] ? <FaEyeSlash /> : <FaEye />}
+                  </button>
                 </div>
-              )}
+              </div>
+
+              <div className="form-group">
+                <label>Assign Projects</label>
+                <div className="assigned-projects-box">
+                  {userToEdit?.projectIds.map((projectId) => {
+                    const projectName = getProjectName(projectId);
+                    return (
+                      <div key={projectId} className="project-badge">
+                        {projectName}
+                        <button
+                          type="button"
+                          className="remove-project-btn" // Use external CSS class
+                          onClick={() => removeProject(projectId, true)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="project-select-container">
+                  <select
+                    multiple
+                    value={userToEdit?.projectIds || []}
+                    onChange={(e) => {
+                      const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                      setUserToEdit({ ...userToEdit, projectIds: selectedOptions });
+                    }}
+                    required
+                    style={styles.projectSelect}
+                  >
+                    {availableProjects.map(project => (
+                      <option
+                        key={project.projectId}
+                        value={project.projectId}
+                        style={styles.projectOption}
+                      >
+                        {project.projectName} {project.role ? `(${project.role})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  <small className="select-hint">Hold Ctrl/Cmd to select multiple projects</small>
+                </div>
+              </div>
 
               <div className="modal-actions">
                 <button type="button" className="cancel-btn" onClick={() => {
                   setShowEditModal(false);
                   setUserToEdit(null);
-                  setNewUser({
-                    name: '',
-                    email: '',
-                    position: '',
-                    password: '',
-                    projectIds: []
-                  });
                 }}>
                   Cancel
                 </button>
                 <button type="submit" className="submit-btn">
-                  Update {activeTab === 'testers' ? 'Tester' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}
+                  Update {activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'}
                 </button>
               </div>
             </form>

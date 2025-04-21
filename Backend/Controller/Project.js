@@ -221,7 +221,7 @@ const assignUsers = async (req, res) => {
     if (!Array.isArray(userIds) || userIds.length === 0) {
       return res.status(400).json({ msg: 'Please provide an array of userIds.' });
     }
-
+    
     const project = await ProjectDetails.findById(projectId);
 
     if (!project) {

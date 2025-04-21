@@ -39,6 +39,7 @@ const registerUser = async (req, res) => {
     });
 
 
+
     await Promise.all(
       projectIdList.map(async (projectId) => {
         const project = await projectModel.findById(projectId);
@@ -150,6 +151,7 @@ const logout = (req, res) => {
 const getUserRoleDetails = async (req, res) => {
   try {
     const { role } = req.query;
+    console.log(role);
     if (!role) {
       return res.status(400).json({ msg: "Role is required" });
     }
@@ -166,6 +168,7 @@ const getUserRoleDetails = async (req, res) => {
         assignedProjects: userProjects
       };
     });
+   
     res.status(200).json(result);
   }
   catch (err) {
@@ -179,6 +182,7 @@ const updatedRole = async (req, res) => {
   try {
 
     const { userId, role, name, email, password, projectIds,position} = req.body;
+    console.log(req.body);
     const user = await userDetails.findById(userId);
     if (password) {
       user.Password = await bcrypt.hash(password, 10);
@@ -224,6 +228,7 @@ const updatedRole = async (req, res) => {
 //fetch project for assigning users
 const getProjectforRole = async (req, res) => {
   try {
+   
 
     const projects = await projectModel.find().select('projectName projectLogo _id');
 
@@ -236,6 +241,7 @@ const getProjectforRole = async (req, res) => {
     };
 
     const formattedProjects = formatProjects(projects);
+    
 
     res.status(200).json({ projects: formattedProjects });
   } catch (err) {
