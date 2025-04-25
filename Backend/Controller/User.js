@@ -151,11 +151,12 @@ const logout = (req, res) => {
 const getUserRoleDetails = async (req, res) => {
   try {
     const { role } = req.query;
-    console.log(role);
+   
     if (!role) {
       return res.status(400).json({ msg: "Role is required" });
     }
-    const users = await userDetails.find({ Role: role });
+    const users = await userDetails.find({ Role: { $regex: `^${role}$`, $options: 'i' } });
+
     const userIds = users.map(user => user._id);
     const projects = await projectModel.find({ assignedTo: { $in: userIds } });
 
