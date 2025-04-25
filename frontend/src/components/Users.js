@@ -130,7 +130,7 @@ const Users = ({ selectedProject }) => {
             role: 'user' // Ensure all users have the user role
           }));
         setUsers(usersWithRoles);
-        saveToLocalStorage(`users_${selectedProject.projectId}`, usersWithRoles);
+        // saveToLocalStorage(`users_${selectedProject.projectId}`, usersWithRoles);
       }
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -151,7 +151,7 @@ const Users = ({ selectedProject }) => {
           role: admin.role || 'admin' // Default to 'admin' if role is missing
         }));
         setAdmins(adminsWithRoles);
-        saveToLocalStorage(`admins_${selectedProject.projectId}`, adminsWithRoles);
+        // saveToLocalStorage(`admins_${selectedProject.projectId}`, adminsWithRoles);
       }
     } catch (error) {
       console.error('Error fetching admins:', error);
@@ -172,7 +172,7 @@ const Users = ({ selectedProject }) => {
           role: admin.role || 'superAdmin' // Default to 'superAdmin' if role is missing
         }));
         setSuperAdmins(superAdminsWithRoles);
-        saveToLocalStorage('superadmins', superAdminsWithRoles);
+        // saveToLocalStorage('superadmins', superAdminsWithRoles);
       }
     } catch (error) {
       console.error('Error fetching super admins:', error);
@@ -299,15 +299,15 @@ const Users = ({ selectedProject }) => {
           if (activeTab === 'admins') {
             const updatedAdmins = [...admins, newUserData];
             setAdmins(updatedAdmins);
-            saveToLocalStorage(`admins_${selectedProject?.projectId || 'all'}`, updatedAdmins);
+           
           } else if (activeTab === 'superAdmin') {
             const updatedSuperAdmins = [...superAdmins, newUserData];
             setSuperAdmins(updatedSuperAdmins);
-            saveToLocalStorage('superadmins', updatedSuperAdmins);
+            
           } else {
             const updatedUsers = [...users, newUserData];
             setUsers(updatedUsers);
-            saveToLocalStorage(`users_${selectedProject?.projectId || 'all'}`, updatedUsers);
+            
           }
 
           toast.success(`${activeTab === 'admins' ? 'Admin' : activeTab === 'superAdmin' ? 'Super Admin' : 'User'} registered successfully`);
@@ -343,6 +343,7 @@ const Users = ({ selectedProject }) => {
     if (!userToDelete) return;
 
     try {
+      console.log(userToDelete._id);
       const response = await axios.delete('/deleteUser/:id', {
         data: {
           userId: userToDelete._id,
@@ -354,15 +355,15 @@ const Users = ({ selectedProject }) => {
         if (activeTab === 'user') {
           const updatedUsers = users.filter(user => user._id !== userToDelete._id);
           setUsers(updatedUsers);
-          saveToLocalStorage(`users_${selectedProject.projectId}`, updatedUsers);
+         
         } else if (activeTab === 'admins') {
           const updatedAdmins = admins.filter(admin => admin._id !== userToDelete._id);
           setAdmins(updatedAdmins);
-          saveToLocalStorage(`admins_${selectedProject.projectId}`, updatedAdmins);
+      
         } else {
           const updatedSuperAdmins = superAdmins.filter(admin => admin._id !== userToDelete._id);
           setSuperAdmins(updatedSuperAdmins);
-          saveToLocalStorage('superadmins', updatedSuperAdmins);
+          
         }
         toast.success(`${activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} removed successfully`);
       } else {
@@ -496,7 +497,7 @@ const Users = ({ selectedProject }) => {
         if (activeTab === 'user') {
           const updatedUsers = users.map(user => user._id === _id ? response.data.data : user);
           setUsers(updatedUsers);
-          saveToLocalStorage(`users_${selectedProject.projectId}`, updatedUsers);
+         
         } else if (activeTab === 'admins') {
           const updatedAdmins = admins.map(admin => admin._id === _id ? {
             ...response.data.data,
@@ -506,7 +507,7 @@ const Users = ({ selectedProject }) => {
             password: password || admin.password,
           } : admin);
           setAdmins(updatedAdmins);
-          saveToLocalStorage(`admins_${selectedProject.projectId}`, updatedAdmins);
+          
         } else {
           const updatedSuperAdmins = superAdmins.map(admin => admin._id === _id ? {
             ...response.data.data,
@@ -516,7 +517,7 @@ const Users = ({ selectedProject }) => {
             password: password || admin.password,
           } : admin);
           setSuperAdmins(updatedSuperAdmins);
-          saveToLocalStorage('superadmins', updatedSuperAdmins);
+          
         }
 
         setShowEditModal(false);
