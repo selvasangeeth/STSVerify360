@@ -60,6 +60,7 @@
   text-align: left;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   transition: background-color 0.2s ease;
+
 }
 .filter-button:hover,
 .time-period-button:hover {
@@ -94,6 +95,7 @@
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
+
 }
 table {
   width: 100%;

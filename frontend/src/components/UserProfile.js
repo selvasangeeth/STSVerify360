@@ -14,6 +14,12 @@ const UserProfile = () => {
         Role: 'User'
     };
 
+    // Format role for display
+    const formatRole = (role) => {
+        if (!role) return 'User';
+        return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+    };
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -57,7 +63,7 @@ const UserProfile = () => {
                             <div className="profile-text">
                                 <p className="profile-name">{userData.Name}</p>
                                 <p className="profile-email">{userData.Email}</p>
-                                <p className="profile-role">{userData.Role}</p>
+                                <p className="profile-role">{formatRole(userData.Role)}</p>
                             </div>
                         </div>
                     </div>

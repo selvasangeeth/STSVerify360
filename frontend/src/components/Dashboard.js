@@ -54,6 +54,10 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
   const dropdownRef = useRef(null);
   const quickLinksRef = useRef(null);
 
+  // Get user role from localStorage
+  const userData = JSON.parse(localStorage.getItem('user')) || {};
+  const userRole = userData.Role?.toLowerCase() || '';
+
   // Add click outside handler for both dropdowns
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -619,14 +623,16 @@ const Dashboard = ({ children, onProjectSelect, selectedProject }) => {
             <MdHistory className="nav-icon" />
             <span>Activity</span>
           </div>
-          <div
-            className={`nav-item ${activeTab === '/users' ? 'active' : ''}`}
-            onClick={() => handleNavClick('/users')}
-            style={{ backgroundColor: activeTab === '/users' ? '#be5133' : '' }}
-          >
-            <FaUsers className="nav-icon" />
-            <span>Users</span>
-          </div>
+          {(userRole === 'admin' || userRole === 'superadmin') && (
+            <div
+              className={`nav-item ${activeTab === '/users' ? 'active' : ''}`}
+              onClick={() => handleNavClick('/users')}
+              style={{ backgroundColor: activeTab === '/users' ? '#be5133' : '' }}
+            >
+              <FaUsers className="nav-icon" />
+              <span>Users</span>
+            </div>
+          )}
         </nav>
 
         {/* Quick Links */}

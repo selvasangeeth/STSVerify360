@@ -256,24 +256,26 @@ const deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await userDetails.findById(userId);
+   
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }
 
+
     await projectModel.updateMany(
-      { assignedTo: userId },
-      { $pull: { assignedTo: userId } }
+      { assignedTo: userId }, 
+      { $pull: { assignedTo: userId } } 
     );
 
-    await user.remove();
-    res.status(200).json({ msg: 'User deleted successfully' });
+    // Remove user from DB
+    await user.deleteOne(); 
 
-  }
-  catch (err) {
+    res.status(200).json({ msg: 'User deleted successfully' });
+  } catch (err) {
+    console.error(err); 
     res.status(500).json({ msg: 'Internal Server Error' });
   }
+};
 
-
-}
 
 module.exports = { registerUser, loginUser, updateUser, logout, getUserRoleDetails, updatedRole, getProjectforRole, deleteUser};

@@ -74,7 +74,7 @@ const updateTestCaseStatus = async (req, res) => {
     const { testCaseId, testStatus, scenarioId, projectId, description, moduleId, testRegion, comments, bugReferenceId, bugPriority } = req.body;
     const testerId = req.user.id;
     let fileUploaded = null; // use let here
-
+    console.log(req.body);
     if (req.files?.reference?.[0]) {
       fileUploaded = req.files.reference[0];
     }

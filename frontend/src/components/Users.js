@@ -5,6 +5,7 @@ import { FaTrash, FaEdit, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import Pagination from './Pagination/Pagination';
+import { Navigate } from 'react-router-dom';
 
 const styles = {
   projectSelect: {
@@ -65,11 +66,15 @@ const Users = ({ selectedProject }) => {
     password: '',
     projectIds: []
   });
-
   const [availableProjects, setAvailableProjects] = useState([]);
 
+  // Get user role from localStorage
+  const userData = JSON.parse(localStorage.getItem('user')) || {};
+  const userRole = userData.Role?.toLowerCase() || '';
+
+  // All useEffect hooks must be declared at the top level
   useEffect(() => {
-    if (selectedProject) {
+    if (selectedProject && (userRole === 'admin' || userRole === 'superadmin')) {
       const cachedUsers = getFromLocalStorage(`users_${selectedProject.projectId}`);
       const cachedAdmins = getFromLocalStorage(`admins_${selectedProject.projectId}`);
       const cachedSuperAdmins = getFromLocalStorage(`superadmins`);
@@ -99,23 +104,42 @@ const Users = ({ selectedProject }) => {
         setSuperAdmins(superAdminsWithRoles);
       }
 
-      fetchUsers();
-      fetchAdmins();
-      fetchSuperAdmins();
+      // Fetch data based on user role
+      if (userRole === 'admin') {
+        fetchUsers();
+      } else if (userRole === 'superadmin') {
+        fetchUsers();
+        fetchAdmins();
+        fetchSuperAdmins();
+      }
     }
-  }, [selectedProject]);
+  }, [selectedProject, userRole]);
+
+  // Fetch role details when component mounts or activeTab changes
+  useEffect(() => {
+    if (userRole === 'admin') {
+      fetchRoleDetails('user');
+    } else if (userRole === 'superadmin' || userRole === 'superAdmin') {
+      fetchRoleDetails(activeTab);
+    }
+  }, [activeTab, userRole]);
 
   useEffect(() => {
-    if (showAddModal && (activeTab === 'admins' || activeTab === 'superAdmin' || activeTab === 'user')) {
+    if (showAddModal && (activeTab === 'admins' || activeTab === 'superAdmin' || activeTab === 'user') && (userRole === 'admin' || userRole === 'superadmin')) {
       fetchProjects();
     }
-  }, [showAddModal, activeTab]);
+  }, [showAddModal, activeTab, userRole]);
 
   useEffect(() => {
-    if (activeTab === 'admins' || activeTab === 'superAdmin') {
+    if ((activeTab === 'admins' || activeTab === 'superAdmin') && (userRole === 'admin' || userRole === 'superadmin')) {
       fetchProjects();
     }
-  }, [activeTab, selectedProject]);
+  }, [activeTab, selectedProject, userRole]);
+
+  // If user is not admin or superadmin, redirect to dashboard
+  if (userRole !== 'admin' && userRole !== 'superadmin') {
+    return <Navigate to="/dashboard" />;
+  }
 
   const fetchUsers = async () => {
     try {
@@ -184,15 +208,27 @@ const Users = ({ selectedProject }) => {
 
   const fetchProjects = async () => {
     try {
-
+      const roleParam = activeTab === 'admins' ? 'admin' : 'superAdmin';
       const response = await axios.get('/getProjectforRole', {
         params: {
-          role: activeTab === 'admins' ? 'admin' : 'superAdmin'
+          role: roleParam,
+          userId: userToEdit?._id // Add userId parameter
         }
       });
-      console.log(response.data.projects);
+      
+      console.log("Projects response:", response.data);
+      
       if (response.data.projects) {
         setAvailableProjects(response.data.projects);
+        
+        // If we have assignedProjects in the response, update userToEdit
+        if (response.data.assignedProjects) {
+          setUserToEdit(prev => ({
+            ...prev,
+            projectIds: response.data.assignedProjects.map(project => project.projectId),
+            assignedProjects: response.data.assignedProjects
+          }));
+        }
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -202,39 +238,43 @@ const Users = ({ selectedProject }) => {
 
   const handleSearch = async (searchValue) => {
     setSearchTerm(searchValue);
-    if (searchValue.trim()) {
-      try {
-        let endpoint;
-        switch (activeTab) {
-          case 'user':
-            endpoint = '/searchUsers';
-            break;
-          case 'admins':
-            endpoint = '/searchAdmins';
-            break;
-          case 'superAdmin':
-            endpoint = '/searchSuperAdmins';
-            break;
-          default:
-            endpoint = '/searchUsers';
-        }
-
-        const response = await axios.get(`${endpoint}?query=${searchValue}`);
-        if (response.data && response.data.data) {
-          let filteredResults;
-          if (activeTab === 'user') {
-            filteredResults = response.data.data.filter(user => user.role === 'user');
-          } else {
-            filteredResults = response.data.data;
-          }
-          setSearchResults(filteredResults);
-          setShowSearchResults(true);
-        }
-      } catch (error) {
-        console.error(`Error searching ${activeTab}:`, error);
+    
+    try {
+      // Convert activeTab to the correct role parameter
+      let roleParam;
+      if (activeTab === 'superAdmin') {
+        roleParam = 'superadmin';
+      } else if (activeTab === 'admins') {
+        roleParam = 'admin';
+      } else {
+        roleParam = activeTab;
       }
-    } else {
-      setShowSearchResults(false);
+
+      // If search is empty, fetch all users for current role
+      if (!searchValue.trim()) {
+        fetchRoleDetails(roleParam);
+        return;
+      }
+
+      console.log("Searching with role:", roleParam, "and search term:", searchValue);
+      const response = await axios.get(`/getUserRoleDetails?role=${roleParam}&search=${searchValue}`);
+      
+      if (response.data) {
+        // Filter the results based on search term
+        const filteredResults = response.data.filter(item => {
+          const userName = item.user?.Name?.toLowerCase() || '';
+          const userEmail = item.user?.Email?.toLowerCase() || '';
+          const searchLower = searchValue.toLowerCase();
+          
+          return userName.includes(searchLower) || userEmail.includes(searchLower);
+        });
+        
+        console.log('Search results:', filteredResults);
+        setDetails(filteredResults);
+      }
+    } catch (error) {
+      console.error('Error searching:', error);
+      toast.error('Error while searching');
     }
   };
 
@@ -343,29 +383,34 @@ const Users = ({ selectedProject }) => {
     if (!userToDelete) return;
 
     try {
-      console.log(userToDelete._id);
-      const response = await axios.delete('/deleteUser/:id', {
+      const userId = userToDelete._id || userToDelete.user?._id;
+      if (!userId) {
+        toast.error('User ID not found');
+        return;
+      }
+      console.log(userId);
+      const response = await axios.delete(`/deleteUser/${userId}`, {
         data: {
-          userId: userToDelete._id,
           projectId: selectedProject?.projectId
         }
       });
 
       if (response.data.msg.includes('deleted successfully')) {
         if (activeTab === 'user') {
-          const updatedUsers = users.filter(user => user._id !== userToDelete._id);
+          const updatedUsers = users.filter(user => user._id !== userId);
           setUsers(updatedUsers);
-         
         } else if (activeTab === 'admins') {
-          const updatedAdmins = admins.filter(admin => admin._id !== userToDelete._id);
+          const updatedAdmins = admins.filter(admin => admin._id !== userId);
           setAdmins(updatedAdmins);
-      
         } else {
-          const updatedSuperAdmins = superAdmins.filter(admin => admin._id !== userToDelete._id);
+          const updatedSuperAdmins = superAdmins.filter(admin => admin._id !== userId);
           setSuperAdmins(updatedSuperAdmins);
-          
         }
         toast.success(`${activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} removed successfully`);
+        setTimeout(() => {
+          fetchRoleDetails(activeTab);
+        }, 1000);
+       
       } else {
         toast.error('Failed to remove user');
       }
@@ -381,19 +426,30 @@ const Users = ({ selectedProject }) => {
   const fetchRoleDetails = async (role) => {
     try {
       setLoading(true);
-      const response = await axios.get(`/getUserRoleDetails?role=${role}`);
-      console.log(response.data);
+      // Convert role parameter for different cases
+      let roleParam;
+      if (role === 'superAdmin') {
+        roleParam = 'superadmin';
+      } else if (role === 'admins') {
+        roleParam = 'admin';
+      } else {
+        roleParam = role;
+      }
+
+      console.log("Fetching role details for:", roleParam);
+      
+      const response = await axios.get(`/getUserRoleDetails?role=${roleParam}`);
+      console.log("Role details response:", response.data);
 
       if (response.data) {
-        setDetails(response.data); // Set details if it's a valid array
+        setDetails(response.data);
       } else {
-        setDetails([]); // Fallback to an empty array if details is missing or invalid
+        setDetails([]);
       }
-      console.log(details);
     } catch (error) {
       console.error(`Error fetching ${role} details:`, error);
       setError(`Failed to fetch ${role} details`);
-      setDetails([]); // Fallback to an empty array in case of an error
+      setDetails([]);
     } finally {
       setLoading(false);
     }
@@ -405,10 +461,17 @@ const Users = ({ selectedProject }) => {
     setSearchTerm('');
     setShowSearchResults(false);
 
-    // Fetch role details based on the active tab
-    if (tab === 'admins') fetchRoleDetails('admin');
-    else if (tab === 'superAdmin') fetchRoleDetails('superAdmin');
-    else fetchRoleDetails('user');
+    // Convert tab to correct role parameter for fetching
+    let roleParam;
+    if (tab === 'admins') {
+      roleParam = 'admin';
+    } else if (tab === 'superAdmin') {
+      roleParam = 'superadmin';
+    } else {
+      roleParam = tab;
+    }
+
+    fetchRoleDetails(roleParam);
 
     // Reset form when changing tabs
     setNewUser({
@@ -459,69 +522,107 @@ const Users = ({ selectedProject }) => {
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
   const handleEditClick = (user) => {
+    console.log("User data for edit:", user);
+    
+    // Get the user's role with proper casing
+    const userRole = user.role || user.user?.Role || '';
+
     setUserToEdit({
-      _id: user._id || user.user?._id || '', // Ensure _id is correctly populated
-      name: user.user?.Name || '', // Ensure the name is correctly populated
-      email: user.user?.Email || '', // Ensure the email is correctly populated
-      position: user.user?.position || '', // Ensure the position is correctly populated
-      password: user.password || '', // Ensure the password is correctly populated
-      projectIds: user.assignedProjects?.map(project => project.projectId) || [], // Ensure the projects are correctly populated
-      role: user.role || '', // Populate the role dynamically
+      _id: user._id || user.user?._id || '',
+      name: user.user?.Name || '',
+      email: user.user?.Email || '',
+      position: user.user?.position || '',
+      password: user.password || '',
+      projectIds: [], // Initialize empty, will be populated by fetchProjects
+      assignedProjects: [], // Initialize empty, will be populated by fetchProjects
+      role: userRole,
     });
+    
     setShowEditModal(true);
+    
+    // Fetch projects after setting initial userToEdit state
+    fetchProjects();
   };
 
+  // Update the project removal in edit modal
+  const removeProjectFromEdit = (projectId) => {
+    console.log("Removing project:", projectId);
+    setUserToEdit(prev => ({
+      ...prev,
+      projectIds: prev.projectIds.filter(id => id !== projectId),
+      assignedProjects: prev.assignedProjects.filter(project => project.projectId !== projectId)
+    }));
+  };
+
+  // Function to format role for backend
+  const formatRoleForBackend = (role) => {
+    switch(role.toLowerCase()) {
+      case 'superadmin':
+        return 'superAdmin';
+      case 'admin':
+        return 'admin';
+      case 'user':
+        return 'user';
+      default:
+        return role;
+    }
+  };
+
+  // Update handleEditSubmit to use the formatted role
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { _id, name, email, password, position, projectIds, role } = userToEdit;
+      const { _id, name, email, password, position, projectIds, role, assignedProjects } = userToEdit;
 
       if (!_id) {
         toast.error('User ID is missing. Unable to update user.');
         return;
       }
 
+      // Ensure we have all project IDs, including previously assigned ones
+      const allProjectIds = [...new Set([
+        ...projectIds,
+        ...(assignedProjects || []).map(project => project.projectId)
+      ])];
+
       const userData = {
-        userId: _id, // Ensure _id is sent to the backend
+        userId: _id,
         name,
         email,
         position,
-        password: password || undefined, // Only send password if it's changed
-        projectIds,
-        role, // Send the selected role to the backend
+        password: password || undefined,
+        projectIds: allProjectIds, // Send all project IDs to backend
+        role: formatRoleForBackend(role),
       };
+
+      console.log("Sending update data:", userData);
 
       const response = await axios.put('/updateRole', userData);
 
       if (response.data.msg === 'User updated successfully') {
+        // Update the appropriate list based on role
+        const updatedUser = {
+          ...userToEdit,
+          ...response.data.data,
+          assignedProjects: userToEdit.assignedProjects // Preserve project information
+        };
+
         if (activeTab === 'user') {
-          const updatedUsers = users.map(user => user._id === _id ? response.data.data : user);
+          const updatedUsers = users.map(user => user._id === _id ? updatedUser : user);
           setUsers(updatedUsers);
-         
         } else if (activeTab === 'admins') {
-          const updatedAdmins = admins.map(admin => admin._id === _id ? {
-            ...response.data.data,
-            name: name,
-            email: email,
-            position: position,
-            password: password || admin.password,
-          } : admin);
+          const updatedAdmins = admins.map(admin => admin._id === _id ? updatedUser : admin);
           setAdmins(updatedAdmins);
-          
         } else {
-          const updatedSuperAdmins = superAdmins.map(admin => admin._id === _id ? {
-            ...response.data.data,
-            name: name,
-            email: email,
-            position: position,
-            password: password || admin.password,
-          } : admin);
+          const updatedSuperAdmins = superAdmins.map(admin => admin._id === _id ? updatedUser : admin);
           setSuperAdmins(updatedSuperAdmins);
-          
         }
 
         setShowEditModal(false);
         toast.success(`${activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} updated successfully`);
+        
+        // Refresh the role details
+        fetchRoleDetails(activeTab);
       } else {
         toast.error(response.data.msg || 'Failed to update user');
       }
@@ -593,18 +694,22 @@ const Users = ({ selectedProject }) => {
         >
           Users
         </button>
-        <button
-          className={`tab-button ${activeTab === 'admins' ? 'active' : ''}`}
-          onClick={() => handleTabChange('admins')}
-        >
-          Admins
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'superAdmin' ? 'active' : ''}`}
-          onClick={() => handleTabChange('superAdmin')}
-        >
-          Super Admins
-        </button>
+        {userRole === 'superadmin' && (
+          <>
+            <button
+              className={`tab-button ${activeTab === 'admins' ? 'active' : ''}`}
+              onClick={() => handleTabChange('admins')}
+            >
+              Admins
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'superAdmin' ? 'active' : ''}`}
+              onClick={() => handleTabChange('superAdmin')}
+            >
+              Super Admins
+            </button>
+          </>
+        )}
       </div>
 
       <div style={{ marginBottom: '30px' }}></div>
@@ -614,7 +719,7 @@ const Users = ({ selectedProject }) => {
           <input
             type="text"
             className="search-input"
-            placeholder={`Search By ${activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} ID / Name / Email`}
+            placeholder={`Search ${activeTab === 'user' ? 'User' : activeTab === 'admins' ? 'Admin' : 'Super Admin'} by name or email`}
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
           />
@@ -644,11 +749,11 @@ const Users = ({ selectedProject }) => {
               <tr key={item._id} className={item.status === 'inactive' ? 'inactive-row' : ''}>
                 <td>
                   <div className="user-infoi">
-                    <div className="user-name">{item.user?.Name || 'N/A'}</div> {/* Display Name */}
-                    <div className="user-email">{item.user?.Email || 'N/A'}</div> {/* Display Email */}
+                    <div className="user-name">{item.user?.Name || 'N/A'}</div>
+                    <div className="user-email">{item.user?.Email || 'N/A'}</div>
                   </div>
                 </td>
-                <td>{item.user?.position || 'N/A'}</td> {/* Display Position */}
+                <td>{item.user?.position || 'N/A'}</td>
                 <td>
                   <div className="assigned-projects">
                     {item.assignedProjects && item.assignedProjects.length > 0 ? (
@@ -732,73 +837,72 @@ const Users = ({ selectedProject }) => {
                 </select>
               </div>
 
-              {(activeTab === 'admins' || activeTab === 'superAdmin' || activeTab === 'user') && (
-                <div className="form-group">
-                  <label>Password</label>
-                  <div className="password-field">
-                    <input
-                      type={showPasswords['new'] ? "text" : "password"}
-                      placeholder="Enter password"
-                      value={newUser.password}
-                      onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="toggle-password"
-                      onClick={() => togglePasswordVisibility('new')}
-                    >
-                      {showPasswords['new'] ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
+              <div className="form-group">
+                <label>Password</label>
+                <div className="password-field">
+                  <input
+                    type={showPasswords['new'] ? "text" : "password"}
+                    placeholder="Enter password"
+                    value={newUser.password}
+                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => togglePasswordVisibility('new')}
+                  >
+                    {showPasswords['new'] ? <FaEyeSlash /> : <FaEye />}
+                  </button>
                 </div>
-              )}
+              </div>
 
-              {(activeTab === 'admins' || activeTab === 'superAdmin' || activeTab === 'user') && (
-                <div className="form-group">
-                  <label>Assign Projects</label>
-                  <div className="assigned-projects-box">
-                    {newUser.projectIds.map((projectId) => {
-                      const projectName = getProjectName(projectId);
-                      return (
-                        <div key={projectId} className="project-badge">
-                          {projectName}
-                          <button
-                            type="button"
-                            className="remove-project-btn" // Use external CSS class
-                            onClick={() => removeProject(projectId)}
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="project-select-container">
-                    <select
-                      multiple
-                      value={newUser.projectIds}
-                      onChange={(e) => {
-                        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-                        setNewUser({ ...newUser, projectIds: selectedOptions });
-                      }}
-                      required
-                      style={styles.projectSelect}
-                    >
-                      {availableProjects.map(project => (
-                        <option
-                          key={project.projectId}
-                          value={project.projectId}
-                          style={styles.projectOption}
+              <div className="form-group">
+                <label>Assign Projects</label>
+                {/* Selected Projects Box */}
+                <div className="selected-projects-box">
+                  {newUser.projectIds.map((projectId) => {
+                    const project = availableProjects.find(p => p.projectId === projectId);
+                    return (
+                      <div key={projectId} className="selected-project-tag">
+                        <span>{project?.projectName || 'Unknown Project'}</span>
+                        <button
+                          type="button"
+                          className="remove-project"
+                          onClick={() => {
+                            setNewUser({
+                              ...newUser,
+                              projectIds: newUser.projectIds.filter(id => id !== projectId)
+                            });
+                          }}
                         >
-                          {project.projectName} {project.role ? `(${project.role})` : ''}
-                        </option>
-                      ))}
-                    </select>
-                    <small className="select-hint">Hold Ctrl/Cmd to select multiple projects</small>
-                  </div>
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
+                {/* Project Selection Dropdown */}
+                <select
+                  multiple
+                  value={[]} // Always empty since we're handling selection manually
+                  onChange={(e) => {
+                    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                    const newProjectIds = [...new Set([...newUser.projectIds, ...selectedOptions])];
+                    setNewUser({ ...newUser, projectIds: newProjectIds });
+                  }}
+                  className="project-select"
+                >
+                  {availableProjects
+                    .filter(project => !newUser.projectIds.includes(project.projectId))
+                    .map(project => (
+                      <option key={project.projectId} value={project.projectId}>
+                        {project.projectName}
+                      </option>
+                    ))}
+                </select>
+                <small className="select-hint">Hold Ctrl/Cmd to select multiple projects</small>
+              </div>
 
               <div className="modal-actions">
                 <button type="button" className="cancel-btn" onClick={() => setShowAddModal(false)}>
@@ -811,7 +915,7 @@ const Users = ({ selectedProject }) => {
             </form>
           </div>
         </div>
-        )}
+      )}
 
       {/* Confirm Remove Modal */}
       {showConfirmModal && (
@@ -878,15 +982,22 @@ const Users = ({ selectedProject }) => {
               <div className="form-group">
                 <label>Role</label>
                 <select
-                  value={userToEdit?.role || ''} // Dynamically set the role
+                  value={userToEdit?.role || ''}
                   onChange={(e) => setUserToEdit({ ...userToEdit, role: e.target.value })}
                   required
                   className="form-select"
                 >
-                  <option value="">Select Role</option>
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                  <option value="superAdmin">Super Admin</option>
+                  {userRole === 'superAdmin' || userRole === 'superadmin' ? (
+                    // If current user is superadmin, show all role options
+                    <>
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                      <option value="superAdmin">Super Admin</option>
+                    </>
+                  ) : userRole === 'admin' ? (
+                    // If current user is admin, only show user role option
+                    <option value="user">User</option>
+                  ) : null}
                 </select>
               </div>
 
@@ -910,47 +1021,55 @@ const Users = ({ selectedProject }) => {
               </div>
 
               <div className="form-group">
-                <label>Assign Projects</label>
-                <div className="assigned-projects-box">
-                  {userToEdit?.projectIds.map((projectId) => {
-                    const projectName = getProjectName(projectId);
-                    return (
-                      <div key={projectId} className="project-badge">
-                        {projectName}
-                        <button
-                          type="button"
-                          className="remove-project-btn" // Use external CSS class
-                          onClick={() => removeProject(projectId, true)}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="project-select-container">
-                  <select
-                    multiple
-                    value={userToEdit?.projectIds || []}
-                    onChange={(e) => {
-                      const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-                      setUserToEdit({ ...userToEdit, projectIds: selectedOptions });
-                    }}
-                    required
-                    style={styles.projectSelect}
-                  >
-                    {availableProjects.map(project => (
-                      <option
-                        key={project.projectId}
-                        value={project.projectId}
-                        style={styles.projectOption}
+                <label>Assigned Projects</label>
+                <div className="selected-projects-box">
+                  {userToEdit?.assignedProjects?.map((project) => (
+                    <div key={project.projectId} className="selected-project-tag">
+                      <span>{project.projectName}</span>
+                      <button
+                        type="button"
+                        className="remove-project"
+                        onClick={() => removeProjectFromEdit(project.projectId)}
                       >
-                        {project.projectName} {project.role ? `(${project.role})` : ''}
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  {(!userToEdit?.assignedProjects || userToEdit.assignedProjects.length === 0) && (
+                    <div className="no-projects">No projects assigned</div>
+                  )}
+                </div>
+                
+                <select
+                  multiple
+                  value={[]}
+                  onChange={(e) => {
+                    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                    const newProjects = selectedOptions.map(projectId => {
+                      const project = availableProjects.find(p => p.projectId === projectId);
+                      return {
+                        projectId: project.projectId,
+                        projectName: project.projectName
+                      };
+                    });
+                    
+                    setUserToEdit(prev => ({
+                      ...prev,
+                      projectIds: [...prev.projectIds, ...selectedOptions],
+                      assignedProjects: [...prev.assignedProjects, ...newProjects]
+                    }));
+                  }}
+                  className="project-select"
+                >
+                  {availableProjects
+                    .filter(project => !userToEdit?.projectIds?.includes(project.projectId))
+                    .map(project => (
+                      <option key={project.projectId} value={project.projectId}>
+                        {project.projectName}
                       </option>
                     ))}
-                  </select>
-                  <small className="select-hint">Hold Ctrl/Cmd to select multiple projects</small>
-                </div>
+                </select>
+                <small className="select-hint">Hold Ctrl/Cmd to select multiple projects</small>
               </div>
 
               <div className="modal-actions">
@@ -982,6 +1101,124 @@ const Users = ({ selectedProject }) => {
         />
       </div>
       <ToastContainer />
+
+      {/* Add this CSS to your Users.css file */}
+      <style>
+        {`
+          .selected-projects-box {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-height: 80px; /* Increased height */
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background-color: #fff;
+          }
+
+          .selected-project-tag {
+            background-color: #e8f0fe;
+            border: 1px solid #4285f4;
+            border-radius: 16px;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+          }
+
+          .remove-project {
+            background: none;
+            border: none;
+            color: #5f6368;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+          }
+
+          .remove-project:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #d93025;
+          }
+
+          .project-select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-top: 8px;
+            min-height: 150px; /* Increased height */
+            max-height: 200px; /* Added max height */
+            overflow-y: auto; /* Added scroll for overflow */
+          }
+
+          .project-select option {
+            padding: 8px;
+            font-size: 14px;
+          }
+
+          .project-select option:hover {
+            background-color: #e8f0fe;
+          }
+
+          .form-select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-top: 4px;
+            font-size: 14px;
+            background-color: #fff;
+          }
+
+          .form-select:focus {
+            outline: none;
+            border-color: #4285f4;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+          }
+
+          .form-select option {
+            padding: 8px;
+          }
+
+          .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+          }
+
+          .search-input:focus {
+            outline: none;
+            border-color: #4285f4;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+          }
+
+          .search-container {
+            position: relative;
+            width: 300px;
+          }
+
+          .search-container::before {
+            content: '🔍';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+          }
+        `}
+      </style>
     </div>
   );
 };

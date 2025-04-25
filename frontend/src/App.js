@@ -25,6 +25,10 @@ function App() {
     setSelectedProject(project);
   };
 
+  // Get user role from localStorage
+  const userData = JSON.parse(localStorage.getItem('user')) || {};
+  const userRole = userData.Role?.toLowerCase() || '';
+
   return (
     <Provider store={store}>
       <Router>
@@ -33,41 +37,43 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-          path="/dashboard"element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
-              <Breadcrumbs />
-            </Dashboard>
-          }
-        />
-        {/* Modules */}
-        <Route
-          path="/modules"
-          element={
-            <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
-              <Breadcrumbs />
-              <Modules selectedProject={selectedProject} />
-            </Dashboard>
-          }
-        />
-        {/* Scenarios */}
-        <Route
-          path="/modules/scenarios/:moduleId/:projectId"
-          element={
-            <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
-              <Breadcrumbs />
-              <Scenarios />
-            </Dashboard>
-          }
-        />
-        {/* Test Cases */}
-        <Route
-          path="/modules/scenarios/testcases/:scenarioId/:projectId/:moduleId"
-          element={
-            <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
-              <Breadcrumbs />
-              <TestCases />
-            </Dashboard>
-          }
-        />
+            path="/dashboard"
+            element={
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs />
+              </Dashboard>
+            }
+          />
+          {/* Modules */}
+          <Route
+            path="/modules"
+            element={
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs />
+                <Modules selectedProject={selectedProject} />
+              </Dashboard>
+            }
+          />
+          {/* Scenarios */}
+          <Route
+            path="/modules/scenarios/:moduleId/:projectId"
+            element={
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs />
+                <Scenarios />
+              </Dashboard>
+            }
+          />
+          {/* Test Cases */}
+          <Route
+            path="/modules/scenarios/testcases/:scenarioId/:projectId/:moduleId"
+            element={
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs />
+                <TestCases />
+              </Dashboard>
+            }
+          />
           <Route path="/add-admin" element={
             <ProtectedRoute allowedRoles={['superadmin']}>
               <AddAdmin />
@@ -76,7 +82,16 @@ function App() {
           <Route path="/activity" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Breadcrumbs/><LogList selectedProject={selectedProject} /></Dashboard>} />
           <Route path="/testrun" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Breadcrumbs/><Testrun selectedProject={selectedProject} /></Dashboard>} />
           <Route path="/metrics" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Breadcrumbs/><Metrics selectedProject={selectedProject} /></Dashboard>} />
-          <Route path="/users" element={<Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}><Breadcrumbs/><Users selectedProject={selectedProject} /></Dashboard>} />
+          <Route path="/users" element={
+            (userRole === 'admin' || userRole === 'superadmin') ? (
+              <Dashboard onProjectSelect={handleProjectSelect} selectedProject={selectedProject}>
+                <Breadcrumbs/>
+                <Users selectedProject={selectedProject} />
+              </Dashboard>
+            ) : (
+              <Navigate to="/dashboard" />
+            )
+          } />
         </Routes>
       </Router>
     </Provider>

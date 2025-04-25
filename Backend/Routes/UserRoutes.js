@@ -17,7 +17,6 @@ const {
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-// router.post("/createAdmin", auth, createAdmin);
 router.put("/updateUser", upload, auth, updateUser);
 router.post("/api/logout", logout)
 router.get("/getUserRoleDetails", auth, getUserRoleDetails)

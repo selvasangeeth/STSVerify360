@@ -104,13 +104,13 @@ const Login = () => {
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <div className="login-footer">
+        {/* <div className="login-footer">
           <p>
             Don't have an account? <Link to="/register">Register here</Link>
           </p>
-        </div>
+        </div> */}
       </div>
-      <ToastContainer />
+      <ToastContainer />  
     </div>
   );
 };

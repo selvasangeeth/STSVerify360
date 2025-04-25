@@ -38,6 +38,7 @@ const Testrun = ({ selectedProject }) => {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const regionDropdownRef = useRef(null);
   const statusDropdownRef = useRef(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     if (selectedProject) {
@@ -104,6 +105,29 @@ const Testrun = ({ selectedProject }) => {
     setSelectedTest(test);
     setShowModal(true);
   };
+
+  const handleImageClick = (imageUrl) => {
+    // If it's already a complete data URL, use it as is
+    if (imageUrl.startsWith('data:')) {
+      setSelectedImage(imageUrl);
+    }
+    // If it's a base64 string starting with specific markers, convert it to a data URL
+    else if (imageUrl.startsWith('/9j/')) {
+      setSelectedImage(`data:image/jpeg;base64,${imageUrl}`);
+    }
+    else if (imageUrl.startsWith('iVBORw0KGgo')) {
+      setSelectedImage(`data:image/png;base64,${imageUrl}`);
+    }
+    // Otherwise, try to use it as a direct URL
+    else {
+      setSelectedImage(imageUrl);
+    }
+  };
+
+  const handleClosePopup = () => {
+    setSelectedImage(null);
+  };
+
   // Filter functions
   const filterByDate = (test) => {
     const testDate = new Date(test.timestamp);
@@ -155,6 +179,47 @@ const Testrun = ({ selectedProject }) => {
   const indexOfFirstTestRun = indexOfLastTestRun - testRunsPerPage;
   const currentTestRuns = filteredData.slice(indexOfFirstTestRun, indexOfLastTestRun);
   const totalPages = Math.ceil(filteredData.length / testRunsPerPage);
+
+  const styles = {
+    imagePopup: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+      cursor: 'pointer',
+    },
+    popupImage: {
+      maxWidth: '90%',
+      maxHeight: '90%',
+      objectFit: 'contain',
+      cursor: 'default',
+    },
+    imageContainer: {
+      cursor: 'pointer',
+      transition: 'transform 0.2s ease',
+      '&:hover': {
+        transform: 'scale(1.05)',
+      },
+    },
+    previewImage: {
+      width: '100px',
+      height: '100px',
+      objectFit: 'cover',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      transition: 'transform 0.2s ease',
+      '&:hover': {
+        transform: 'scale(1.05)',
+      },
+    },
+  };
+
   return (
     <div className="test-runs-container">
       <div className="search-filters-row">
@@ -238,26 +303,52 @@ const Testrun = ({ selectedProject }) => {
             <th>Sub Task ID</th>
             <th>Test Status</th>
             <th>Tested By</th>
-            <th>Action</th>
+            <th>Action </th>
+            <th></th>
+            <th> </th>
           </tr>
         </thead>
         <tbody>
           {currentTestRuns.length > 0 ? (
-            currentTestRuns.map((test, index) => (
+            currentTestRuns.map((testRun, index) => (
               <tr key={index}>
-                <td>{new Date(test.timestamp).toLocaleString()}</td>
-                <td>{test.testScenario}</td>
-                <td>{test.testCaseName}</td>
-                <td>{test.testDescription}</td>
-                <td>{test.subTaskId}</td>
+                <td>{new Date(testRun.timestamp).toLocaleString()}</td>
+                <td>{testRun.testScenario}</td>
+                <td>{testRun.testCaseName}</td>
+                <td>{testRun.testDescription}</td>
+                <td>{testRun.subTaskId}</td>
                 <td>
-                  <span className={`status-badge ${test.testStatus?.toLowerCase()}`}>
-                    {test.testStatus}
+                  <span className={`status-badge ${testRun.testStatus?.toLowerCase()}`}>
+                    {testRun.testStatus}
                   </span>
                 </td>
-                <td>{test.testedBy}</td>
+                <td>{testRun.testedBy}</td>
                 <td className="action-cell">
-                  <FaEye className="action-eye" onClick={() => handleEyeClick(test)} />
+                  <FaEye className="action-eye" onClick={() => handleEyeClick(testRun)} />
+                </td>
+                <td>
+                  {testRun.jpegImage && (
+                    <div style={styles.imageContainer}>
+                      <img
+                        src={`data:image/jpeg;base64,${testRun.jpegImage}`}
+                        alt="JPEG"
+                        style={styles.previewImage}
+                        onClick={() => handleImageClick(`data:image/jpeg;base64,${testRun.jpegImage}`)}
+                      />
+                    </div>
+                  )}
+                </td>
+                <td>
+                  {testRun.pngImage && (
+                    <div style={styles.imageContainer}>
+                      <img
+                        src={`data:image/png;base64,${testRun.pngImage}`}
+                        alt="PNG"
+                        style={styles.previewImage}
+                        onClick={() => handleImageClick(`data:image/png;base64,${testRun.pngImage}`)}
+                      />
+                    </div>
+                  )}
                 </td>
               </tr>
             ))
@@ -305,19 +396,21 @@ const Testrun = ({ selectedProject }) => {
                 <div className="detail-row">
                   <span className="label">Reference</span>
                   <span className="value">
-                    {selectedTest.reference.startsWith('/9j/') ? (
+                    {typeof selectedTest.reference === 'string' && selectedTest.reference.startsWith('/9j/') ? (
                       <img
                         src={`data:image/jpeg;base64,${selectedTest.reference}`}
                         alt="Test reference"
-                        style={{ maxWidth: '100%', height: 'auto' }}
+                        style={{ maxWidth: '100%', height: 'auto', cursor: 'pointer' }}
+                        onClick={() => handleImageClick(`data:image/jpeg;base64,${selectedTest.reference}`)}
                       />
-                    ) : selectedTest.reference.startsWith('iVBORw0KGgo') ? (
+                    ) : typeof selectedTest.reference === 'string' && selectedTest.reference.startsWith('iVBORw0KGgo') ? (
                       <img
                         src={`data:image/png;base64,${selectedTest.reference}`}
                         alt="Test reference"
-                        style={{ maxWidth: '100%', height: 'auto' }}
+                        style={{ maxWidth: '100%', height: 'auto', cursor: 'pointer' }}
+                        onClick={() => handleImageClick(`data:image/png;base64,${selectedTest.reference}`)}
                       />
-                    ) : selectedTest.reference.startsWith('AAAA') || selectedTest.reference.startsWith('GkXf') ? (
+                    ) : typeof selectedTest.reference === 'string' && (selectedTest.reference.startsWith('AAAA') || selectedTest.reference.startsWith('GkXf')) ? (
                       <video
                         controls
                         style={{ maxWidth: '100%', height: 'auto' }}
@@ -326,7 +419,16 @@ const Testrun = ({ selectedProject }) => {
                         Your browser does not support the video tag.
                       </video>
                     ) : (
-                      <p>Unsupported media type</p>
+                      <img
+                        src={selectedTest.reference}
+                        alt="Test reference"
+                        style={{ maxWidth: '100%', height: 'auto', cursor: 'pointer' }}
+                        onClick={() => handleImageClick(selectedTest.reference)}
+                        onError={(e) => {
+                          console.error('Error loading image:', e);
+                          e.target.src = 'data:image/png;base64,' + selectedTest.reference;
+                        }}
+                      />
                     )}
                   </span>
                 </div>
@@ -336,6 +438,16 @@ const Testrun = ({ selectedProject }) => {
             </div>
           </div>
         </Modal>
+      )}
+      {selectedImage && (
+        <div style={styles.imagePopup} onClick={handleClosePopup}>
+          <img 
+            src={selectedImage} 
+            alt="Preview" 
+            style={styles.popupImage} 
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
       )}
     </div>
   );

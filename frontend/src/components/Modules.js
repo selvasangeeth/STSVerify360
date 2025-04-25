@@ -355,7 +355,7 @@ const Modules = ({ selectedProject }) => {
                     {editingModule?._id === module._id ? (
                       <div className="edit-actions">
                         <button className="text-btn cancel" onClick={() => setEditingModule(null)}>
-                          Clear
+                          Cancel
                         </button>
                       </div>
                     ) : (

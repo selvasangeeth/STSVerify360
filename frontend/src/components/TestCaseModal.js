@@ -166,6 +166,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
     }
 
     try {
+      console.log(formData);
 
       const response = await axios.post('/updatedTestCase', formData, {
         headers: {
@@ -230,7 +231,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
           <form onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label>Test Case ID</label>
+                <label>Test Case ID <span style={{ color: 'red' }}>*</span></label>
                 <input
                   type="text"
                   placeholder="Enter the Test case ID"
@@ -239,7 +240,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                 />
               </div>
               <div className="form-group">
-                <label>Test Case Type</label>
+                <label>Test Case Type <span style={{ color: 'red' }}>*</span></label>
                 <select
                   value={editedCase.caseType}
                   onChange={(e) => setEditedCase({
@@ -255,7 +256,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
             </div>
 
             <div className="form-group">
-              <label>Test Case Description</label>
+              <label>Test Case Description <span style={{ color: 'red' }}>*</span></label>
               <textarea
                 placeholder="Enter the Test case description"
                 value={editedCase.description}
@@ -463,7 +464,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                       <div className="result-form">
                         <div className="form-row">
                           <div className="form-group">
-                            <label>Test Region</label>
+                            <label>Test Region <span style={{ color: 'red' }}>*</span></label>
                             <select
                               value={newResult.testRegion}
                               onChange={(e) =>
@@ -478,7 +479,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                             </select>
                           </div>
                           <div className="form-group">
-                            <label>Test Status</label>
+                            <label>Test Status <span style={{ color: 'red' }}>*</span></label>
                             <select value={newResult.testStatus} onChange={(e) =>
                               setNewResult({ ...newResult, testStatus: e.target.value })
                             }>
@@ -548,7 +549,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                         {newResult.testStatus === "Fail" ? (
                           <div className="form-row">
                             <div className="form-group">
-                              <label>Bug Reference ID</label>
+                              <label>Bug Reference ID <span style={{ color: 'red' }}>*</span></label>
                               <input
                                 type="text"
                                 placeholder="Enter the Bug Ref ID"
@@ -560,7 +561,7 @@ const TestCaseModal = ({ testCase, scenarioId, onClose, genId, projectId, module
                             </div>
 
                             <div className="form-group">
-                              <label>Bug Priority</label>
+                              <label>Bug Priority <span style={{ color: 'red' }}>*</span></label>
                               <select
                                 value={newResult.bugPriority || ''}
                                 onChange={(e) =>

@@ -44,6 +44,7 @@ const TestCaseSchema = new mongoose.Schema({
   },
   testRegion: {
     type: String,
+    
   },
    moduleId :{
           type :mongoose.Schema.Types.ObjectId,

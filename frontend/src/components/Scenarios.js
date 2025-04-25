@@ -494,7 +494,7 @@ const Scenarios = () => {
                           setSelectedScenario(null);
                         }}
                       >
-                        Clear
+                        Cancel  
                       </button>
                     </div>
                   ) : (
@@ -508,7 +508,7 @@ const Scenarios = () => {
                       {activeMenu === scenario._id && (
                         <div className="action-buttons popup">
                           <button 
-                            className="action-btn edit"
+                            className="action-btn editi"
                             onClick={() => {
                               startEditing(scenario);
                               setActiveMenu(null);
@@ -517,7 +517,7 @@ const Scenarios = () => {
                             <FaEdit /> Edit
                           </button>
                           <button 
-                            className="action-btn delete"
+                            className="action-btn deletei"
                             onClick={() => {
                               setSelectedScenario(scenario);
                               setShowRemoveModal(true);
